@@ -59,7 +59,6 @@ typedef struct r2{
      balance_array *balance;
 }r2;
 
-
 typedef struct group_persons_array{
     int personal_id;
     indi_gene_count *ptr_to_genes_count;
@@ -73,7 +72,7 @@ typedef struct population_table{
     group_persons_array *ptr_to_group_persons;
 }population_table;
 
-
+/* convert integer to binary. Max integer (2^8)-1. Returns pointer to string representing the binary form*/
 char *int_to_binary(int n)
 {
     int c, d, count;
@@ -98,6 +97,7 @@ char *int_to_binary(int n)
     return  pointer;
 }
 
+/*take the first 4 bits of 8-bit string. Return pointer to that string + null terminated*/
 char *break_binary_to_first_part(char *pointer){
     char first_part[5];
     char *ptr_to_first_part;
@@ -116,6 +116,7 @@ char *break_binary_to_first_part(char *pointer){
    return ptr_to_first_part;
 }
 
+/*take the last 4 bits of 8-bit string. Return pointer to that string + null terminated*/
 char *break_binary_to_second_part(char *pointer){
     char second_part[5];
     char *ptr_to_second_part;
@@ -134,7 +135,7 @@ char *break_binary_to_second_part(char *pointer){
    return ptr_to_second_part;
 }
 
-
+/*count how many 1s on first part and on second part and subtract them return the result*/
 int create_balance(char *pointer){
     int count_first_part=0;
     int count_second_part=0;
@@ -161,6 +162,7 @@ int create_balance(char *pointer){
     return balance;
 }
 
+/*initialize personal nxn interaction matrix. Where n=gene_counts. Return pointer*/
 gene_inter_matrix* initialize_gene_inter_matrix(){
     int i,j;
     gene_inter_matrix *ptr_to_gene_inter_matrix;
@@ -192,6 +194,7 @@ gene_inter_matrix* initialize_gene_inter_matrix(){
     return ptr_to_gene_inter_matrix;
 }
 
+/*initialize personal gene counts,and put them on nx1 return pointer*/
 indi_gene_count* initialize_indi_gene_count(){
     int i;
     indi_gene_count *ptr_to_indi_gene_count;
@@ -219,12 +222,14 @@ indi_gene_count* initialize_indi_gene_count(){
     return ptr_to_indi_gene_count;
 }
 
+/*initialize pointer to balance array if not seg-fault at when saving balances*/
 balance_array *create_balance_array(){
     balance_array *ptr_to_balance_array;
     ptr_to_balance_array = (balance_array *)malloc(sizeof(balance_array));
 
     return ptr_to_balance_array;
 }
+
 
 r1* initialize_r1(){
     int j;
@@ -239,6 +244,7 @@ r1* initialize_r1(){
     return ptr_to_personal_r1;
 }
 
+
 r2* initialize_r2(){
     int j;
     r2 *ptr_to_personal_r2;
@@ -251,6 +257,7 @@ r2* initialize_r2(){
     }
     return ptr_to_personal_r2;
 }
+
 
 group_persons_array* initialize_group_persons_array(){
     int i,j,k,l;
@@ -301,6 +308,7 @@ group_persons_array* initialize_group_persons_array(){
     return ptr_to_group_persons_array;
 }
 
+
 population_table* create_population(){
     int i;
     population_table *poptable = NULL;
@@ -320,6 +328,7 @@ population_table* create_population(){
     return poptable;
 }
 
+
 void delete_population(population_table *poptable,int num_for_deletion){
     /*sanity checks*/
     if(poptable==NULL)
@@ -333,6 +342,7 @@ void delete_population(population_table *poptable,int num_for_deletion){
         return;
     }
 }
+
 
 population_table* initialization(){
     srand(time(NULL));
@@ -360,6 +370,7 @@ population_table* initialization(){
     new_poptable=create_population();
     return new_poptable;
 }
+
 
 int main (int argc,char **argv){
     population_table *new_poptable;
