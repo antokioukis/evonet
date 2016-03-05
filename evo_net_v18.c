@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -44,11 +43,6 @@ typedef struct personal_gene_count{
     int indi_gene_array[genes_per_person][2];
 }personal_gene_count;
 
-typedef struct new_gene_counts{
-     int gene_array[genes_per_person][2];
-     struct new_gene_counts *next;
-}new_gene_counts;
-
 typedef struct personal_r1{
     char *personal_gene_r1[genes_per_person];
     int balance[genes_per_person];
@@ -62,7 +56,7 @@ typedef struct personal_r2{
 typedef struct personal_records{
     int personal_id;
     personal_gene_count *ptr_to_genes_count;
-    new_gene_counts *ptr_to_new_genes_count;
+    personal_gene_count *ptr_to_new_genes_count;
     personal_gene_interaction_matrix *gene_dependancies;    /*need a better name*/
     personal_r1* ptr_to_personal_r1;
     personal_r2* ptr_to_personal_r2;
@@ -254,25 +248,15 @@ personal_r2* initialize_r2(){
     return ptr_to_personal_r2;
 }
 
-new_gene_counts *add_to_gene_list(personal_records *personal_record,new_gene_counts *ptr_to_new_personal_gene_counts){
-    new_gene_counts *temp=personal_record->ptr_to_new_genes_count;
-    while(temp->next!=NULL){
-        temp=temp->next;
-    }
-    temp->next=ptr_to_new_personal_gene_counts;
-    return personal_record->ptr_to_new_genes_count;
-}
-
-new_gene_counts *create_new_gene_counts(personal_records *personal_record){
+personal_gene_count *create_new_gene_counts(personal_records *personal_record){
     int i,j,b;
     float a,c;
-    new_gene_counts *ptr_to_new_personal_gene_counts;
+    personal_gene_count *ptr_to_new_personal_gene_counts;
 
-    ptr_to_new_personal_gene_counts= (new_gene_counts *)malloc(sizeof(new_gene_counts));
-    ptr_to_new_personal_gene_counts->next=NULL;
+    ptr_to_new_personal_gene_counts= (personal_gene_count *)malloc(sizeof(personal_gene_count));
 
     for (i=0;i<genes_per_person;i++){
-            ptr_to_new_personal_gene_counts->gene_array[i][1]=0;
+            ptr_to_new_personal_gene_counts->indi_gene_array[i][1]=0;
     }
 
     for (i=0;i<genes_per_person;i++){
@@ -281,16 +265,17 @@ new_gene_counts *create_new_gene_counts(personal_records *personal_record){
             a=personal_record->gene_dependancies->gene_inter_matrix[i][j];
             b=personal_record->ptr_to_genes_count->indi_gene_array[j][1];
             if (personal_record->ptr_to_new_genes_count!=NULL){
-               c=personal_record->ptr_to_new_genes_count->gene_array[i][1];
+               c=personal_record->ptr_to_new_genes_count->indi_gene_array[i][1];
             }
             else c=0;
 
-            ptr_to_new_personal_gene_counts->gene_array[i][0]=i;
-            ptr_to_new_personal_gene_counts->gene_array[i][1]=(a*b)+c;
+            ptr_to_new_personal_gene_counts->indi_gene_array[i][0]=i;
+            ptr_to_new_personal_gene_counts->indi_gene_array[i][1]=(a*b)+c;
 
         }
     }
-    return add_to_gene_list(personal_record,ptr_to_new_personal_gene_counts);
+
+    return ptr_to_new_personal_gene_counts;
 }
 
 void aging(int num_of_gens){
@@ -387,27 +372,27 @@ void print_dump(){
     while(temp!=NULL){
         printf("Gia to group me max id %d\n",temp->max_id);
         for(i=0;i<group_persons;i++){
- //           printf("Gia to atomo me id %d\n",temp->groups->personal_record[i]->personal_id);
+            printf("Gia to atomo me id %d\n",temp->groups->personal_record[i]->personal_id);
             for (j=0;j<genes_per_person;j++){
-//                printf("Gene No %d ",temp->groups->personal_record[i]->ptr_to_genes_count->indi_gene_array[j][0]);
-//                printf("Gene Count %d ",temp->groups->personal_record[i]->ptr_to_genes_count->indi_gene_array[j][1]);
+                printf("Gene No %d ",temp->groups->personal_record[i]->ptr_to_genes_count->indi_gene_array[j][0]);
+                printf("Gene Count %d ",temp->groups->personal_record[i]->ptr_to_genes_count->indi_gene_array[j][1]);
 //                printf("R1 of Gene %s ", temp->groups->personal_record[i]->ptr_to_personal_r1->personal_gene_r1[j]);
 //                printf("Balance of R1 %d ", temp->groups->personal_record[i]->ptr_to_personal_r1->balance[j]);
 //                printf("R2 of Gene %s ", temp->groups->personal_record[i]->ptr_to_personal_r2->personal_gene_r2[j]);
 //                printf("Balance of R2 %d ",temp->groups->personal_record[i]->ptr_to_personal_r2->balance[j]);
-                printf("New Gene No %d ",temp->groups->personal_record[i]->ptr_to_new_genes_count->gene_array[j][0]);
-                printf("New Gene Count %d ",temp->groups->personal_record[i]->ptr_to_new_genes_count->gene_array[j][1]);
+                printf("New Gene No %d ",temp->groups->personal_record[i]->ptr_to_new_genes_count->indi_gene_array[j][0]);
+                printf("New Gene Count %d ",temp->groups->personal_record[i]->ptr_to_new_genes_count->indi_gene_array[j][1]);
                 printf("\n");
             }
 
-//            printf("Pinakas Dependencies Sigkekrimenou Atomou\n");
-//            for (k=0;k<genes_per_person;k++){
-//                for (l=0;l<genes_per_person;l++){
-//                    printf(" %f ",temp->groups->personal_record[i]->gene_dependancies->gene_inter_matrix[k][l]);
-//                }
-//                printf("\n");
-//            }
-//            printf("\n");
+            printf("Pinakas Dependencies Sigkekrimenou Atomou\n");
+            for (k=0;k<genes_per_person;k++){
+                for (l=0;l<genes_per_person;l++){
+                    printf(" %f ",temp->groups->personal_record[i]->gene_dependancies->gene_inter_matrix[k][l]);
+                }
+                printf("\n");
+            }
+            printf("\n");
         }
         temp=temp->next;
     }
@@ -458,8 +443,6 @@ int main(){
 srand (time(NULL));
 add_population(4);
 aging(1);
-    print_dump();
-    aging(1);
     print_dump();
     return 0;
 }
