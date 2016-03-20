@@ -1,11 +1,35 @@
-Parousiazetai to e3is: otan estw kai 1 gonidio enos atomou den exei plastikotita perimenei olos o pli8ismos
-gia na ginei mature. Mipws na baloume ena orio oti meta apo x "genies" an den exei ginei mature kane ton delete?
+Problimataki: Parousiazetai to e3is: otan estw kai 1 gonidio enos atomou den exei plastikotita perimenei olos o pli8ismos
+gia na ginei mature. Mipws na baloume ena orio oti meta apo x "genies" an den exei ginei mature to sigkekrimeno atomo
+kane ton delete?
 
 To problima entinetai an baloume 10 gonidia gia ton ka8ena kai o pli8ismos einai ena sebasto noumero. Den sizitaw gia 
 100.000 pou legame stin arxi. Dokimasa me 400 atoma kai 10 gonidia ston ka8ena kai iparxei periptwsi
-na min ginei pote mature olos o pli8ismos.
+na min ginei pote mature olos o pli8ismos.(Ta ma8imatika epali8euoun oti den einai aparaitito na emfanistei plastikotita pantou)
 
-Exei mpei ena orio 50.000 genies gia maturity olou tou pli8ismou se periptwsi pou to 3eperasei kanei exit to programma giati meta apo ekei mou kremage olo 
-to pc. (Laptop tou 2004 den mporei na ante3ei)
+Exei mpei ena orio 50.000 "genies" gia maturity olou tou pli8ismou se periptwsi pou to 3eperasei kanei exit to programma giati 
+meta apo ekei mou kremage olo to pc. (Laptop tou 2004 den mporei na ante3ei)
 
 Kata ta alla me mikrotera noumera ola douleuoun.
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+8ewritika to programma prepei na trexei kai gia megalitero pli8ismo. Me tin parousa ilopoihsh ka8e fora pou tsekarw
+tin plastikotita katanalwnw O(n^2) , opou n o ari8mos twn "genarations" pou exoun perasei mexri twra. 
+An pame gia megalo ari8mo "geniwn" tote 8a prepei na allaxei drastika to olo programma kai na brw kalitero tropo gia na
+apo8ikeuontai ta nea gene_counts tis ka8e genias.Pros to paron mpainoun se mia single-linked list.
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+Episis ta perissotera optimizations pou kikloforoun einai gia megalous pinakes (1000x1000) kai den nomiza oti 8a doume diafora
+an pame kai kanw optimize auto to simeio ka8ws oi pinakes pou pollaplasiazoume einai arketa mikroi (10x1 * 10x1)
+
+Proxwrisa ligo parapera kai brika kommati kwdika pou ipologizei apostasi metaxi 2 pinakwn.
+http://stackoverflow.com/questions/12398689/how-to-calculate-distance-between-two-matrices-in-c
+8a to xrisimopoihsw gia to otan ginei o pli8ismos mature na ipologisw tin diafora tou apo to optimal.
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+I have done the following assumptions as of now:
+To optimal array (-1 ews 1) logika den einai proswpiko gia to ka8e atomo.
+Stin parousa ilopoihsh opoios emfanisei plastikotita stamataei na "e3elissetai".
+Assumptions correct or not?
