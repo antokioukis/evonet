@@ -1,25 +1,6 @@
-Problimataki: Parousiazetai to e3is: otan estw kai 1 gonidio enos atomou den exei plastikotita perimenei olos o pli8ismos
-gia na ginei mature. Mipws na baloume ena orio oti meta apo x "genies" an den exei ginei mature to sigkekrimeno atomo
-kane ton delete?
-Edit: Ebala orio 200 genies giati an ipo8esoume oti ka8e genia einai 1 minas tote ka8e atomo ftanei se ilikia pou 8a afine 
-apogonous peripou 16,5 xronwn.
-
-To problima entinetai an baloume 10 gonidia gia ton ka8ena kai o pli8ismos einai ena sebasto noumero. Den sizitaw gia 
-100.000 pou legame stin arxi. Dokimasa me 400 atoma kai 10 gonidia ston ka8ena kai iparxei periptwsi
-na min ginei pote mature olos o pli8ismos.(Ta ma8imatika epali8euoun oti den einai aparaitito na emfanistei plastikotita pantou)
-
-Kata ta alla me mikrotera noumera ola douleuoun.
-
-----------------------------------------------------------------------------------------------------------------------------------
-
-8ewritika to programma prepei na trexei kai gia megalitero pli8ismo. Me tin parousa ilopoihsh ka8e fora pou tsekarw
-tin plastikotita katanalwnw O(n^2) , opou n o ari8mos twn "genarations" pou exoun perasei mexri twra. 
-An pame gia megalo ari8mo "geniwn" tote 8a prepei na allaxei drastika to olo programma kai na brw kalitero tropo gia na
-apo8ikeuontai ta nea gene_counts tis ka8e genias.Pros to paron mpainoun se mia single-linked list.
-
 ---------------------------------------------------------------------------------------------------------------------------------
 
-Episis ta perissotera optimizations pou kikloforoun einai gia megalous pinakes (1000x1000) kai den nomiza oti 8a doume diafora
+Ta perissotera optimizations pou kikloforoun einai gia megalous pinakes (1000x1000) kai den nomiza oti 8a doume diafora
 an pame kai kanw optimize auto to simeio ka8ws oi pinakes pou pollaplasiazoume einai arketa mikroi (10x1 * 10x1)
 
 Proxwrisa ligo parapera kai brika kommati kwdika pou ipologizei apostasi metaxi 2 pinakwn.
@@ -30,7 +11,21 @@ http://stackoverflow.com/questions/12398689/how-to-calculate-distance-between-tw
 
 I have done the following assumptions as of now:
 To optimal array (-1 ews 1) logika den einai proswpiko gia to ka8e atomo.
-Stin parousa ilopoihsh opoios emfanisei plastikotita stamataei na "e3elissetai".
-Ka8e atomo afinei apogono, den "zeugarwnoun". Ka8e tekno klironomei ton pinaka gene_interactions tou patera tou.Prepei na
-dimiourgisw nea gene counts? h pairnw ta teleutaia tou patera me kapoia diaforopoihsh?
+Ka8e atomo afinei apogono, den "zeugarwnoun". Ka8e tekno klironomei ton pinaka gene_interactions tou patera tou.
 Assumptions correct or not?
+
+1) giati xreiazomaste ta prwta gene_counts? afou etsi kai alliws 3ekiname panta apo 1. Mipws na bgaloume teleiws to gene_counts?
+2) spase tin megali teleutaia sinartisi se 3.
+3) bale pantou sxolia se ka8e while kai tetoia
+4) etoimos na afiseis apogonous.to mono pou dineis einai to gene_dependencies matrix. Dwse kai metalla3i. 
+
+http://www.livescience.com/33347-mutants-average-human-60-genetic-mutations.html
+0< n metalla3ewn <3
++ || - pros ta pou 8a einai h metalla3i
+0 0 <= 8esi metalla3ewn <=gene_counts gene_counts
+
+
+2 tropous: 
+	random pateras: aplo rand % total_population
+
+	fitness factor: distance matrix apo to optimal pou 8a exw dwsei egw. Me rand h erxetai apo to 8eo?
