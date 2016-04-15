@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------------------------------------------------------------------
 
-Ta perissotera optimizations pou kikloforoun einai gia megalous pinakes (1000x1000) kai den nomiza oti 8a doume diafora
-an pame kai kanw optimize auto to simeio ka8ws oi pinakes pou pollaplasiazoume einai arketa mikroi (10x1 * 10x1)
+Ta perissotera optimizations pou kikloforoun einai gia megalous pinakes (1000x1000) kai den nomizw oti 8a doume diafora
+an paw kai kanw optimize auto to simeio ka8ws oi pinakes pou pollaplasiazoume einai arketa mikroi (10x1 * 10x1)
 
 Proxwrisa ligo parapera kai brika kommati kwdika pou ipologizei apostasi metaxi 2 pinakwn.
 http://stackoverflow.com/questions/12398689/how-to-calculate-distance-between-two-matrices-in-c
@@ -10,7 +10,7 @@ http://stackoverflow.com/questions/12398689/how-to-calculate-distance-between-tw
 ---------------------------------------------------------------------------------------------------------------------------------
 
 I have done the following assumptions as of now:
-To optimal array (-1 ews 1) logika den einai proswpiko gia to ka8e atomo.
+To optimal array (-1,1,...,1) logika den einai proswpiko gia to ka8e atomo.
 Ka8e atomo afinei apogono, den "zeugarwnoun". Ka8e tekno klironomei ton pinaka gene_interactions tou patera tou.
 Assumptions correct or not?
 
