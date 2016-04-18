@@ -64,7 +64,7 @@ char *int_to_binary(int n){
         printf("No memory left for pointer on making integer_to_binary\n");
         exit(EXIT_FAILURE);
     }
-    for ( c = 7 ; c >= 0 ; c-- ){
+    for ( c = 7 ; c > 0 ; c-- ){
         d = n >> c;
         if ( d & 1 )
           *(pointer+count) = 1 + '0';
@@ -78,7 +78,7 @@ char *int_to_binary(int n){
 
 /*take the first 4 bits of 8-bit string. Return pointer to that string + null terminated*/
 char *break_binary_to_first_part(char *pointer){
-    char first_part[5];
+    char first_part[5]={0};
     char *ptr_to_first_part;
     strncpy(first_part, pointer,4);
     first_part[4] = '\0';
@@ -96,7 +96,7 @@ char *break_binary_to_first_part(char *pointer){
 
 /*take the last 4 bits of 8-bit string. Return pointer to that string + null terminated*/
 char *break_binary_to_second_part(char *pointer){
-    char second_part[5];
+    char second_part[5]={0};
     char *ptr_to_second_part;
     strncpy(second_part, pointer + 4, 7 - 2);
     second_part[4] = '\0';

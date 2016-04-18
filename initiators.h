@@ -132,6 +132,7 @@ array_of_group *create_group_persons_array(int max_id){
 
     /*fill the ptr_to_grp_person_array*/
     for (i=0;i<group_persons;i++){
+        if(debug_mode) printf("Mesa sto group ftiaxnw ta personal records tou\n");
         ptr_grp_person_array->personal_record[i]=create_personal_records(i);
     }
 
@@ -170,6 +171,7 @@ population_list *add_population(int population){
     population_list *plist_head=NULL;
     total_population=(population*group_persons)+total_population;     /*add to global used for delete*/
     for (i=0;i<population;i++){
+        if(debug_mode) printf("Creating Group %d for Persons\n",i);
         plist_head=add_population_node(plist_head,i);
     }
     printf("Total Population: %d\n",total_population);

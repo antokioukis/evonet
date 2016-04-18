@@ -7,10 +7,12 @@
 
 #include "mathss.h"
 
+#define debug_mode 0
+
 #define group_persons 100
 #define genes_per_person 10
 #define max_gene_count 1000
-#define num_of_max_generations 10
+#define num_of_max_generations 1000
 
 typedef struct personal_gene_interaction_matrix{
     float gene_inter_matrix[genes_per_person][genes_per_person];

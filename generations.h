@@ -12,21 +12,13 @@ personal_gene_interaction_matrix *inherit_from_random_father_gene_dependancies()
 
     while(id_patera>=group_persons) {
         temp=temp->next;
-        // printf("Megalitero proxwraw sto epomeno group: +%d\n",group_persons);
+        if(debug_mode) printf("Megalitero proxwraw sto epomeno group: +%d\n",group_persons);
         id_patera=id_patera-group_persons;
     }
 
     id_patera=id_patera%group_persons;
   //  printf("Apo pinaka id %d \n",temp->groups->personal_record[id_patera]->personal_id);
     patera_gene_dependancies=temp->groups->personal_record[id_patera]->gene_dependancies;
-
-//    for (k=0;k<genes_per_person;k++){
-//        for (l=0;l<genes_per_person;l++){
-//            printf("Pira %f ",temp->groups->personal_record[id_patera]->gene_dependancies->gene_inter_matrix[k][l]);
-//        }
-//        printf("\n");
-//    }
-//    printf("\n");
 
     return patera_gene_dependancies;
 }
@@ -48,11 +40,18 @@ personal_gene_interaction_matrix *create_mutations(personal_gene_interaction_mat
 
     num_of_mutations=rand()%4;
 
+    if(debug_mode)printf("Arithmos Mutations: %d \n", num_of_mutations);
+
     for (i=0;i<num_of_mutations;i++){
+
         sign_mutation=rand()%2;
         thesi_mutation[0]=rand()%genes_per_person;
         thesi_mutation[1]=rand()%genes_per_person;
+
+       if(debug_mode) printf("Mutations stis theseis %d %d\n",thesi_mutation[0],thesi_mutation[1] );
+
         mutation=random_normal_distrubution(0,sqrt(10));
+
         if(sign_mutation){
             final_mutation=mutation;
         }

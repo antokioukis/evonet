@@ -3,18 +3,20 @@
 #include "plastics.h"
 #include "generations.h"
 
+
 void fill_generation_table(int population,int num_of_generations,int fitness_flag){
     int i;
     for (i=0;i<num_of_generations;i++){
         if(i==0){
+            if(debug_mode) printf("Creating First Generation\n");
             generation_array[i]=add_population(population);
-            mature_pop(generation_array[i]);
+            //mature_pop(generation_array[i]);
         }
         else{
             //printf("going to generate new generation %d \n",i);
             generation_array[i]=create_new_generation(population,fitness_flag);
             //printf("going to mature gen %d\n",i);
-            mature_pop(generation_array[i]);
+           // mature_pop(generation_array[i]);
         }
         printf("Generation %d Mature\n",i);
     }
