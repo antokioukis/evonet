@@ -1,7 +1,7 @@
 all:
-	gcc evo_net_v27.c -lm -o a.out
+	gcc -Wall evo_net_v31.c -lm -o evonet -g
 clean:
-	rm *.out
+	rm evonet
 	clear
 run:
-	./a.out
+	./evonet
