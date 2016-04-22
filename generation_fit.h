@@ -11,10 +11,10 @@ void calculate_fitness(int num_of_gen){
             personal_fitness=exp(-lamda*distance);
 
             generation_array[num_of_gen-1]->group_in_population[i]->person_in_group[j]->fitness=personal_fitness;
-           // printf("Personal Fitness %f\n",generation_array[num_of_gen-1]->group_in_population[i]->person_in_group[j]->fitness);
+           /* printf("Personal Fitness %f\n",generation_array[num_of_gen-1]->group_in_population[i]->person_in_group[j]->fitness); */
 
             generation_array[num_of_gen-1]->sum_of_fitness+=personal_fitness;
-            //printf("Generation Fitness %f\n",generation_array[num_of_gen-1]->sum_of_fitness);
+            /* printf("Generation Fitness %f\n",generation_array[num_of_gen-1]->sum_of_fitness);*/
         }
     }
 }
@@ -22,7 +22,7 @@ void calculate_fitness(int num_of_gen){
 
 void choose_fitted_father_dependencies(int num_of_gen,float new_dependancies[genes_per_person][genes_per_person]){
     float fitness_array[(num_of_groups*persons_per_group)];
- //   int theseis_pinaka=num_of_groups*persons_per_group;
+/*  int theseis_pinaka=num_of_groups*persons_per_group;*/
     int counter=0;
     int i,j;
     double fitness_asked=0;
@@ -40,18 +40,18 @@ void choose_fitted_father_dependencies(int num_of_gen,float new_dependancies[gen
         }
     }
 
-//    printf("Fitness_array[%d]= %f \n",theseis_pinaka-1,fitness_array[theseis_pinaka-1]);
-//    printf("Fitness of generation = %f  \n",generation_array[num_of_gen-1]->sum_of_fitness);
+/*    printf("Fitness_array[%d]= %f \n",theseis_pinaka-1,fitness_array[theseis_pinaka-1]);*/
+/*    printf("Fitness of generation = %f  \n",generation_array[num_of_gen-1]->sum_of_fitness);*/
 
-    //na brw to fitness pou zitaei kai apo ekei mesa na brw ton patera
+    /*na brw to fitness pou zitaei kai apo ekei mesa na brw ton patera*/
     fitness_asked=((double)rand() / RAND_MAX)*generation_array[num_of_gen-1]->sum_of_fitness;
-    //printf("fitness_asked: %f \n",fitness_asked);
+    /*printf("fitness_asked: %f \n",fitness_asked);*/
 
     counter=0;
     while(fitness_asked>fitness_array[counter]){
         counter++;
     }
-   // printf("Counter= %d\n",counter);
+   /* printf("Counter= %d\n",counter);*/
 
     group_counter=counter/persons_per_group;
     person_counter=counter%persons_per_group;
@@ -68,7 +68,7 @@ void choose_fitted_father_dependencies(int num_of_gen,float new_dependancies[gen
 
 person *gen_create_person_fit(int id,int num_of_gen){
     int i;
-    //int j;
+    /*int j;*/
 
     person *new_person;
     new_person = (person*)calloc(1, sizeof(person));
@@ -84,15 +84,16 @@ person *gen_create_person_fit(int id,int num_of_gen){
         new_person->vector_of_signs[i]=1;
     }
 
-//    printf("Creating Inheritance\n");
+/*    printf("Creating Inheritance\n");*/
     choose_fitted_father_dependencies(num_of_gen,new_person->gene_interactions);
-//    printf("Created Inheritance\n");
-//    for(i=0;i<genes_per_person;i++){
-//        for(j=0;j<genes_per_person;j++){
-//            printf(" %f ", new_person->gene_interactions[i][j]);
-//        }printf("\n");
-//    }
-
+/*
+    printf("Created Inheritance\n");
+    for(i=0;i<genes_per_person;i++){
+        for(j=0;j<genes_per_person;j++){
+            printf(" %f ", new_person->gene_interactions[i][j]);
+        }printf("\n");
+    }
+*/
     return new_person;
 }
 
@@ -103,9 +104,9 @@ group *gen_create_group_fit(int starting_id,int num_of_gen){
     new_group = (group*)calloc(1, sizeof(group));
 
     for(i=0;i<persons_per_group;i++){
-       // printf("Creating Atomo %d\n",i);
+       /* printf("Creating Atomo %d\n",i);*/
         new_group->person_in_group[i]=gen_create_person_fit(starting_id+i,num_of_gen);
-        //printf("Atomo created %d\n",i);
+        /*printf("Atomo created %d\n",i);*/
     }
     return new_group;
 }
@@ -120,10 +121,10 @@ population *create_gen_population_fit(int num_of_gen){
     calculate_fitness(num_of_gen);
 
     for(i=0;i<num_of_groups;i++){
-       // printf("Creating Group %d\n",i);
+       /* printf("Creating Group %d\n",i);*/
         new_population->group_in_population[i]=gen_create_group_fit(persons_per_group*i,num_of_gen);
-     //   printf("Group created %d\n",i);
+     /*   printf("Group created %d\n",i);*/
     }
-   // printf("Generation Created\n");
+   /* printf("Generation Created\n");*/
     return new_population;
 }

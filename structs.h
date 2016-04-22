@@ -1,12 +1,12 @@
-#define max_generations 500
+#define max_generations 50
 #define num_of_groups 10
 #define persons_per_group 100
 #define genes_per_person 10
 
 typedef struct person{
 
-    int periodos;
-    int id;
+    int periodos;   /*maturity steps needed */
+    int id;         /*personal UNIQUE id */
     bool mature;
     float fitness;
 
@@ -14,7 +14,7 @@ typedef struct person{
     float gene_interactions[genes_per_person][genes_per_person];
 
     int vector_of_signs[genes_per_person];
-    int maturity_array[1024];
+    int maturity_array[1024]; /*if genes_per_person change, change this also to 2^gene_per_person */
 
 }person;
 

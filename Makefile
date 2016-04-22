@@ -1,5 +1,5 @@
 all:
-	gcc -Wall evo_net_v31.c -lm -o evonet -g
+	gcc -pedantic -ansi -Wall evo_net_v31.c -lm -o evonet -g
 clean:
 	rm evonet
 	clear

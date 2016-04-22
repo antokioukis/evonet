@@ -1,3 +1,4 @@
+/*Create personal records, return pointer to person */
 person *create_person(int id){
     int i,j;
 
@@ -12,7 +13,7 @@ person *create_person(int id){
     }
 
     for(i=0;i<genes_per_person;i++){
-        new_person->vector_of_signs[i]=1;
+        new_person->vector_of_signs[i]=1;  /* first generation so gene_counts always positive on the vector -> 1 */
     }
 
     for(i=0;i<genes_per_person;i++){
@@ -24,6 +25,7 @@ person *create_person(int id){
     return new_person;
 }
 
+/*return pointer to new group. New group is array of pointers to persons.*/
 group *create_group(int starting_id){
     int i;
 
@@ -31,11 +33,13 @@ group *create_group(int starting_id){
     new_group = (group*)calloc(1, sizeof(group));
 
     for(i=0;i<persons_per_group;i++){
-       new_group->person_in_group[i]=create_person(starting_id+i);
+       new_group->person_in_group[i]=create_person(starting_id+i); /*create pointer to person, save on the groups array , argument is the personal id */
     }
     return new_group;
 }
 
+
+/*return pointer to new population. New population is array of pointers to groups.*/
 population *create_population(){
     int i;
 
@@ -43,7 +47,7 @@ population *create_population(){
     new_population = (population*)calloc(1, sizeof(population));
 
     for(i=0;i<num_of_groups;i++){
-       new_population->group_in_population[i]=create_group(persons_per_group*i);
+       new_population->group_in_population[i]=create_group(persons_per_group*i); /*create pointer to group, save on the population array*/
     }
     return new_population;
 }

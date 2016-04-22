@@ -39,7 +39,7 @@ unsigned int concatenate(unsigned x, unsigned y) {
 
 float *matrix_multiplication(float first[genes_per_person][genes_per_person],int second[genes_per_person],float multiply[genes_per_person]){
 
-  //  int m, n, p, q
+  /*  int m, n, p, q */
     int c, d, k;
     float sum = 0;
 
@@ -54,11 +54,11 @@ float *matrix_multiplication(float first[genes_per_person][genes_per_person],int
         }
     }
 
-//    printf("Product of entered matrices:-\n");
-//
-//    for (c = 0; c < genes_per_person; c++) {
-//        printf(" %f ", multiply[c]);
-//    }printf("\n");
+  /*  printf("Product of entered matrices:-\n");
+
+    for (c = 0; c < genes_per_person; c++) {
+        printf(" %f ", multiply[c]);
+    }printf("\n");*/
     return multiply;
 }
 
@@ -88,12 +88,13 @@ void make_discrete(person *individual, float temp[genes_per_person]){
         }
     }
 
-//    printf("Apotelesma discretion");
-//    for(i=0;i<genes_per_person;i++){
-//        printf(" %d ",individual->vector_of_signs[i]);
-//    }
-//    printf("\n");
-
+/*
+    printf("Apotelesma discretion");
+    for(i=0;i<genes_per_person;i++){
+        printf(" %d ",individual->vector_of_signs[i]);
+    }
+    printf("\n");
+*/
 }
 
 /*calculate eucledian distances of 2 vectors*/
