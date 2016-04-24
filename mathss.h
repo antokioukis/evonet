@@ -112,4 +112,3 @@ float eucledian_distance(int final_form[],int optimal[]){
     distance=sqrt(distance);
     return distance;
 }
-

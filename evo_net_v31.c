@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
-#include <gsl/gsl_math.h>
+#include <pthread.h>
 
 #include "structs.h"
 #include "mathss.h"
@@ -11,6 +11,9 @@
 #include "maturity.h"
 #include "generation_nofit.h"
 #include "generation_fit.h"
+
+clock_t begin, end;
+double time_spent;
 
 void print_dump(population *new_population){
     int i,j;
@@ -60,17 +63,26 @@ void create_generations(int fitness){
                 generation_array[i]=create_gen_population_nofit(i);
             }
         }
-        mature_generation(generation_array[i]);
+        if(fittness==0){
+            mature_generation(generation_array[i]);
+        }
+        else{
+            threaded_mature_generation(generation_array[i]);
+        }
         printf("Generation %d Mature\n",i);
     }
 }
 
 int main(void){
+    begin = clock();
     srand (time(NULL));
     /*
     orisma 1 gia inheritance based on fitness
     orisma 0 gia random inheritance
     */
-    create_generations(1);
+    create_generations(0);
+    end = clock();
+    time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("Time spent %f:\n",time_spent);
     return 1;
 }

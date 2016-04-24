@@ -2,10 +2,11 @@ void create_mutations(float new_dependancies[genes_per_person][genes_per_person]
     int num_of_mutations,sign_mutation,thesi_mutation[2];
     int i;
     float final_mutation,mutation;
+    /*float u;*/
 
     /*POISSON TO BE IMPLEMENTED*/
     num_of_mutations=rand()%2;
-    /*printf("Arithmos Mutations: %d \n", num_of_mutations);*/
+  /*  printf("Arithmos Mutations: %d \n", num_of_mutations); */
 
     for (i=0;i<num_of_mutations;i++){
 

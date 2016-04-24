@@ -1,3 +1,5 @@
+population *active_population;
+
 void create_maturity_step(person *individual,int step){
     int i;
     unsigned int position;
@@ -48,6 +50,65 @@ int check_population_mature(population *new_population){
     return 1;
 }
 
+int check_group_mature(group *new_group){
+    /*int ID,periodos;*/
+    int l;
+    for(l=0;l<persons_per_group;l++){
+            if(!new_group->person_in_group[l]->mature){
+                return 0;
+            }
+            else {
+              /*  ID=new_group->person_in_group[l]->id;
+                periodos=new_group->person_in_group[l]->periodos;
+                printf("Atomo me ID %d idi mature me periodo: %d\n",ID,periodos); */
+            }
+        }
+    return 1;
+}
+
+
+void *mature_group (void  *a) {
+    int i,group_num;
+    /*int ID;*/
+    int step=0;
+
+    group_num = *((int *) a);
+
+    while(!check_group_mature(active_population->group_in_population[group_num])){
+        for(i=0;i<persons_per_group;i++){
+            if(!active_population->group_in_population[group_num]->person_in_group[i]->mature){
+                   /* ID=active_population->group_in_population[group_num]->person_in_group[i]->id;
+                    printf("Atomo me ID %d xreiazetai maturity step\n",ID);*/
+                    create_maturity_step(active_population->group_in_population[group_num]->person_in_group[i],step);
+            }
+        }
+        step++;
+    }
+
+    return 0;
+}
+
+/*purpose is to create as many threas as there are groups and bring the whole group to maturity simultaneously*/
+void threaded_mature_generation(population *new_population){
+    int i,j;
+    int num_of_threads=num_of_groups;
+    pthread_t thread_ID[num_of_groups];
+
+    active_population=new_population;
+
+    for (i = 0; i < num_of_threads; i++) {
+        int *arg = malloc(sizeof(*arg));
+        *arg = i;
+        if(pthread_create(&thread_ID[i], NULL, mature_group, arg)) {
+            printf("Error: Pthread not created.\n");
+        }
+    }
+
+    for (j = 0; j < num_of_threads; j++) {
+        pthread_join(thread_ID[j], NULL);
+    }
+
+}
 
 void mature_generation(population *new_population){
     /*population *temp=new_population; */
