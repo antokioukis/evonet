@@ -1,6 +1,6 @@
 #define max_generations 50
-#define num_of_groups 4
-#define persons_per_group 1000
+#define num_of_groups 50
+#define persons_per_group 100
 #define genes_per_person 10
 
 typedef struct person{

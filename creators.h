@@ -52,4 +52,14 @@ population *create_population(){
     return new_population;
 }
 
+population *create_new_population(population *new_population,int num_of_new_groups){
+    int i;
 
+    for(i=0;i<num_of_new_groups;i++){
+        if(new_population->group_in_population[i]->person_in_group[0]->id==-100){
+            new_population->group_in_population[i]=create_group(persons_per_group*i);
+            printf("Created new Group %d\n",i);
+        }
+    }
+    return new_population;
+}
