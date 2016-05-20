@@ -48,20 +48,22 @@ void print_dump(population *new_population){
     }
 }
 
-void create_generations(int fitness){
+void create_generations(int fitness,int num_of_parents){
     int i;
     for(i=0;i<max_generations;i++){
         if(i==0){
+            printf("Creating Generation 0\n");
             generation_array[i]=create_population();
+            printf("Fitness_of_Generation 0: Not calculated \n");
         }
         else{
             printf("Creating Generation %d\n",i);
             if(fitness){
-                generation_array[i]=create_gen_population_fit(i);
-                printf("Fitness_of_Generation %d: %f \n",i-1,generation_array[i-1]->sum_of_fitness);
+                generation_array[i]=create_gen_population_fit(i,num_of_parents);
+                printf("Fitness_of_Generation %d: %f \n",i,generation_array[i-1]->sum_of_fitness);
             }
             else{
-                generation_array[i]=create_gen_population_nofit(i);
+                generation_array[i]=create_gen_population_nofit(i,num_of_parents);
             }
         }
         if(fitness==0){
@@ -79,10 +81,17 @@ int main(void){
 
     srand (time(NULL));
     /*
+    1o orisma
     orisma 1 gia inheritance based on fitness
     orisma 0 gia random inheritance
     */
-    create_generations(1);
+    /*
+    2o orisma
+    orisma 1 gia sindiasmo gonewn
+    orisma 0 gia autousia gene dependancies apo 1 gonea
+    */
+
+    create_generations(1,1);
 
  /*   end = clock();
     time_spent = (double)(end - begin) / CLOCKS_PER_SEC;

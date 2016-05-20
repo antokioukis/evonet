@@ -30,7 +30,70 @@ void create_mutations(float new_dependancies[genes_per_person][genes_per_person]
     }
 }
 
-void choose_random_father_dependencies(int num_of_gen,float new_dependancies[genes_per_person][genes_per_person]){
+void choose_random_father_dependencies_combined(int num_of_gen,float new_dependancies[genes_per_person][genes_per_person]){
+    int group_counter1=0;
+    int person_counter1=0;
+    int id_patera1,i,j;
+
+    int group_counter2=0;
+    int person_counter2=0;
+    int id_patera2;
+
+    int genes_from_first_parent;
+    int genes_from_second_parent;
+
+    /*printf("No fitness PLUS combined"); */
+
+    id_patera1=rand()%(num_of_groups*persons_per_group);
+    id_patera2=rand()%(num_of_groups*persons_per_group);
+
+
+    group_counter1=id_patera1/persons_per_group;
+    person_counter1=id_patera1%persons_per_group;
+/*    printf("Group_of_father %d Person_on_group %d \n",group_counter,person_counter);*/
+
+    group_counter2=id_patera2/persons_per_group;
+    person_counter2=id_patera2%persons_per_group;
+
+    genes_from_first_parent=rand()%genes_per_person;
+    genes_from_second_parent=genes_per_person-genes_from_first_parent;
+
+
+    for(i=0;i<genes_per_person;i++){
+        for(j=0;j<genes_from_first_parent;j++){
+            new_dependancies[i][j]=generation_array[num_of_gen-1]->group_in_population[group_counter1]->person_in_group[person_counter1]->gene_interactions[i][j];
+        }
+    }
+
+/*
+    printf("Apo ton prwto parent pira %d\n", genes_from_first_parent);
+
+    for(i=0;i<genes_per_person;i++){
+        for(j=0;j<genes_from_first_parent;j++){
+            printf(" %f ",new_dependancies[i][j]);
+        }
+        printf("\n");
+    }
+*/
+    for(i=0;i<genes_per_person;i++){
+        for(j=genes_from_first_parent;j<genes_per_person;j++){
+            new_dependancies[i][j]=generation_array[num_of_gen-1]->group_in_population[group_counter2]->person_in_group[person_counter2]->gene_interactions[i][j];
+        }
+    }
+/*
+    printf("Apo ton deutero parent pira %d\n", genes_from_second_parent);
+
+    for(i=0;i<genes_per_person;i++){
+        for(j=0;j<genes_per_person;j++){
+            printf(" %f ",new_dependancies[i][j]);
+        }
+        printf("\n");
+    }
+*/
+    create_mutations(new_dependancies);
+}
+
+void choose_random_father_dependencies_no_combinations(int num_of_gen,float new_dependancies[genes_per_person][genes_per_person]){
     int group_counter=0;
     int person_counter=0;
     int id_patera,i,j;
@@ -50,7 +113,8 @@ void choose_random_father_dependencies(int num_of_gen,float new_dependancies[gen
     create_mutations(new_dependancies);
 }
 
-person *gen_create_person_nofit(int id,int num_of_gen){
+
+person *gen_create_person_nofit(int id,int num_of_gen, int num_of_parents){
     int i;
     /*int j;*/
 
@@ -69,7 +133,12 @@ person *gen_create_person_nofit(int id,int num_of_gen){
     }
 
 /*    printf("Creating Inheritance\n");*/
-    choose_random_father_dependencies(num_of_gen,new_person->gene_interactions);
+    if(num_of_parents){
+        choose_random_father_dependencies_combined(num_of_gen,new_person->gene_interactions);
+    }
+    else{
+        choose_random_father_dependencies_no_combinations(num_of_gen,new_person->gene_interactions);
+    }
 /*    printf("Created Inheritance\n");
     for(i=0;i<genes_per_person;i++){
         for(j=0;j<genes_per_person;j++){
@@ -80,7 +149,7 @@ person *gen_create_person_nofit(int id,int num_of_gen){
     return new_person;
 }
 
-group *gen_create_group_nofit(int starting_id,int num_of_gen){
+group *gen_create_group_nofit(int starting_id,int num_of_gen, int num_of_parents){
     int i;
 
     group *new_group;
@@ -88,13 +157,13 @@ group *gen_create_group_nofit(int starting_id,int num_of_gen){
 
     for(i=0;i<persons_per_group;i++){
        /* printf("Creating Atomo %d\n",i);*/
-        new_group->person_in_group[i]=gen_create_person_nofit(starting_id+i,num_of_gen);
+        new_group->person_in_group[i]=gen_create_person_nofit(starting_id+i,num_of_gen, num_of_parents);
         /*printf("Atomo created %d\n",i);*/
     }
     return new_group;
 }
 
-population *create_gen_population_nofit(int num_of_gen){
+population *create_gen_population_nofit(int num_of_gen, int num_of_parents){
     int i;
 
     population *new_population;
@@ -102,7 +171,7 @@ population *create_gen_population_nofit(int num_of_gen){
 
     for(i=0;i<num_of_groups;i++){
        /* printf("Creating Group %d\n",i);*/
-        new_population->group_in_population[i]=gen_create_group_nofit(persons_per_group*i,num_of_gen);
+        new_population->group_in_population[i]=gen_create_group_nofit(persons_per_group*i,num_of_gen,num_of_parents);
      /*  printf("Group created %d\n",i);*/
     }
    /* printf("Generation Created\n");*/

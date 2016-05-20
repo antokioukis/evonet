@@ -14,7 +14,7 @@ typedef struct person{
     float gene_interactions[genes_per_person][genes_per_person];
 
     int vector_of_signs[genes_per_person];
-    int maturity_array[1024]; /*if genes_per_person change, change this also to 2^gene_per_person */
+    int maturity_array[1024]; /*if genes_per_person change, change this also to 2^genes_per_person */
 
 }person;
 
