@@ -7,6 +7,7 @@ void calculate_fitness(int num_of_gen){
     float lamda=0.5;
     float distance;
     float non_descrete_res[genes_per_person];
+    /*int optimal[genes_per_person]={1,1}; */
     int optimal[genes_per_person]={1,1,1,1,1,1,1,1,1,1};
 
     /*gia ka8e atomo tou pli8ismou*/
