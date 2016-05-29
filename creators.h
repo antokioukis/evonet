@@ -25,7 +25,11 @@ float create_gene_interactions(int R1,int R2){
     printf("lastbitR2=%d \n",lastbitR2);
 */
     if(lastbitR2==lastbitR1){ /*ri8misi*/
-        power_of_interaction = NumberOfSetBits(R1_binary)&NumberOfSetBits(R2_binary);
+/*auto 8eloume? or   
+	power_of_interaction = NumberOfSetBits(R1_binary)&NumberOfSetBits(R2_binary);
+den 3erw an bgazei diaforetiko apotelesma
+*/
+	power_of_interaction=NumberOfSetBits(R1_binary & R2_binary)
  /*       printf("Interaction:%f \n",power_of_interaction); */
         power_of_interaction = power_of_interaction / genes_per_person; /*kanonikopoihsh*/
 
