@@ -7,8 +7,8 @@ void calculate_fitness(int num_of_gen){
     float lamda=0.5;
     float distance;
     float non_descrete_res[genes_per_person];
-    /*int optimal[genes_per_person]={1,1}; */
-    int optimal[genes_per_person]={1,1,1,1,1,1,1,1,1,1};
+    int optimal[genes_per_person]={1,1};
+   /* int optimal[genes_per_person]={1,1,1,1,1,1,1,1,1,1}; */
 
     /*gia ka8e atomo tou pli8ismou*/
     for(i=0;i<num_of_groups;i++){
@@ -97,11 +97,6 @@ void choose_fitted_father_dependencies_no_combinations(int num_of_gen,float new_
     group_counter=counter/persons_per_group;
     person_counter=counter%persons_per_group;
 
-    /*if the chosen father is deleted then the first one from the second group is selected*/
-    while(generation_array[num_of_gen-1]->group_in_population[group_counter]->person_in_group[person_counter]->id==-100){
-        group_counter++;
-    }
-
     for(i=0;i<genes_per_person;i++){
         for(j=0;j<genes_per_person;j++){
             new_dependancies[i][j]=generation_array[num_of_gen-1]->group_in_population[group_counter]->person_in_group[person_counter]->gene_interactions[i][j];
@@ -121,7 +116,8 @@ void choose_fitted_father_dependencies_combined(int num_of_gen,float new_dependa
     double fitness_asked1=0;
     double fitness_asked2=0;
     int group_counter1,person_counter1,group_counter2,person_counter2;
-    int which_parent;
+    int genes_from_first_parent;
+    int genes_from_second_parent;
 
    /* printf("Fitness PLUS combinations\n"); */
 
@@ -164,32 +160,66 @@ void choose_fitted_father_dependencies_combined(int num_of_gen,float new_dependa
     group_counter2=counter2/persons_per_group;
     person_counter2=counter2%persons_per_group;
 
-    /*if the chosen father is deleted then the first one from the second group is selected*/
-    while(generation_array[num_of_gen-1]->group_in_population[group_counter1]->person_in_group[person_counter1]->id==-100){
-        group_counter1++;
-    }
-    while(generation_array[num_of_gen-1]->group_in_population[group_counter2]->person_in_group[person_counter2]->id==-100){
-        group_counter2++;
-    }   
+    genes_from_first_parent=rand()%genes_per_person;
+    genes_from_second_parent=genes_per_person-genes_from_first_parent;
 
-   /* printf("ID patera %d ID patera %d \n",generation_array[num_of_gen-1]->group_in_population[group_counter1]->person_in_group[person_counter1]->id,generation_array[num_of_gen-1]->group_in_population[group_counter2]->person_in_group[person_counter2]->id);
-*/
+
+    /*panw aristero tetartimorio ston pinaka gene_dependancies*/
     for(i=0;i<genes_per_person;i++){
-        which_parent=rand()%2;
-        /*row_swapping*/
-        if(which_parent==0){
-            for(j=0;j<genes_per_person;j++){
-                new_dependancies[i][j]=generation_array[num_of_gen-1]->group_in_population[group_counter1]->person_in_group[person_counter1]->gene_interactions[i][j];
-            }
-        }
-        else{
-            for(j=0;j<genes_per_person;j++){
-                new_dependancies[i][j]=generation_array[num_of_gen-1]->group_in_population[group_counter2]->person_in_group[person_counter2]->gene_interactions[i][j];
-            }
+        for(j=0;j<genes_from_first_parent;j++){
+            new_dependancies[i][j]=generation_array[num_of_gen-1]->group_in_population[group_counter1]->person_in_group[person_counter1]->gene_interactions[i][j];
         }
     }
 
-    create_mutations(new_dependancies);
+ /*   printf("Apo ton prwto parent pira %d\n", genes_from_first_parent); */
+
+
+ /*   printf("Panw aristero tetartimorio");
+    for(i=0;i<genes_per_person;i++){
+        for(j=0;j<genes_from_first_parent;j++){
+            printf(" %f ",new_dependancies[i][j]);
+        }
+        printf("\n");
+    }
+
+*/
+
+    /* katw de3io tetartimorio*/
+    for(i=genes_from_first_parent;i<genes_per_person;i++){
+        for(j=genes_from_first_parent;j<genes_per_person;j++){
+            new_dependancies[i][j]=generation_array[num_of_gen-1]->group_in_population[group_counter2]->person_in_group[person_counter2]->gene_interactions[i][j];
+        }
+    }
+
+   /* printf("Apo ton deutero parent pira %d\n", genes_from_second_parent); */
+
+    /*katw aristero tetartimorio r1_second + r2_first*/
+    for(i=genes_from_first_parent;i<genes_per_person;i++){
+        for(j=0;j<genes_from_first_parent;j++){
+            new_dependancies[i][j]=create_gene_interactions(
+                                    generation_array[num_of_gen-1]->group_in_population[group_counter2]->person_in_group[person_counter2]->gene_R1[i],
+                                    generation_array[num_of_gen-1]->group_in_population[group_counter1]->person_in_group[person_counter1]->gene_R2[j]);
+        }
+    }
+
+    /*panw de3io tetartimorio r1_first + r2_second*/
+    for(i=0;i<genes_per_person;i++){
+        for(j=genes_from_first_parent;j<genes_per_person;j++){
+            new_dependancies[i][j]=create_gene_interactions(
+                                        generation_array[num_of_gen-1]->group_in_population[group_counter2]->person_in_group[person_counter2]->gene_R2[i],
+                                        generation_array[num_of_gen-1]->group_in_population[group_counter1]->person_in_group[person_counter1]->gene_R1[j]
+                                    );
+        }
+    }
+
+    for(i=0;i<genes_per_person;i++){
+        for(j=0;j<genes_per_person;j++){
+            printf(" %f ",new_dependancies[i][j]);
+        }
+        printf("\n");
+    }
+
+   /* create_mutations(new_dependancies); */
 }
 
 
@@ -227,7 +257,8 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents){
     else {
         choose_fitted_father_dependencies_no_combinations(num_of_gen,new_person->gene_interactions);
     }
-    current_population++;
+
+
     return new_person;
 }
 
@@ -253,9 +284,6 @@ population *create_gen_population_fit(int num_of_gen, int num_of_parents){
     new_population = (population*)calloc(1, sizeof(population));
 
     calculate_fitness(num_of_gen);
-
-    if(num_of_gen==3){create_event(generation_array[num_of_gen-1],0,2);}
-    /*if(num_of_gen==4)create_event(generation_array[num_of_gen-1],1,2);*/
 
     for(i=0;i<num_of_groups;i++){
        /* printf("Creating Group %d\n",i);*/

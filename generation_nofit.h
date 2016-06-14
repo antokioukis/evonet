@@ -39,8 +39,7 @@ void choose_random_father_dependencies_combined(int num_of_gen,float new_dependa
     int person_counter2=0;
     int id_patera2;
 
-    int genes_from_first_parent;
-    int genes_from_second_parent;
+    int which_parent;
 
     /*printf("No fitness PLUS combined"); */
 
@@ -55,41 +54,21 @@ void choose_random_father_dependencies_combined(int num_of_gen,float new_dependa
     group_counter2=id_patera2/persons_per_group;
     person_counter2=id_patera2%persons_per_group;
 
-    genes_from_first_parent=rand()%genes_per_person;
-    genes_from_second_parent=genes_per_person-genes_from_first_parent;
-
-
-    for(i=0;i<genes_per_person;i++){
-        for(j=0;j<genes_from_first_parent;j++){
-            new_dependancies[i][j]=generation_array[num_of_gen-1]->group_in_population[group_counter1]->person_in_group[person_counter1]->gene_interactions[i][j];
+   for(i=0;i<genes_per_person;i++){
+        which_parent=rand()%2;
+        /*row_swapping*/
+        if(which_parent==0){
+            for(j=0;j<genes_per_person;j++){
+                new_dependancies[i][j]=generation_array[num_of_gen-1]->group_in_population[group_counter1]->person_in_group[person_counter1]->gene_interactions[i][j];
+            }
+        }
+        else{
+            for(j=0;j<genes_per_person;j++){
+                new_dependancies[i][j]=generation_array[num_of_gen-1]->group_in_population[group_counter2]->person_in_group[person_counter2]->gene_interactions[i][j];
+            }
         }
     }
-
-/*
-    printf("Apo ton prwto parent pira %d\n", genes_from_first_parent);
-
-    for(i=0;i<genes_per_person;i++){
-        for(j=0;j<genes_from_first_parent;j++){
-            printf(" %f ",new_dependancies[i][j]);
-        }
-        printf("\n");
-    }
-*/
-    for(i=0;i<genes_per_person;i++){
-        for(j=genes_from_first_parent;j<genes_per_person;j++){
-            new_dependancies[i][j]=generation_array[num_of_gen-1]->group_in_population[group_counter2]->person_in_group[person_counter2]->gene_interactions[i][j];
-        }
-    }
-/*
-    printf("Apo ton deutero parent pira %d\n", genes_from_second_parent);
-
-    for(i=0;i<genes_per_person;i++){
-        for(j=0;j<genes_per_person;j++){
-            printf(" %f ",new_dependancies[i][j]);
-        }
-        printf("\n");
-    }
-*/
+        
     create_mutations(new_dependancies);
 }
 
@@ -146,6 +125,7 @@ person *gen_create_person_nofit(int id,int num_of_gen, int num_of_parents){
         }printf("\n");
     }
 */
+    current_population++;
     return new_person;
 }
 

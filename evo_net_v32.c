@@ -11,7 +11,7 @@
 #include "maturity.h"
 #include "generation_nofit.h"
 #include "generation_fit.h"
-#include "deletes.h"
+#include "events.h"
 
 clock_t begin, end;
 double time_spent;
@@ -73,6 +73,7 @@ void create_generations(int fitness,int num_of_parents){
             threaded_mature_generation(generation_array[i]);
         }
         printf("Generation %d Mature\n",i);
+        current_population=0;
     }
 }
 

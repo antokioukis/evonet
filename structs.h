@@ -1,7 +1,11 @@
-#define max_generations 50
+#define max_generations 10
 #define num_of_groups 10
-#define persons_per_group 100
+#define persons_per_group 2
 #define genes_per_person 10
+
+int max_population=num_of_groups*persons_per_group;
+int current_population=0;
+
 
 typedef struct person{
 

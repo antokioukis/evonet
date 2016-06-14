@@ -13,24 +13,24 @@ float create_gene_interactions(int R1,int R2){
     lastbitR1=R1%2;
     lastbitR2=R2%2;
 
-
 /*
+
     printf("Mpika me R1 = %d , R2 = %d  \n",R1,R2);
 
     printf("R1 se binary=%010d \n",R1_binary);
     
     printf("R2 se binary=%010d \n",R2_binary);
 
-    printf("lastbitR1=%d \n",lastbitR1);
-    printf("lastbitR2=%d \n",lastbitR2);
-*/
+   printf("lastbitR1=%d \n",lastbitR1);
+    printf("lastbitR2=%d \n",lastbitR2); */
+
     if(lastbitR2==lastbitR1){ /*ri8misi*/
 /*auto 8eloume? or   
 	power_of_interaction = NumberOfSetBits(R1_binary)&NumberOfSetBits(R2_binary);
 den 3erw an bgazei diaforetiko apotelesma
 */
-	power_of_interaction=NumberOfSetBits(R1_binary & R2_binary)
- /*       printf("Interaction:%f \n",power_of_interaction); */
+	power_of_interaction=NumberOfSetBits(R1_binary & R2_binary);
+      /*  printf("Interaction:%f \n",power_of_interaction); */
         power_of_interaction = power_of_interaction / genes_per_person; /*kanonikopoihsh*/
 
         if(lastbitR1){
@@ -76,23 +76,22 @@ person *create_person(int id){
             new_person->gene_interactions[i][j]=create_gene_interactions(new_person->gene_R1[i],new_person->gene_R2[j]);
         }
     }
-
-
+    current_population++;
     return new_person;
 }
 
 /*return pointer to new group. New group is array of pointers to persons.*/
 group *create_group(int starting_id){
     int i;
-
     group *new_group;
     new_group = (group*)calloc(1, sizeof(group));
 
     for(i=0;i<persons_per_group;i++){
-       new_group->person_in_group[i]=create_person(starting_id+i); /*create pointer to person, save on the groups array , argument is the personal id */
-    }
+        new_group->person_in_group[i]=create_person(starting_id+i); /*create pointer to person, save on the groups array , argument is the personal id */
+        }
     return new_group;
 }
+
 
 
 /*return pointer to new population. New population is array of pointers to groups.*/
