@@ -2,11 +2,16 @@ void create_mutations(float new_dependancies[genes_per_person][genes_per_person]
     int num_of_mutations,sign_mutation,thesi_mutation[2];
     int i;
     float final_mutation,mutation;
+    const gsl_rng_type * T;
+    gsl_rng * r;
     /*float u;*/
 
-    /*POISSON TO BE IMPLEMENTED*/
-    num_of_mutations=rand()%2;
-  /*  printf("Arithmos Mutations: %d \n", num_of_mutations); */
+    gsl_rng_env_setup();
+    T = gsl_rng_default;
+    r = gsl_rng_alloc (T);
+    
+    num_of_mutations=gsl_ran_poisson (r, rate_of_mutation);
+    /*printf("Arithmos Mutations: %d \n", num_of_mutations); */
 
     for (i=0;i<num_of_mutations;i++){
 
@@ -29,7 +34,47 @@ void create_mutations(float new_dependancies[genes_per_person][genes_per_person]
      /*   printf("New %f \n",new_dependancies[thesi_mutation[0]][thesi_mutation[1]]);*/
     }
 }
+/*
+void create_mutations(float new_dependancies[genes_per_person][genes_per_person]){
+    const gsl_rng_type * T;
+    gsl_rng * r;
+    int i;
+    unsigned int num_of_mutations;
+    int gene1;
+    int gene2;
+    int bit_R1;
+    int bit_R2;
+    float strength;
 
+    gsl_rng_env_setup();
+    T = gsl_rng_default;
+    r = gsl_rng_alloc (T);
+
+    num_of_mutations = gsl_ran_poisson (r, rate_of_mutation);
+
+    for(i=0;i<num_of_mutations;i++){
+
+        gene1_R1=rand()%genes_per_person;
+        gene2_R1=rand()%genes_per_person;
+
+        gene1_R2=rand()%genes_per_person;
+        gene2_R2=rand()%genes_per_person;
+
+        bit_R1  =rand()%genes_per_person;
+        bit_R2  =rand()%genes_per_person;
+
+        if(new_dependancies[gene1_R1][gene2_R1]<pow(2,bit_R1)){
+            new_dependancies[gene1_R1][gene2_R1]=pow(2,bit_R1);
+        }
+    }
+    
+    
+    gsl_rng_free (r);
+    
+    return;
+
+}
+*/
 void choose_random_father_dependencies_combined(int num_of_gen,float new_dependancies[genes_per_person][genes_per_person]){
     int group_counter1=0;
     int person_counter1=0;

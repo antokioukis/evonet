@@ -254,8 +254,8 @@ population *create_gen_population_fit(int num_of_gen, int num_of_parents){
 
     calculate_fitness(num_of_gen);
 
-    if(num_of_gen==3){create_event(generation_array[num_of_gen-1],0,2);}
-    /*if(num_of_gen==4)create_event(generation_array[num_of_gen-1],1,2);*/
+    /*if(num_of_gen==3){create_event(generation_array[num_of_gen-1],0,2);}
+    if(num_of_gen==4)create_event(generation_array[num_of_gen-1],1,2);*/
 
     for(i=0;i<num_of_groups;i++){
        /* printf("Creating Group %d\n",i);*/
