@@ -1,42 +1,68 @@
-void shrink(population* new_population, int num_of_groups_for_delete){
-   /* int i,j; */
-    int l,k;
-
-    if(max_population<(num_of_groups_for_delete*persons_per_group)){
-    	printf("Whole population would be deleted, not accepting\n");
-    	return;
-    }
-
-    printf("Arxiko fitness %f\n",new_population->sum_of_fitness);
-
-    for(k=0; k<num_of_groups_for_delete;k++){
-        for(l=0;l<persons_per_group;l++){
-            new_population->group_in_population[k]->person_in_group[l]->id=-100;
-            new_population->sum_of_fitness=(new_population->sum_of_fitness)-(new_population->group_in_population[k]->person_in_group[l]->fitness);
-            new_population->group_in_population[k]->person_in_group[l]->fitness=0;
-        }
-
-        printf("Deleted %d Group\n", k);
-    }
-    printf("Teliko fitness %f\n",new_population->sum_of_fitness);
-}
-/*
-void expand(population* new_population,int num_of_groups_for_add){
-	int k,l;
-	for(k=0;k<num_of_groups_for_add;k++){	
-		new_population->group_in_population[k]=gen_create_group_fit(persons_per_group*k,2,1);
-		for(l=0;l<persons_per_group;l++){
-			new_population->sum_of_fitness=(new_population->sum_of_fitness)+(new_population->group_in_population[k]->person_in_group[l]->fitness);
+void delete_groups(int groups_to_delete,int num_of_generation){
+	int i,l;
+	group *temp;
+	if(groups_to_delete>curr_num_of_groups){
+		printf("Delete the whole population. Ignore statement\n");
+		return;
+	}
+	temp=generation_array[num_of_generation]->groups_list;
+	while(temp->next!=NULL){
+		temp=temp->next;
+	}
+	for(i=0;i<groups_to_delete;i++){
+		if(generation_array[num_of_generation]!=0){
+			for(l=0;l<persons_per_group;l++){
+				generation_array[num_of_generation]->sum_of_fitness=generation_array[num_of_generation]->sum_of_fitness-temp->person_in_group[l]->fitness;
+			}
 		}
-		printf("Added %d Group\n", k);
+		temp=temp->prev;
+		free(temp->next);
+		temp->next=NULL;
+		curr_num_of_groups--;
+		/*printf("Deleted Group: %d remaining\n",curr_num_of_groups); */
 	}
-	printf("Teliko fitness %f\n",new_population->sum_of_fitness);
 }
-*/
 
-void create_event(population* new_population, int type_of_event,int num_of_groups_affected){
-	if (type_of_event==0){
-		shrink(new_population,num_of_groups_affected);
+void insert_groups(int groups_to_insert,int num_of_generation,int num_of_parents,int fitness){
+	int i;
+	group *temp=generation_array[num_of_generation]->groups_list;
+	while(temp->next!=NULL){
+		temp=temp->next;
 	}
-	/*else expand(new_population,num_of_groups_affected); */
+	for(i=0;i<groups_to_insert;i++){
+		if(fitness==0){
+			if(num_of_parents==0){
+				temp->next=gen_create_group_no_fit(i,num_of_generation,0);
+			}
+			else{
+				temp->next=gen_create_group_no_fit(i,num_of_generation,1);
+			}
+
+		}
+		else{
+			if(num_of_parents==0){
+				temp->next=gen_create_group_fit(i,num_of_generation,0);
+			}
+			else{
+				temp->next=gen_create_group_fit(i,num_of_generation,1);
+			}
+		}
+
+	  	temp->next->next=NULL;
+	  	temp->next->prev=temp;
+	 	/* printf("Created Group: %d\n",curr_num_of_groups); */
+	  	curr_num_of_groups++;
+	}
+
+	mature_generation(generation_array[num_of_generation]);
+	calculate_fitness(num_of_generation);
+}
+
+void create_event(int type_of_event,int groups_affected,int num_of_generation,int num_of_parents, int fitness){
+	if(type_of_event==0){
+		delete_groups(groups_affected,num_of_generation);
+	}
+	else{
+		insert_groups(groups_affected,num_of_generation,num_of_parents,fitness);
+	}
 }

@@ -1,12 +1,15 @@
 #define max_generations 50
-#define num_of_groups 10
+#define num_of_groups 50
 #define persons_per_group 100
 #define genes_per_person 10
 #define rate_of_mutation 1
 
-int max_population=num_of_groups*persons_per_group;
-int current_population=0;
 
+typedef struct R1_R2_auxiliary{
+    int R1[genes_per_person];
+    int R2[genes_per_person];
+    float dependancies[genes_per_person][genes_per_person];
+}R1_R2_auxiliary;
 
 typedef struct person{
 
@@ -28,11 +31,18 @@ typedef struct person{
 
 typedef struct group{
     person *person_in_group[persons_per_group];
+    struct group *next;
+    struct group *prev;
+    int group_number;
 }group;
 
 typedef struct population{
-    group *group_in_population[num_of_groups];
+    group *groups_list;
     float sum_of_fitness;
 }population;
 
 population *generation_array[max_generations];
+ 
+struct group *group_head = NULL;
+
+int curr_num_of_groups=0;

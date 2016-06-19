@@ -1,25 +1,32 @@
 population *active_population;
 
 void create_maturity_step(person *individual,int step){
-    int i;
+    int i,k,c;
     unsigned int position;
     int sum=0;
     float non_descrete_res[genes_per_person];
 
 
-    matrix_multiplication(individual->gene_interactions,individual->vector_of_signs,non_descrete_res);
+    for (c = 0; c < genes_per_person; c++) {
+        for (k = 0; k < genes_per_person; k++) {
+            sum = sum + individual->gene_interactions[c][k]*individual->vector_of_signs[k];
+        }
+
+        non_descrete_res[c] = sum;
+        sum = 0;
+    }
 
     make_discrete(individual,non_descrete_res);
 
     for(i=0;i<genes_per_person;i++){
-/*        printf("current sign %d stin thesi %d\n",individual->vector_of_signs[i],i);*/
+      /*  printf("current sign %d stin thesi %d\n",individual->vector_of_signs[i],i); */
         sum+=individual->vector_of_signs[i]*(pow(10,i));
-/*        printf("current Sum %d\n",sum);*/
+      /*  printf("current Sum %d\n",sum);*/
     }
 
-/*    printf(" %d \n",sum);*/
-/*    printf("position Array = %ld\n",binary_to_decimal(position));*/
+   /* printf(" %d \n",sum);  */
     position=binary_to_decimal(sum);
+   /* printf("position Array = %ld\n",binary_to_decimal(position)); */
 
     if(individual->maturity_array[position]==0){
         individual->maturity_array[position]=step;
@@ -32,101 +39,44 @@ void create_maturity_step(person *individual,int step){
 
 int check_population_mature(population *new_population){
     int k,l;
+    group *temp=new_population->groups_list;
    /* int ID;
     int periodos;*/
-    for(k=0;k<num_of_groups;k++){
+    for(k=0;k<curr_num_of_groups;k++){
         for(l=0;l<persons_per_group;l++){
-            if(!new_population->group_in_population[k]->person_in_group[l]->mature){
+            if(!temp->person_in_group[l]->mature){
                 return 0;
             }
-            else {
-                /*ID=new_population->group_in_population[k]->person_in_group[l]->id;
-                periodos=new_population->group_in_population[k]->person_in_group[l]->periodos;
-                printf("Atomo me ID %d idi mature me periodo: %d\n",ID,periodos);*/
-            }
+        }
+        if(temp->next!=NULL){
+                temp=temp->next;
         }
     }
-    /*printf("Generation Mature\n");*/
+   /* printf("Generation Mature\n"); */ 
     return 1;
-}
-
-int check_group_mature(group *new_group){
-    /*int ID,periodos;*/
-    int l;
-    for(l=0;l<persons_per_group;l++){
-            if(!new_group->person_in_group[l]->mature){
-                return 0;
-            }
-            else {
-              /*  ID=new_group->person_in_group[l]->id;
-                periodos=new_group->person_in_group[l]->periodos;
-                printf("Atomo me ID %d idi mature me periodo: %d\n",ID,periodos); */
-            }
-        }
-    return 1;
-}
-
-
-void *mature_group (void  *a) {
-    int i,group_num;
-    /*int ID;*/
-    int step=0;
-
-    group_num = *((int *) a);
-
-    while(!check_group_mature(active_population->group_in_population[group_num])){
-        for(i=0;i<persons_per_group;i++){
-            if(!active_population->group_in_population[group_num]->person_in_group[i]->mature){
-                   /* ID=active_population->group_in_population[group_num]->person_in_group[i]->id;
-                    printf("Atomo me ID %d xreiazetai maturity step\n",ID);*/
-                    create_maturity_step(active_population->group_in_population[group_num]->person_in_group[i],step);
-            }
-        }
-        step++;
-    }
-
-    return 0;
-}
-
-/*purpose is to create as many threas as there are groups and bring the whole group to maturity simultaneously*/
-void threaded_mature_generation(population *new_population){
-    int i,j;
-    int num_of_threads=num_of_groups;
-    pthread_t thread_ID[num_of_groups];
-
-    active_population=new_population;
-
-    for (i = 0; i < num_of_threads; i++) {
-        int *arg = malloc(sizeof(*arg));
-        *arg = i;
-        if(pthread_create(&thread_ID[i], NULL, mature_group, arg)) {
-            printf("Error: Pthread not created.\n");
-        }
-    }
-
-    for (j = 0; j < num_of_threads; j++) {
-        pthread_join(thread_ID[j], NULL);
-    }
-
 }
 
 void mature_generation(population *new_population){
-    /*population *temp=new_population; */
-    /*int ID;*/
+    group *temp=new_population->groups_list;
+    /*int ID; */
     int step=0;
     int k,l;
 
     while(!check_population_mature(new_population)){
-        /*printf("Pli8ismos Oxi Plastikos. Xreiazomai kai alla maturity steps\n");*/
-        for(k=0;k<num_of_groups;k++){
+      /*  printf("Pli8ismos Oxi wrimos. Xreiazomai kai alla maturity steps\n"); */
+        for(k=0;k<curr_num_of_groups;k++){
             for(l=0;l<persons_per_group;l++){
-                if(!new_population->group_in_population[k]->person_in_group[l]->mature){
-           /*         ID=new_population->group_in_population[k]->person_in_group[l]->id;*/
-          /*          printf("Atomo me ID %d xreiazetai maturity step\n",ID);*/
-                    create_maturity_step(new_population->group_in_population[k]->person_in_group[l],step);
+                if(!temp->person_in_group[l]->mature){
+     /*               ID=temp->person_in_group[l]->id;
+                    printf("group:%d Atomo me ID %d xreiazetai maturity step\n",k,ID);
+       */             create_maturity_step(temp->person_in_group[l],step);
                 }
+            }
+            if(temp->next!=NULL){
+                temp=temp->next;
             }
         }
         step++;
+        temp=new_population->groups_list;
     }
 }

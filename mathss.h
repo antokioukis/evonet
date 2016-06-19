@@ -37,31 +37,6 @@ unsigned int concatenate(unsigned x, unsigned y) {
     return x * pow + y;
 }
 
-float *matrix_multiplication(float first[genes_per_person][genes_per_person],int second[genes_per_person],float multiply[genes_per_person]){
-
-  /*  int m, n, p, q */
-    int c, d, k;
-    float sum = 0;
-
-    for (c = 0; c < genes_per_person; c++) {
-        for (d = 0; d < genes_per_person; d++) {
-            for (k = 0; k < genes_per_person; k++) {
-                sum = sum + first[c][k]*second[k];
-            }
-
-            multiply[c] = sum;
-            sum = 0;
-        }
-    }
-
-  /*  printf("Product of entered matrices:-\n");
-
-    for (c = 0; c < genes_per_person; c++) {
-        printf(" %f ", multiply[c]);
-    }printf("\n");*/
-    return multiply;
-}
-
 /*convert binary 101010101 representing discrete genes of that step to integer used for comparison*/
 long int binary_to_decimal(long int num){
     long int rem,sum=0,power=0;

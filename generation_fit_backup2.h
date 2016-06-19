@@ -1,5 +1,5 @@
 void calculate_fitness(int num_of_gen){
-    int i,j,k,c,t;
+    int i,j,k;
     /*int w,n;*/
     person* atomo;
     int num_of_steps;
@@ -7,8 +7,7 @@ void calculate_fitness(int num_of_gen){
     float personal_fitness;
     float lamda=0.5;
     float distance;
-    float non_descrete_res[genes_per_person];
-    int sum=0;
+    float *non_descrete_res;
    /* int optimal[genes_per_person]={1,1,1,1}; */
     int optimal[genes_per_person]={1,1,1,1,1,1,1,1,1,1};
     group* temp;
@@ -40,14 +39,7 @@ void calculate_fitness(int num_of_gen){
                     } printf("\n");
                     */
 
-                    for (c = 0; c < genes_per_person; c++) {
-                        for (t = 0; k < genes_per_person; t++) {
-                            sum = sum + atomo->gene_interactions[c][t]*atomo->vector_of_signs[t];
-                        }
-                        non_descrete_res[c] = sum;
-                        sum = 0;
-                    }
-
+                    non_descrete_res=matrix_multiplication(atomo->gene_interactions,atomo->vector_of_signs);
                     make_discrete(atomo,non_descrete_res);
                     sum_of_personal_fitness_cycles+=eucledian_distance(atomo->vector_of_signs,optimal);
                    /* printf("Sum of personal fitness cycles %f\n",sum_of_personal_fitness_cycles); */
@@ -169,7 +161,7 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
     return new_auxiliary;
 }
 
-R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int num_of_gen){
+R1_R2_auxiliary *new_choose_fitted_father_dependencies_combined(int num_of_gen){
     float fitness_array[(num_of_groups*persons_per_group)];
 /*  int theseis_pinaka=num_of_groups*persons_per_group; */
     int counter=0;
@@ -301,7 +293,7 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int nu
     return new_auxiliary;
 }
 
-void choose_fitted_father_dependencies_combined_row_swapping(int num_of_gen,float new_dependancies[genes_per_person][genes_per_person]){
+void choose_fitted_father_dependencies_combined(int num_of_gen,float new_dependancies[genes_per_person][genes_per_person]){
     float fitness_array[(num_of_groups*persons_per_group)];
 /*  int theseis_pinaka=num_of_groups*persons_per_group; */
     int counter=0;
@@ -415,8 +407,7 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents){
 /*    printf("Creating Inheritance\n");*/
     if(num_of_parents){
        /* printf("Atomo %d\n",id); */
-        auxiliary=choose_fitted_father_dependencies_combined_R1R2_swapping(num_of_gen);
-        /*auxiliary=new_choose_fitted_father_dependencies_combined_row_swapping(num_of_gen);*/
+        auxiliary=new_choose_fitted_father_dependencies_combined(num_of_gen);
     }
     else {
         auxiliary=choose_fitted_father_dependencies_no_combinations(num_of_gen);
