@@ -1,3 +1,125 @@
+person *poisson(person *individual){
+    /*create mutations*/
+    const gsl_rng_type * T;
+    int result=0;
+    int remainder;
+    int k[genes_per_person];
+    gsl_rng * r;
+    int t;
+    int thesi_mutation;
+    int bit_mutation,to_be_mutated;
+    int which_R1R2;
+    int j=0;
+    int i = 0;
+    int counter=0;
+    unsigned int num_of_mutations;
+    double mu = 0.001;
+
+    /* create a generator chosen by the 
+    environment variable GSL_RNG_TYPE */
+
+    gsl_rng_env_setup();
+
+    T = gsl_rng_default;
+    r = gsl_rng_alloc (T);
+
+    /* print n random variates chosen from 
+    the poisson distribution with mean 
+         parameter mu */
+
+    num_of_mutations = gsl_ran_poisson (r, mu);
+    /*printf("num of mutations: %d\n",num_of_mutations);*/
+    
+
+    for(i=0;i<genes_per_person;i++){
+        k[i]=0;
+    }
+    i=0;
+
+    for(j=0;j<num_of_mutations;j++){
+        
+        which_R1R2=rand()%2;
+        thesi_mutation=rand()%genes_per_person;
+        bit_mutation=rand()%100;
+
+
+            while(counter<bit_mutation){
+                counter=counter+(99/(genes_per_person-1));
+            }
+            counter=counter/genes_per_person;
+
+        /*mutation on R1*/
+        if(which_R1R2){
+            /*printf("R1\n");*/
+            to_be_mutated=individual->gene_R1[thesi_mutation];
+            /*printf("palio R1: %d\n",to_be_mutated);*/
+
+            while(to_be_mutated!=0){
+                remainder=to_be_mutated%2;
+                to_be_mutated = to_be_mutated/2;
+                k[i]=remainder;
+                i++;
+                if(i==genes_per_person) break;            
+            }
+            /*avoid buffer overflow*/
+
+            t=0;
+            i=0;
+
+            if(k[counter]==0){
+                k[counter]=1;
+            }
+            else{
+                k[counter]=0;
+            }
+
+            for(i=0;i<genes_per_person;i++){
+                result=result+k[i]*pow(2,i);
+            }
+            individual->gene_R1[thesi_mutation]=result;
+            /*printf("New R1[%d]:%d \n",thesi_mutation,result);*/
+        }
+        /*mutation on R2*/
+        else{
+            /*printf("R2\n");*/
+            to_be_mutated=individual->gene_R2[thesi_mutation];
+            /*printf("palio R2: %d\n",to_be_mutated);*/
+
+            while(to_be_mutated!=0){
+                remainder=to_be_mutated%2;
+                to_be_mutated = to_be_mutated/2;
+                k[i]=remainder;
+                i++;            
+            }
+            /*avoid buffer overflow*/
+            for(t=i+1;t<genes_per_person;t++){
+                k[t]=0;
+            }
+            t=0;
+            i=0;
+
+            if(k[counter]==0){
+                k[counter]=1;
+            }
+            else{
+                k[counter]=0;
+            }
+
+            for(i=0;i<genes_per_person;i++){
+                result=result+k[i]*pow(2,i);
+            }
+            individual->gene_R2[thesi_mutation]=result;
+            /*printf("New R2[%d]:%d \n",thesi_mutation,result);*/
+            /*printf("New R2[%d]:%d \n",thesi_mutation,individual->gene_R2[thesi_mutation]);*/
+
+        }
+    }
+      
+    gsl_rng_free (r);
+    return individual;
+}
+
+
 float create_gene_interactions(int R1,int R2){
     float interaction=0;
     float power_of_interaction=0;
@@ -62,8 +184,10 @@ person *create_person(int id){
     }
 
     for (i=0;i<genes_per_person;i++){
-        new_person->gene_R1[i]=rand()%1024; /*return an integer*/
-        new_person->gene_R2[i]=rand()%1024; /*return an integer*/
+        new_person->gene_R1[i]=5; /*return an integer*/
+        new_person->gene_R2[i]=5; /*return an integer*/
+        /*new_person->gene_R1[i]=rand()%1024; /*return an integer*/
+        /*new_person->gene_R2[i]=rand()%1024; /*return an integer*/
         /*printf("atomou R1: %d R2: %d\n",new_person->gene_R1[i],new_person->gene_R2[i]); */
     }
 

@@ -1,6 +1,6 @@
 #define max_generations 50
 #define num_of_groups 50
-#define persons_per_group 100
+#define persons_per_group 10
 #define genes_per_person 10
 #define rate_of_mutation 1
 

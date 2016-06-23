@@ -426,9 +426,9 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents){
     for(i=0;i<genes_per_person;i++){
         new_person->gene_R1[i]=auxiliary->R1[i];
         new_person->gene_R2[i]=auxiliary->R2[i];
-        for(j=0;j<genes_per_person;j++){
+        /*for(j=0;j<genes_per_person;j++){
             new_person->gene_interactions[i][j]=auxiliary->dependancies[i][j];
-        }
+        }*/
        /* printf("R1: %d R2: %d \n",new_person->gene_R1[i],new_person->gene_R2[i]); */
     
     }/*
@@ -440,6 +440,19 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents){
         printf("\n");
     }
 */
+    new_person=poisson(new_person);
+
+    for(i=0;i<genes_per_person;i++){
+        for(j=0;j<genes_per_person;j++){
+            /*new_person->gene_interactions[i][j]=random_normal_distrubution(0,sqrt(10));*/
+            new_person->gene_interactions[i][j]=create_gene_interactions(new_person->gene_R1[i],new_person->gene_R2[j]);
+          /*  printf("%f ",create_gene_interactions(new_auxiliary->R1[i],new_auxiliary->R2[j]));
+            extract_person(R1[i],R2[j]);*/
+            /*if (new_person->gene_interactions[i][j]<0) printf("Arnitiko gene interaction %f\n",new_person->gene_interactions[i][j]);
+            */
+        }
+   /*     printf("\n"); */
+    }
     return new_person;
 }
 
