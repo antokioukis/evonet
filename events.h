@@ -23,7 +23,7 @@ void delete_groups(int groups_to_delete,int num_of_generation){
 	}
 }
 
-void insert_groups(int groups_to_insert,int num_of_generation,int num_of_parents,int fitness){
+void insert_groups(int groups_to_insert,int num_of_generation,int num_of_parents,int fitness,int row_swapping){
 	int i;
 	group *temp=generation_array[num_of_generation]->groups_list;
 	while(temp->next!=NULL){
@@ -32,19 +32,19 @@ void insert_groups(int groups_to_insert,int num_of_generation,int num_of_parents
 	for(i=0;i<groups_to_insert;i++){
 		if(fitness==0){
 			if(num_of_parents==0){
-				temp->next=gen_create_group_no_fit(i,num_of_generation,0);
+				temp->next=gen_create_group_no_fit(i,num_of_generation,0,row_swapping);
 			}
 			else{
-				temp->next=gen_create_group_no_fit(i,num_of_generation,1);
+				temp->next=gen_create_group_no_fit(i,num_of_generation,1,row_swapping);
 			}
 
 		}
 		else{
 			if(num_of_parents==0){
-				temp->next=gen_create_group_fit(i,num_of_generation,0);
+				temp->next=gen_create_group_fit(i,num_of_generation,0,row_swapping);
 			}
 			else{
-				temp->next=gen_create_group_fit(i,num_of_generation,1);
+				temp->next=gen_create_group_fit(i,num_of_generation,1,row_swapping);
 			}
 		}
 
@@ -58,11 +58,11 @@ void insert_groups(int groups_to_insert,int num_of_generation,int num_of_parents
 	calculate_fitness(num_of_generation);
 }
 
-void create_event(int type_of_event,int groups_affected,int num_of_generation,int num_of_parents, int fitness){
+void create_event(int type_of_event,int groups_affected,int num_of_generation,int num_of_parents, int fitness, int row_swapping){
 	if(type_of_event==0){
 		delete_groups(groups_affected,num_of_generation);
 	}
 	else{
-		insert_groups(groups_affected,num_of_generation,num_of_parents,fitness);
+		insert_groups(groups_affected,num_of_generation,num_of_parents,fitness,row_swapping);
 	}
 }

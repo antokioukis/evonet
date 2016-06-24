@@ -1,4 +1,4 @@
-person *poisson(person *individual){
+person *create_mutations(person *individual){
     /*create mutations*/
     const gsl_rng_type * T;
     int result=0;
@@ -43,10 +43,10 @@ person *poisson(person *individual){
         bit_mutation=rand()%100;
 
 
-            while(counter<bit_mutation){
+        while(counter<bit_mutation){
                 counter=counter+(99/(genes_per_person-1));
-            }
-            counter=counter/genes_per_person;
+        }
+        counter=counter/genes_per_person;
 
         /*mutation on R1*/
         if(which_R1R2){
@@ -166,7 +166,7 @@ float create_gene_interactions(int R1,int R2){
 
 
 /*Create personal records, return pointer to person */
-person *create_person(int id){
+person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2){
     int i,j;
 
     person *new_person;
@@ -184,10 +184,13 @@ person *create_person(int id){
     }
 
     for (i=0;i<genes_per_person;i++){
-        new_person->gene_R1[i]=5; /*return an integer*/
-        new_person->gene_R2[i]=5; /*return an integer*/
-        /*new_person->gene_R1[i]=rand()%1024; /*return an integer*/
-        /*new_person->gene_R2[i]=rand()%1024; /*return an integer*/
+        new_person->gene_R1[i]=rand_interval(min_gene_R1R2,max_gene_R1R2);
+        new_person->gene_R2[i]=rand_interval(min_gene_R1R2,max_gene_R1R2);
+
+        /*new_person->gene_R1[i]=5; *//*return an integer*/
+        /*new_person->gene_R2[i]=5; *//*return an integer*/
+        /*new_person->gene_R1[i]=rand()%1024;*/ /*return an integer*/
+        /*new_person->gene_R2[i]=rand()%1024;*/ /*return an integer*/
         /*printf("atomou R1: %d R2: %d\n",new_person->gene_R1[i],new_person->gene_R2[i]); */
     }
 
@@ -204,13 +207,13 @@ person *create_person(int id){
 }
 
 /*return pointer to new group. New group is array of pointers to persons.*/
-group *create_group(int group_num){
+group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2){
     int i;
     group *new_group;
     new_group = (group*)calloc(1, sizeof(group));
     new_group->group_number=group_num;
     for(i=0;i<persons_per_group;i++){
-        new_group->person_in_group[i]=create_person(i); /*create pointer to person, save on the groups array , argument is the personal id */
+        new_group->person_in_group[i]=create_person(i,min_gene_R1R2,max_gene_R1R2); /*create pointer to person, save on the groups array , argument is the personal id */
     }
     return new_group;
 }
@@ -218,7 +221,7 @@ group *create_group(int group_num){
 
 
 /*return pointer to new population. New population is array of pointers to groups.*/
-population *create_population(int groups_wanted){
+population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene_R1R2){
     int i;
     /*int j;*/
     group *temp;
@@ -230,7 +233,7 @@ population *create_population(int groups_wanted){
     for(i=0;i<groups_wanted;i++){
         if(i==0){
            /* printf("Head on the group_list of the generation 0\n"); */          
-            new_population->groups_list=create_group(i); /*create pointer to group_list, save on the population array*/
+            new_population->groups_list=create_group(i,min_gene_R1R2,max_gene_R1R2); /*create pointer to group_list, save on the population array*/
             new_population->groups_list->next=NULL;
             new_population->groups_list->prev=NULL;
         }
@@ -239,7 +242,7 @@ population *create_population(int groups_wanted){
             while(temp->next!=NULL){
                 temp=temp->next;
             }
-            temp->next=create_group(i);
+            temp->next=create_group(i,min_gene_R1R2,max_gene_R1R2);
             temp->next->next=NULL;
             temp->next->prev=temp;
         }
