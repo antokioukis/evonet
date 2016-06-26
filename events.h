@@ -32,26 +32,28 @@ void insert_groups(int groups_to_insert,int num_of_generation,int num_of_parents
 	for(i=0;i<groups_to_insert;i++){
 		if(fitness==0){
 			if(num_of_parents==0){
-				temp->next=gen_create_group_no_fit(i,num_of_generation,0,row_swapping);
+				temp->next=gen_create_group_no_fit(curr_num_of_groups+1,num_of_generation,0,row_swapping);
 			}
 			else{
-				temp->next=gen_create_group_no_fit(i,num_of_generation,1,row_swapping);
+				temp->next=gen_create_group_no_fit(curr_num_of_groups+1,num_of_generation,1,row_swapping);
 			}
 
 		}
 		else{
 			if(num_of_parents==0){
-				temp->next=gen_create_group_fit(i,num_of_generation,0,row_swapping);
+				temp->next=gen_create_group_fit(curr_num_of_groups+1,num_of_generation,0,row_swapping);
 			}
 			else{
-				temp->next=gen_create_group_fit(i,num_of_generation,1,row_swapping);
+				temp->next=gen_create_group_fit(curr_num_of_groups+1,num_of_generation,1,row_swapping);
 			}
 		}
 
 	  	temp->next->next=NULL;
 	  	temp->next->prev=temp;
-	 	/* printf("Created Group: %d\n",curr_num_of_groups); */
 	  	curr_num_of_groups++;
+	 	/*printf("Created Group: %d\n",curr_num_of_groups);*/
+	 	temp=temp->next;
+
 	}
 
 	mature_generation(generation_array[num_of_generation]);

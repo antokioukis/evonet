@@ -257,7 +257,7 @@ group *gen_create_group_no_fit(int starting_id,int num_of_gen, int num_of_parent
     for(i=0;i<persons_per_group;i++){
        /* printf("Creating Atomo %d\n",i);*/
         new_group->person_in_group[i]=gen_create_person_no_fit(i,num_of_gen, num_of_parents,row_swapping);
-        /*printf("Atomo created %d\n",i);*/
+       /* printf("Atomo created %d\n",i); */
     }
     return new_group;
 }
