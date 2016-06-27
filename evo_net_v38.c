@@ -3,8 +3,10 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <string.h>
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
+#include <assert.h>
 
 #include "structs.h"
 #include "mathss.h"
@@ -87,9 +89,9 @@ void create_generations(int fitness,int num_of_parents,int number_of_groups_want
 
 
 
-int main(void){
-    int fitness;
-    int combinations;
+int main(int argc, char** argv){
+  int fitness;
+  int combinations;
     int groups_wanted;
     int R1R2_swapping=0;
     int min_gene_R1R2;
@@ -100,7 +102,68 @@ int main(void){
     int event2=-100;
     int event3=-100;
     int event4=-100;
+    int num_of_parents = 1;
     srand (time(NULL));
+    int i;
+
+    for( i = 1; i < argc; ++i){
+      
+      /* neutral or selection */
+      if( strcmp(argv[i], "-selection" ) == 0 ){
+	fitness = atoi(argv[++i]);
+	continue;
+      }
+
+      /* sigma^2, o paronomastis sto fitness function */
+      if( strcmp(argv[i], "-selection" ) == 0 ){
+	
+	continue;
+      }
+
+      /* o arithmos atomwn */
+      if( strcmp(argv[i], "-N" ) == 0 ){
+	
+	continue;
+      }
+
+      /* number of parents per person */
+      if( strcmp(argv[i], "-ploidy" ) == 0 ){
+	
+	if( num_of_parents != 1 && num_of_parents != 2 )
+	  {
+	    assert( num_of_parents ==1 || num_of_parents == 2);
+	  }
+	continue;
+      }
+
+      if( strcmp(argv[i], "-selection" ) == 0 ){
+	
+	continue;
+      }
+
+      if( strcmp(argv[i], "-n" ) == 0 ){
+	/* number of genes per person */
+	
+	continue;
+      }
+
+      
+      if( strcmp( argv[i], "-eN") == 0 )
+	{
+	  /* -eN 100 50 */
+	  checkNextArgument(argv, i);
+	  generationChange = atoi( argv[++i] );
+	  checkNextArgument(argv, i);
+	  popSizeChange = atoi( argv[++i]);
+
+	  
+	}
+
+      
+
+    }
+   
+    printf("fitness: %d\n", fitness);
 
     /*
     1o orisma

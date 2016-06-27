@@ -1,30 +1,35 @@
-#define max_generations 501
+/* #include <math.h> */
+
+#define max_generations 5001
 #define persons_per_group 10
 #define num_of_groups 100
 #define genes_per_person 10
 #define rate_of_mutation 1
 
 
+
+
 typedef struct R1_R2_auxiliary{
-    int R1[genes_per_person];
-    int R2[genes_per_person];
+  int R1[genes_per_person];
+  int R2[genes_per_person];
 }R1_R2_auxiliary;
 
 typedef struct person{
 
-    int periodos;   /*maturity steps needed */
-    int id;         /*personal UNIQUE id */
-    bool mature;
-    float fitness;
+  int periodos;   /*maturity steps needed */
+  int id;         /*personal UNIQUE id */
+  bool mature;
+  float fitness;
+  
+     
+  int gene_counts[genes_per_person];
+  float gene_interactions[genes_per_person][genes_per_person];
+  
+  int vector_of_signs[genes_per_person];
+  int maturity_array[1024]; /*if genes_per_person change, change this also to 2^genes_per_person */
 
-    int gene_counts[genes_per_person];
-    float gene_interactions[genes_per_person][genes_per_person];
-
-    int vector_of_signs[genes_per_person];
-    int maturity_array[1024]; /*if genes_per_person change, change this also to 2^genes_per_person */
-
-    int gene_R1[genes_per_person]; /*gia ka8e gonidio, to [10] einai oti 8a paw mexri ton 2^10 san max integer*/
-    int gene_R2[genes_per_person];
+  int gene_R1[genes_per_person]; /*gia ka8e gonidio, to [10] einai oti 8a paw mexri ton 2^10 san max integer*/
+  int gene_R2[genes_per_person];
 
 }person;
 

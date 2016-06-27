@@ -1,3 +1,4 @@
 make clean
 make all
-make run
+#make run
+./evonet -selection 1
