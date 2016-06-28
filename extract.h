@@ -43,7 +43,7 @@ void extract_gene_dependancies_matrix_generation(int num_of_gen){
         printf("Error opening file!\n");
         exit(1);
     }
-
+    fprintf(f, "\n");
     fprintf(f, "Generation %d: Population: %d Number of Genes: %d\n", num_of_gen,curr_num_of_groups*persons_per_group,genes_per_person);
     for(k=0;k<curr_num_of_groups;k++){
         for(l=0;l<persons_per_group;l++){

@@ -51,10 +51,10 @@ long int binary_to_decimal(long int num){
 }
 
 /*create discrete vector with elements based on the sign of the plastic records*/
-void make_discrete(person *individual, float temp[genes_per_person]){
+void make_discrete(person *individual, float temp[max_genes_per_person]){
     int i;
 
-    for (i=0;i<genes_per_person;i++){
+    for (i=0;i<max_genes_per_person;i++){
         if(temp[i]>0){
             individual->vector_of_signs[i]=1;
         }
@@ -65,7 +65,7 @@ void make_discrete(person *individual, float temp[genes_per_person]){
 
 /*
     printf("Apotelesma discretion");
-    for(i=0;i<genes_per_person;i++){
+    for(i=0;i<max_genes_per_person;i++){
         printf(" %d ",individual->vector_of_signs[i]);
     }
     printf("\n");

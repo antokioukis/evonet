@@ -3,7 +3,7 @@ person *create_mutations(person *individual){
     const gsl_rng_type * T;
     int result=0;
     int remainder;
-    int k[genes_per_person];
+    int k[max_genes_per_person];
     gsl_rng * r;
     int t;
     int thesi_mutation;
@@ -31,7 +31,7 @@ person *create_mutations(person *individual){
     /*printf("num of mutations: %d\n",num_of_mutations);*/
     
 
-    for(i=0;i<genes_per_person;i++){
+    for(i=0;i<max_genes_per_person;i++){
         k[i]=0;
     }
     i=0;
@@ -39,14 +39,14 @@ person *create_mutations(person *individual){
     for(j=0;j<num_of_mutations;j++){
         
         which_R1R2=rand()%2;
-        thesi_mutation=rand()%genes_per_person;
+        thesi_mutation=rand()%max_genes_per_person;
         bit_mutation=rand()%100;
 
 
         while(counter<bit_mutation){
-                counter=counter+(99/(genes_per_person-1));
+                counter=counter+(99/(max_genes_per_person-1));
         }
-        counter=counter/genes_per_person;
+        counter=counter/max_genes_per_person;
 
         /*mutation on R1*/
         if(which_R1R2){
@@ -59,7 +59,7 @@ person *create_mutations(person *individual){
                 to_be_mutated = to_be_mutated/2;
                 k[i]=remainder;
                 i++;
-                if(i==genes_per_person) break;            
+                if(i==max_genes_per_person) break;            
             }
             /*avoid buffer overflow*/
 
@@ -73,7 +73,7 @@ person *create_mutations(person *individual){
                 k[counter]=0;
             }
 
-            for(i=0;i<genes_per_person;i++){
+            for(i=0;i<max_genes_per_person;i++){
                 result=result+k[i]*pow(2,i);
             }
             individual->gene_R1[thesi_mutation]=result;
@@ -92,7 +92,7 @@ person *create_mutations(person *individual){
                 i++;            
             }
             /*avoid buffer overflow*/
-            for(t=i+1;t<genes_per_person;t++){
+            for(t=i+1;t<max_genes_per_person;t++){
                 k[t]=0;
             }
             t=0;
@@ -105,7 +105,7 @@ person *create_mutations(person *individual){
                 k[counter]=0;
             }
 
-            for(i=0;i<genes_per_person;i++){
+            for(i=0;i<max_genes_per_person;i++){
                 result=result+k[i]*pow(2,i);
             }
             individual->gene_R2[thesi_mutation]=result;
@@ -149,7 +149,7 @@ float create_gene_interactions(int R1,int R2){
     if(lastbitR2==lastbitR1){ /*ri8misi*/
 	   power_of_interaction=NumberOfSetBits(R1_binary & R2_binary);
       /*  printf("Interaction:%f \n",power_of_interaction); */
-        power_of_interaction = power_of_interaction / genes_per_person; /*kanonikopoihsh*/
+        power_of_interaction = power_of_interaction / max_genes_per_person; /*kanonikopoihsh*/
 
         if(lastbitR1){
             interaction=power_of_interaction;
@@ -166,7 +166,7 @@ float create_gene_interactions(int R1,int R2){
 
 
 /*Create personal records, return pointer to person */
-person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2){
+person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count){
     int i,j;
 
     person *new_person;
@@ -175,9 +175,6 @@ person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2){
     new_person->id=id;
 
    /* printf("Sto atomo me id: %d \n",new_person->id); */
-    for(i=0;i<genes_per_person;i++){
-        new_person->gene_counts[i]=(int)random_normal_distrubution(100,sqrt(100));
-    }
 
     for(i=0;i<genes_per_person;i++){
         new_person->vector_of_signs[i]=1;  /* first generation so gene_counts always positive on the vector -> 1 */
@@ -186,6 +183,8 @@ person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2){
     for (i=0;i<genes_per_person;i++){
         new_person->gene_R1[i]=rand_interval(min_gene_R1R2,max_gene_R1R2);
         new_person->gene_R2[i]=rand_interval(min_gene_R1R2,max_gene_R1R2);
+
+        new_person->gene_counts[i]=rand_interval(min_count,max_count);
 
         /*new_person->gene_R1[i]=5; *//*return an integer*/
         /*new_person->gene_R2[i]=5; *//*return an integer*/
@@ -207,13 +206,13 @@ person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2){
 }
 
 /*return pointer to new group. New group is array of pointers to persons.*/
-group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2){
+group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count){
     int i;
     group *new_group;
     new_group = (group*)calloc(1, sizeof(group));
     new_group->group_number=group_num;
     for(i=0;i<persons_per_group;i++){
-        new_group->person_in_group[i]=create_person(i,min_gene_R1R2,max_gene_R1R2); /*create pointer to person, save on the groups array , argument is the personal id */
+        new_group->person_in_group[i]=create_person(i,min_gene_R1R2,max_gene_R1R2,min_count,max_count); /*create pointer to person, save on the groups array , argument is the personal id */
     }
     return new_group;
 }
@@ -221,7 +220,7 @@ group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2){
 
 
 /*return pointer to new population. New population is array of pointers to groups.*/
-population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene_R1R2){
+population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count){
     int i;
     /*int j;*/
     group *temp;
@@ -233,7 +232,7 @@ population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene
     for(i=0;i<groups_wanted;i++){
         if(i==0){
            /* printf("Head on the group_list of the generation 0\n"); */          
-            new_population->groups_list=create_group(i,min_gene_R1R2,max_gene_R1R2); /*create pointer to group_list, save on the population array*/
+            new_population->groups_list=create_group(i,min_gene_R1R2,max_gene_R1R2,min_count,max_count); /*create pointer to group_list, save on the population array*/
             new_population->groups_list->next=NULL;
             new_population->groups_list->prev=NULL;
         }
@@ -242,7 +241,7 @@ population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene
             while(temp->next!=NULL){
                 temp=temp->next;
             }
-            temp->next=create_group(i,min_gene_R1R2,max_gene_R1R2);
+            temp->next=create_group(i,min_gene_R1R2,max_gene_R1R2,min_count,max_count);
             temp->next->next=NULL;
             temp->next->prev=temp;
         }

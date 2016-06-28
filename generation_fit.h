@@ -1,16 +1,15 @@
-void calculate_fitness(int num_of_gen){
+void calculate_fitness(int num_of_gen,float lamda){
     int i,j,k,c,t;
     /*int w,n;*/
     person* atomo;
     int num_of_steps;
     float sum_of_personal_fitness_cycles=0;
     float personal_fitness;
-    float lamda=0.5;
     float distance;
-    float non_descrete_res[genes_per_person];
+    float non_descrete_res[max_genes_per_person];
     int sum=0;
-   /* int optimal[genes_per_person]={1,1,1,1}; */
-    int optimal[genes_per_person]={1,1,1,1,1,1,1,1,1,1};
+   /* int optimal[max_genes_per_person]={1,1,1,1}; */
+    int optimal[max_genes_per_person]={1,1,1,1,1,1,1,1,1,1};
     group* temp;
 
     /*printf("num_of_gen:%d \n",num_of_gen);*/
@@ -28,14 +27,14 @@ void calculate_fitness(int num_of_gen){
                 /*NEEDS MORE TESTING , printf ka8e apotelesma pou mpainei kai bgainei apo to matrix multiplication*/
                 for(k=0;k<num_of_steps;k++){
 
-                   /* for (w=0;w<genes_per_person;w++){
-                        for(n=0;n<genes_per_person;n++){
+                   /* for (w=0;w<max_genes_per_person;w++){
+                        for(n=0;n<max_genes_per_person;n++){
                             printf("%f ", atomo->gene_interactions[w][n]);
                         }
                         printf("\n");
                     }
 
-                    for(w=0;w<genes_per_person;w++){
+                    for(w=0;w<max_genes_per_person;w++){
                         printf("%d ", atomo->vector_of_signs[w]);
                     } printf("\n");
                     */
@@ -141,14 +140,14 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
     }
     /*
     printf("Pira apo prwto patera %d gonidia\n", genes_from_first_parent);
-    for(i=0;i<genes_per_person;i++){
+    for(i=0;i<max_genes_per_person;i++){
         printf("R1:%d R2: %d\n", new_auxiliary->R1[i],new_auxiliary->R2[i]);
     }
 
 */
  /*
-    for (i = 0; i < genes_per_person; i++){
-        for(j=0;j<genes_per_person;j++){
+    for (i = 0; i < max_genes_per_person; i++){
+        for(j=0;j<max_genes_per_person;j++){
             printf("%d ",new_auxiliary->dependancies[i][j]);
         }
         printf("\n");
@@ -267,7 +266,7 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int nu
     }
     /*
     printf("Pira apo prwto patera %d gonidia\n", genes_from_first_parent);
-    for(i=0;i<genes_per_person;i++){
+    for(i=0;i<max_genes_per_person;i++){
         printf("R1:%d R2: %d\n", new_auxiliary->R1[i],new_auxiliary->R2[i]);
     }
     */
@@ -387,7 +386,7 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
 }
 
 
-person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_swapping){
+person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count){
     int i,j;
     /*int j;*/
     R1_R2_auxiliary *auxiliary;
@@ -397,8 +396,8 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
     new_person->id=id;
 
 
-    for(i=0;i<genes_per_person;i++){
-        new_person->gene_counts[i]=(int)random_normal_distrubution(100,sqrt(100));
+    for (i=0;i<genes_per_person;i++){
+        new_person->gene_counts[i]=rand_interval(min_count,max_count);
     }
 
     for(i=0;i<genes_per_person;i++){
@@ -427,8 +426,8 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
     
     }/*
     printf("\n");
-    for (i = 0; i < genes_per_person; i++){
-        for(j=0;j<genes_per_person;j++){
+    for (i = 0; i < max_genes_per_person; i++){
+        for(j=0;j<max_genes_per_person;j++){
             printf("%f ",new_person->gene_interactions[i][j]);
         }
         printf("\n");
@@ -450,7 +449,7 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
     return new_person;
 }
 
-group *gen_create_group_fit(int starting_id,int num_of_gen, int num_of_parents,int row_swapping){
+group *gen_create_group_fit(int starting_id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count){
     int i;
 
     group *new_group;
@@ -458,14 +457,14 @@ group *gen_create_group_fit(int starting_id,int num_of_gen, int num_of_parents,i
 /*printf("Group:%d \n",starting_id);*/
     for(i=0;i<persons_per_group;i++){
       /*  printf("Creating Atomo %d\n",i); */
-        new_group->person_in_group[i]=gen_create_person_fit(i,num_of_gen, num_of_parents,row_swapping);
+        new_group->person_in_group[i]=gen_create_person_fit(i,num_of_gen, num_of_parents,row_swapping,min_count,max_count);
         /*printf("Atomo created %d\n",i);*/
     }
     return new_group;
 }
 
 
-population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row_swapping){
+population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count){
     int i;
     group *temp;
 
@@ -475,7 +474,7 @@ population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row
     for(i=0;i<curr_num_of_groups;i++){
         if(i==0){
             /*printf("Head on the group_list of the generation 0");*/       
-            new_population->groups_list=gen_create_group_fit(i,num_of_gen,num_of_parents,row_swapping); /*create pointer to group_list, save on the population array*/
+            new_population->groups_list=gen_create_group_fit(i,num_of_gen,num_of_parents,row_swapping,min_count,max_count); /*create pointer to group_list, save on the population array*/
             new_population->groups_list->next=NULL;
             new_population->groups_list->prev=NULL;
         }
@@ -484,7 +483,7 @@ population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row
             while(temp->next!=NULL){
                 temp=temp->next;
             }
-            temp->next=gen_create_group_fit(i,num_of_gen,num_of_parents,row_swapping);
+            temp->next=gen_create_group_fit(i,num_of_gen,num_of_parents,row_swapping,min_count,max_count);
             temp->next->next=NULL;
             temp->next->prev=temp;
         }
