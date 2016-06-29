@@ -49,7 +49,7 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
                         int min_gene_R1R2,int max_gene_R1R2,int freq,/*
                         int event,int event1,int event2,int event3, int event4*/
                         int min_count,int max_count,int generations_wanted,
-                        int generation_change,int pop_size_change){
+                        int generation_change,int pop_size_change, FILE *r1r2Output, FILE *matrixOutput, FILE *countsOutput){
     int i;
     /*int type_of_event;
     int num_of_groups_affected; */
@@ -82,9 +82,9 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
         if(i%freq==0){
             
             printf("Fitness of Generation %d: %f (pososto) \n",i,generation_array[i]->sum_of_fitness/(curr_num_of_groups*persons_per_group));
-            extract_R1R2_generation(i);
-            extract_gene_dependancies_matrix_generation(i);
-            extract_gene_counts_generation(i);
+            extract_R1R2_generation(r1r2Output, i);
+            extract_gene_dependancies_matrix_generation(matrixOutput, i);
+            extract_gene_counts_generation(countsOutput, i);
         }
     }
 }
@@ -105,9 +105,11 @@ int main(int argc, char** argv){
     int min_gene_R1R2;
     int max_gene_R1R2;
     int freq;
-    int generation_change;
+    int generation_change=-1;
     int pop_size_change;
     srand (time(NULL));
+
+    FILE *r1r2Output, *matrixOutput, *countsOutput;
 
     for( i = 1; i < argc; ++i){
         /* neutral or selection */
@@ -192,7 +194,15 @@ int main(int argc, char** argv){
 
     }
 
-    create_generations(fitness,lamda,num_of_parents,groups_wanted,R1R2_swapping,min_gene_R1R2,max_gene_R1R2,freq,min_count,max_count,generations,generation_change,pop_size_change);
+    r1r2Output = fopen("R1R2.txt", "w");
+    matrixOutput = fopen("matrix.txt", "w");
+    countsOutput = fopen("counts.txt", "w");
+
+    create_generations(fitness,lamda,num_of_parents,groups_wanted,R1R2_swapping,min_gene_R1R2,max_gene_R1R2,freq,min_count,max_count,generations,generation_change,pop_size_change, r1r2Output, matrixOutput, countsOutput);
+
+    fclose(r1r2Output);
+    fclose(matrixOutput);
+    fclose(countsOutput);
 
     return 0;
 }
