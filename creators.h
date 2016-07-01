@@ -1,4 +1,4 @@
-person *create_mutations(person *individual){
+person *create_mutations(person *individual,double mu){
     /*create mutations*/
     const gsl_rng_type * T;
     int result=0;
@@ -13,7 +13,6 @@ person *create_mutations(person *individual){
     int i = 0;
     int counter=0;
     unsigned int num_of_mutations;
-    double mu = 0.001;
 
     /* create a generator chosen by the 
     environment variable GSL_RNG_TYPE */

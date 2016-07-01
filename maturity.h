@@ -4,8 +4,7 @@ void create_maturity_step(person *individual,int step){
     int i,k,c;
     unsigned int position;
     int sum=0;
-    float non_descrete_res[max_genes_per_person];
-
+    float non_descrete_res[max_genes_per_person]={0,0,0,0,0,0,0,0,0,0};
 
     for (c = 0; c < genes_per_person; c++) {
         for (k = 0; k < genes_per_person; k++) {

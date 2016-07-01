@@ -187,7 +187,7 @@ R1_R2_auxiliary *choose_random_father_dependencies_no_combinations(int num_of_ge
 }
 
 
-person *gen_create_person_no_fit(int id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count){
+person *gen_create_person_no_fit(int id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,double mutation_rate){
     int i,j;
     R1_R2_auxiliary *auxiliary;
     person *new_person;
@@ -231,7 +231,7 @@ person *gen_create_person_no_fit(int id,int num_of_gen, int num_of_parents,int r
         printf("\n");
     }
 */
-    new_person=create_mutations(new_person);
+    new_person=create_mutations(new_person,mutation_rate);
 
     for(i=0;i<genes_per_person;i++){
         for(j=0;j<genes_per_person;j++){
@@ -244,11 +244,11 @@ person *gen_create_person_no_fit(int id,int num_of_gen, int num_of_parents,int r
         }
    /*     printf("\n"); */
     }
-
+    free(auxiliary);
     return new_person;
 }
 
-group *gen_create_group_no_fit(int starting_id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count){
+group *gen_create_group_no_fit(int starting_id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,double mutation_rate){
     int i;
 
     group *new_group;
@@ -256,13 +256,13 @@ group *gen_create_group_no_fit(int starting_id,int num_of_gen, int num_of_parent
 
     for(i=0;i<persons_per_group;i++){
        /* printf("Creating Atomo %d\n",i);*/
-        new_group->person_in_group[i]=gen_create_person_no_fit(i,num_of_gen, num_of_parents,row_swapping,min_count,max_count);
+        new_group->person_in_group[i]=gen_create_person_no_fit(i,num_of_gen, num_of_parents,row_swapping,min_count,max_count,mutation_rate);
        /* printf("Atomo created %d\n",i); */
     }
     return new_group;
 }
 
-population *create_gen_population_no_fit(int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count){
+population *create_gen_population_no_fit(int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,double mutation_rate){
     int i;
     group *temp;
 
@@ -273,7 +273,7 @@ population *create_gen_population_no_fit(int num_of_gen, int num_of_parents,int 
     for(i=0;i<curr_num_of_groups;i++){
         if(i==0){
             /*printf("Head on the group_list of the generation 0"); */           
-            new_population->groups_list=gen_create_group_no_fit(i,num_of_gen,num_of_parents,row_swapping,min_count,max_count); /*create pointer to group_list, save on the population array*/
+            new_population->groups_list=gen_create_group_no_fit(i,num_of_gen,num_of_parents,row_swapping,min_count,max_count,mutation_rate); /*create pointer to group_list, save on the population array*/
             new_population->groups_list->next=NULL;
             new_population->groups_list->prev=NULL;
         }
@@ -282,7 +282,7 @@ population *create_gen_population_no_fit(int num_of_gen, int num_of_parents,int 
             while(temp->next!=NULL){
                 temp=temp->next;
             }
-            temp->next=gen_create_group_no_fit(i,num_of_gen,num_of_parents,row_swapping,min_count,max_count);
+            temp->next=gen_create_group_no_fit(i,num_of_gen,num_of_parents,row_swapping,min_count,max_count,mutation_rate);
             temp->next->next=NULL;
             temp->next->prev=temp;
         }

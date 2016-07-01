@@ -46,10 +46,10 @@ void print_dump(int num_of_generation){
 }
 
 void create_generations(int fitness,float lamda,int num_of_parents,int number_of_groups_wanted,int row_swapping,
-                        int min_gene_R1R2,int max_gene_R1R2,int freq,/*
-                        int event,int event1,int event2,int event3, int event4*/
+                        int min_gene_R1R2,int max_gene_R1R2,int freq,
                         int min_count,int max_count,int generations_wanted,
-                        int generation_change,int pop_size_change, FILE *r1r2Output, FILE *matrixOutput, FILE *countsOutput){
+                        int generation_change,int pop_size_change,double mutation_rate,
+                        FILE *r1r2Output, FILE *matrixOutput, FILE *countsOutput,FILE *fitnessOutput){
     int i;
     /*int type_of_event;
     int num_of_groups_affected; */
@@ -62,10 +62,10 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
             /*printf("Creating Generation %d\n",i);*/
 
             if(fitness){
-                generation_array[i]=create_gen_population_fit(i,num_of_parents,row_swapping,min_count,max_count);
+                generation_array[i]=create_gen_population_fit(i,num_of_parents,row_swapping,min_count,max_count,mutation_rate);
             }
             else{
-                generation_array[i]=create_gen_population_no_fit(i,num_of_parents,row_swapping,min_count,max_count);
+                generation_array[i]=create_gen_population_no_fit(i,num_of_parents,row_swapping,min_count,max_count,mutation_rate);
             }
         }
         mature_generation(generation_array[i]);
@@ -75,18 +75,46 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
                 delete_groups(curr_num_of_groups-(pop_size_change/persons_per_group),i);
             }
             else{
-                insert_groups((pop_size_change/persons_per_group)-curr_num_of_groups,lamda,i,num_of_parents,fitness,row_swapping,min_count,max_count);
+                insert_groups((pop_size_change/persons_per_group)-curr_num_of_groups,lamda,i,num_of_parents,fitness,row_swapping,min_count,max_count,mutation_rate);
             }
         }
 
         if(i%freq==0){
-            
-            printf("Fitness of Generation %d: %f (pososto) \n",i,generation_array[i]->sum_of_fitness/(curr_num_of_groups*persons_per_group));
+            extract_fitness_generation(fitnessOutput,i);
+            printf("Generation %d Simulated. \n",i);
             extract_R1R2_generation(r1r2Output, i);
             extract_gene_dependancies_matrix_generation(matrixOutput, i);
             extract_gene_counts_generation(countsOutput, i);
         }
     }
+}
+
+void print_help(void){
+    printf("Options\n");
+
+    printf("\n");
+    printf("-ploidy X:                  Number of parents per person (1 - 2)\n");
+    printf("-swapping X:                R1R2_swapping or Row_swapping (Binary) \n");
+    printf("-min_R1R2 X -max_R1R2 X:    Width of R1R2 selection (Integers)\n");
+    printf("-min_count X -max_count X:  Width of gene_counts selection (Integers)\n");
+    printf("-n X:                       Number of genes per person (Integer)\n");
+    printf("-mutrate X:                 Mutation Rate (Double) (Default: 0.001) \n");
+
+    printf("\n");
+    printf("-N X:           Number of persons to be simulated (Integer)\n");
+    printf("-generations X: Number of generations to be simulated (Integer)\n");
+    printf("-selection X:   Inheritance based on fitness or neutral (Binary)\n");
+    printf("-s2 X:          s^2 for the fitness function (Float)\n");
+    printf("-eN X Y :       Create event at generation X, persons after event Y (Integers)\n");
+    
+    printf("\n");
+    printf("-freq X:        Frequency of export of data (Integer)\n");
+    printf("-r1r2out X:     Write R1R2_output at specified file (File) (Default R1R2.txt)\n");
+    printf("-matout X:      Write gene_interaction_matrix_output at specified file (Default matrix.txt) \n");
+    printf("-gencout X:     Write gene_counts_output at specified file (Default counts.txt)\n");
+    printf("-fitout X:      Write fitness_output at specified file (Default fitness.txt)\n");
+         
+    exit(0);
 }
 
 
@@ -96,6 +124,7 @@ int main(int argc, char** argv){
     int generations;
     int min_count;
     int max_count;
+    float s2;
     float lamda;
     int fitness;
     int num_of_parents;
@@ -107,9 +136,16 @@ int main(int argc, char** argv){
     int freq;
     int generation_change=-1;
     int pop_size_change;
-    srand (time(NULL));
+    double mutation_rate=0.001;
 
-    FILE *r1r2Output, *matrixOutput, *countsOutput;
+    FILE *r1r2Output, *matrixOutput, *countsOutput, *fitnessOutput;
+
+    r1r2Output=NULL;
+    matrixOutput=NULL;
+    countsOutput=NULL;
+    fitnessOutput=NULL;
+
+    srand (time(NULL));
 
     for( i = 1; i < argc; ++i){
         /* neutral or selection */
@@ -119,8 +155,9 @@ int main(int argc, char** argv){
         }
 
         /* sigma^2, o paronomastis sto fitness function */
-        if( strcmp(argv[i], "-lamda" ) == 0 ){
-            lamda = atof(argv[++i]);
+        if( strcmp(argv[i], "-s2" ) == 0 ){
+            s2 = atof(argv[++i]);
+            lamda=1/s2;
             continue;
         }
 
@@ -191,18 +228,51 @@ int main(int argc, char** argv){
             continue;
         }
 
+        if( strcmp(argv[i], "-r1r2out" ) == 0 ){
+            r1r2Output=fopen(argv[++i],"w");
+            continue;
+        }
 
+        if( strcmp(argv[i], "-matout" ) == 0 ){
+            matrixOutput=fopen(argv[++i],"w");
+            continue;
+        }
+
+        if( strcmp(argv[i], "-gencout" ) == 0 ){
+            countsOutput=fopen(argv[++i],"w");
+            continue;
+        }
+
+        if( strcmp(argv[i], "-fitout" ) == 0 ){
+            fitnessOutput=fopen(argv[++i],"w");
+            continue;
+        }
+
+        if( strcmp(argv[i], "-h" ) == 0 ){
+            print_help();
+        }
+
+        if( strcmp(argv[i], "-mutrate" ) == 0 ){
+            mutation_rate=atof(argv[++i]);
+            continue;
+        }
+        
     }
 
-    r1r2Output = fopen("R1R2.txt", "w");
-    matrixOutput = fopen("matrix.txt", "w");
-    countsOutput = fopen("counts.txt", "w");
+    if(r1r2Output==NULL)   r1r2Output = fopen("R1R2.txt", "w");
+    if(matrixOutput==NULL) matrixOutput = fopen("matrix.txt", "w");
+    if(countsOutput==NULL) countsOutput = fopen("counts.txt", "w");
+    if(fitnessOutput==NULL) fitnessOutput = fopen("fitness.txt", "w");
 
-    create_generations(fitness,lamda,num_of_parents,groups_wanted,R1R2_swapping,min_gene_R1R2,max_gene_R1R2,freq,min_count,max_count,generations,generation_change,pop_size_change, r1r2Output, matrixOutput, countsOutput);
+    create_generations(fitness,lamda,num_of_parents,
+        groups_wanted,R1R2_swapping,min_gene_R1R2,max_gene_R1R2,freq,min_count,max_count,
+        generations,generation_change,pop_size_change,mutation_rate,
+         r1r2Output, matrixOutput, countsOutput,fitnessOutput);
 
     fclose(r1r2Output);
     fclose(matrixOutput);
     fclose(countsOutput);
+    fclose(fitnessOutput);
 
     return 0;
 }

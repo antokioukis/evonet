@@ -92,3 +92,14 @@ void extract_gene_counts_generation(FILE *f, int num_of_gen){
     }
     return;
 }
+
+void extract_fitness_generation(FILE *f, int num_of_gen){
+
+    if (f == NULL)
+    {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+
+    fprintf(f, "Generation %d: Population: %d Number of Genes: %d Fitness of Generation: %f\n", num_of_gen,curr_num_of_groups*persons_per_group,genes_per_person,generation_array[num_of_gen]->sum_of_fitness/(curr_num_of_groups*persons_per_group));
+}
