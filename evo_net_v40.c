@@ -49,7 +49,7 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
                         int min_gene_R1R2,int max_gene_R1R2,int freq,
                         int min_count,int max_count,int generations_wanted,
                         int generation_change,int pop_size_change,double mutation_rate,
-                        FILE *r1r2Output, FILE *matrixOutput, FILE *countsOutput,FILE *fitnessOutput){
+                        FILE *r1r2Output, FILE *matrixOutput, FILE *countsOutput,FILE *fitnessOutput,FILE *discreteOutput){
     int i;
     /*int type_of_event;
     int num_of_groups_affected; */
@@ -80,11 +80,12 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
         }
 
         if(i%freq==0){
-            extract_fitness_generation(fitnessOutput,i);
             printf("Generation %d Simulated. \n",i);
             extract_R1R2_generation(r1r2Output, i);
             extract_gene_dependancies_matrix_generation(matrixOutput, i);
             extract_gene_counts_generation(countsOutput, i);
+            extract_discrete_generation(discreteOutput,i);
+            extract_fitness_generation(fitnessOutput,i);
         }
     }
 }
@@ -113,7 +114,9 @@ void print_help(void){
     printf("-matout X:      Write gene_interaction_matrix_output at specified file (Default matrix.txt) \n");
     printf("-gencout X:     Write gene_counts_output at specified file (Default counts.txt)\n");
     printf("-fitout X:      Write fitness_output at specified file (Default fitness.txt)\n");
-         
+    printf("-disout X:      Write discrete_output at specified file (Default discrete.txt)\n");
+
+
     exit(0);
 }
 
@@ -138,7 +141,7 @@ int main(int argc, char** argv){
     int pop_size_change;
     double mutation_rate=0.001;
 
-    FILE *r1r2Output, *matrixOutput, *countsOutput, *fitnessOutput;
+    FILE *r1r2Output, *matrixOutput, *countsOutput, *fitnessOutput, *discreteOutput;
 
     r1r2Output=NULL;
     matrixOutput=NULL;
@@ -248,7 +251,12 @@ int main(int argc, char** argv){
             continue;
         }
 
-        if( strcmp(argv[i], "-h" ) == 0 ){
+        if( strcmp(argv[i], "-desout" ) == 0 ){
+            discreteOutput=fopen(argv[++i],"w");
+            continue;
+        }
+
+        if( strcmp(argv[i], "-help" ) == 0 ){
             print_help();
         }
 
@@ -263,16 +271,19 @@ int main(int argc, char** argv){
     if(matrixOutput==NULL) matrixOutput = fopen("matrix.txt", "w");
     if(countsOutput==NULL) countsOutput = fopen("counts.txt", "w");
     if(fitnessOutput==NULL) fitnessOutput = fopen("fitness.txt", "w");
+    if(discreteOutput==NULL) discreteOutput = fopen("discrete.txt", "w");
+
 
     create_generations(fitness,lamda,num_of_parents,
         groups_wanted,R1R2_swapping,min_gene_R1R2,max_gene_R1R2,freq,min_count,max_count,
         generations,generation_change,pop_size_change,mutation_rate,
-         r1r2Output, matrixOutput, countsOutput,fitnessOutput);
+         r1r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput);
 
     fclose(r1r2Output);
     fclose(matrixOutput);
     fclose(countsOutput);
     fclose(fitnessOutput);
+    fclose(discreteOutput);
 
     return 0;
 }

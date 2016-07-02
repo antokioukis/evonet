@@ -172,7 +172,7 @@ person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2,int min_count,
     new_person = (person*)calloc(1, sizeof(person));
 
     new_person->id=id;
-
+    new_person->mature=0;
    /* printf("Sto atomo me id: %d \n",new_person->id); */
 
     for(i=0;i<genes_per_person;i++){
@@ -214,6 +214,7 @@ group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2,int min_c
         new_group->person_in_group[i]=create_person(i,min_gene_R1R2,max_gene_R1R2,min_count,max_count); /*create pointer to person, save on the groups array , argument is the personal id */
     }
     return new_group;
+    curr_num_of_groups++;
 }
 
 

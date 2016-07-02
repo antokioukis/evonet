@@ -5,5 +5,6 @@ clean:
 	> matrix.txt
 	> counts.txt
 	> fitness.txt
+	> discrete.txt
 	rm evonet
 	clear
