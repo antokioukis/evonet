@@ -1,8 +1,9 @@
+
+
 void extract_R1R2_generation(FILE *f, int num_of_gen){
     int k,l,i;
     
     group *temp;
-
     /* f = fopen("R1R2.txt", "a"); */
     temp=generation_array[num_of_gen]->groups_list;
 
@@ -34,39 +35,40 @@ void extract_R1R2_generation(FILE *f, int num_of_gen){
 }
 
 void extract_discrete_generation(FILE *f, int num_of_gen){
-    int k,l,i;
-    int sum=0;
-    group *temp;
-
-    /* f = fopen("R1R2.txt", "a"); */
-    temp=generation_array[num_of_gen]->groups_list;
-
-    if (f == NULL)
+  int k,l,i;
+  group *temp;
+  
+  /* f = fopen("R1R2.txt", "a"); */
+  temp=generation_array[num_of_gen]->groups_list;
+  
+  if (f == NULL)
     {
-        printf("Error opening file discrete\n");
-        exit(1);
+      printf("Error opening file discrete\n");
+      exit(1);
     }
-
-    fprintf(f, "Generation %d: Population: %d Number of Genes: %d\n", num_of_gen,curr_num_of_groups*persons_per_group,genes_per_person);
-
-    for(k=0;k<curr_num_of_groups;k++){
-        for(l=0;l<persons_per_group;l++){
-            for(i=0;i<genes_per_person;i++){
-        /*      printf("current sign %d stin thesi %d\n",individual->vector_of_signs[i],i); */
-                sum+=temp->person_in_group[l]->vector_of_signs[i]*(pow(10,i));
-                fprintf(f,"%d",temp->person_in_group[l]->vector_of_signs[i]);
-            }
-            fprintf(f, "\n");
-            sum=0;
-        }
-
-        if(temp->next!=NULL){
-                temp=temp->next;
-        }
-
+  
+  fprintf(f, "Generation %d: Population: %d Number of Genes: %d\n", num_of_gen,curr_num_of_groups*persons_per_group,genes_per_person);
+  
+  /* fprintf(stderr, "Generation %d: Population: %d Number of Genes: %d\n", num_of_gen,curr_num_of_groups*persons_per_group,genes_per_person); */
+  
+  for(k=0;k<curr_num_of_groups;k++){
+    for(l=0;l<persons_per_group;l++){
+      for(i=0;i<genes_per_person;i++){
+	/* printf("current sign %d stin thesi %d\n",individual->vector_of_signs[i],i); */
+	fprintf(f,"%d",temp->person_in_group[l]->vector_of_signs[i]);
+	/* fprintf(stderr, "%d",temp->person_in_group[l]->vector_of_signs[i]); */
+	/* fprintf(stderr, "%d %d %d\n", ++j, l, k); */
+      }
+      fprintf(f, "\n");
     }
-
-    return;
+    
+    if(temp->next!=NULL){
+      temp=temp->next;
+    }
+    
+  }
+  
+  return;
 }
 
 void extract_gene_dependancies_matrix_generation(FILE* f, int num_of_gen){
