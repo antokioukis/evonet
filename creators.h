@@ -140,6 +140,7 @@ float create_gene_interactions(int R1,int R2){
     lastbitR1=R1%2;
     lastbitR2=R2%2;
 
+    
 
 /*
     printf("Mpika me R1 = %d , R2 = %d  \n",R1,R2);
