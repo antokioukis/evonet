@@ -38,6 +38,7 @@ unsigned int concatenate(unsigned x, unsigned y) {
 }
 
 /*convert binary 101010101 representing discrete genes of that step to integer used for comparison*/
+
 long int binary_to_decimal(long int num){
     long int rem,sum=0,power=0;
 
@@ -50,11 +51,13 @@ long int binary_to_decimal(long int num){
     return sum;
 }
 
+
+
 /*create discrete vector with elements based on the sign of the plastic records*/
 void make_discrete(person *individual, float temp[max_genes_per_person]){
     int i;
 
-    for (i=0;i<max_genes_per_person;i++){
+    for (i=0;i<genes_per_person;i++){
         if(temp[i]>0){
             individual->vector_of_signs[i]=1;
         }
@@ -87,7 +90,7 @@ float eucledian_distance(int final_form[],int optimal[]){
     distance=sqrt(distance);
     return distance;
 }
-
+/*
 int decimal_to_binary(int n) {
     int remainder; 
     int binary = 0, i = 1;
@@ -100,7 +103,7 @@ int decimal_to_binary(int n) {
     }
     return binary;
 }
-
+*/
 
 int NumberOfSetBits(int i){
     i = i - ((i >> 1) & 0x55555555);
@@ -113,15 +116,14 @@ unsigned int rand_interval(unsigned int min, unsigned int max){
     const unsigned int range = 1 + max - min;
     const unsigned int buckets = RAND_MAX / range;
     const unsigned int limit = buckets * range;
-    assert(min <= max);
-    
+
     /* Create equal size buckets all in a row, then fire randomly towards
      * the buckets until you land in one of them. All buckets are equally
      * likely. If you land off the end of the line of buckets, try again. */
     do
-      {
+    {
         r = rand();
-      } while (r >= limit);
-    
+    } while (r >= limit);
+
     return min + (r / buckets);
 }

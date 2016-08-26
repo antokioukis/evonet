@@ -8,7 +8,6 @@ void calculate_fitness(int num_of_gen,float lamda){
     float distance;
     float non_descrete_res[max_genes_per_person];
     int sum=0;
-   /* int optimal[max_genes_per_person]={1,1,1,1}; */
     int optimal[max_genes_per_person]={1,1,1,1,1,1,1,1,1,1};
     group* temp;
 
@@ -20,6 +19,7 @@ void calculate_fitness(int num_of_gen,float lamda){
         /*gia na min grafw olo auto to makrinari*/
             atomo=temp->person_in_group[j];
            /* printf("ID atomou: %d, periodos %d\n",atomo->id,atomo->periodos);*/
+            
             /*parousiazei kikliko equilibrium*/
             if(atomo->periodos>1){
                 num_of_steps=atomo->periodos;
@@ -41,15 +41,22 @@ void calculate_fitness(int num_of_gen,float lamda){
 
                     for (c = 0; c < genes_per_person; c++) {
                         for (t = 0; k < genes_per_person; t++) {
-                            sum = sum + atomo->gene_interactions[c][t]*atomo->vector_of_signs[t];
-                        }
-                        non_descrete_res[c] = sum;
-                        sum = 0;
-                    }
+                            sum = sum + atomo->gene_interactions[c][k]*atomo->gene_counts[k];
+                		}
 
-                    make_discrete(atomo,non_descrete_res);
+                		non_descrete_res[c] = sum;
+                		if(non_descrete_res[c]>0){
+                    			atomo->vector_of_signs[c]=1;
+                		}
+                		else {
+                        		atomo->vector_of_signs[c]=0;
+                		}
+                		sum = 0;
+    		        }
+
+   
                     sum_of_personal_fitness_cycles+=eucledian_distance(atomo->vector_of_signs,optimal);
-                   /* printf("Sum of personal fitness cycles %f\n",sum_of_personal_fitness_cycles); */
+                    /*printf("Sum of personal fitness cycles %f\n",sum_of_personal_fitness_cycles); */
                 }
                 distance=sum_of_personal_fitness_cycles/num_of_steps;
                 personal_fitness=exp(-lamda*distance);
@@ -59,10 +66,10 @@ void calculate_fitness(int num_of_gen,float lamda){
                 distance=eucledian_distance(temp->person_in_group[j]->vector_of_signs,optimal);
                 personal_fitness=exp(-lamda*distance);
                 temp->person_in_group[j]->fitness=personal_fitness;
-               /* printf("Personal Fitness %f\n",temp->person_in_group[j]->fitness); */
+                /*printf("Personal Fitness %f\n",temp->person_in_group[j]->fitness);*/
             }
             generation_array[num_of_gen]->sum_of_fitness+=personal_fitness;
-           /* printf("Generation Fitness %f\n",generation_array[num_of_gen-1]->sum_of_fitness); */
+            /*printf("Generation Fitness %f\n",generation_array[num_of_gen]->sum_of_fitness);*/
             sum_of_personal_fitness_cycles=0;
         }
         if(temp->next!=NULL){
@@ -359,7 +366,7 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
         }
         else{
             for(j=0;j<genes_per_person;j++){
-                new_auxiliary->R1[j]=temp1->person_in_group[person_counter2]->gene_R1[j];
+                new_auxiliary->R1[j]=temp2->person_in_group[person_counter2]->gene_R1[j];
             }
         }
     }
@@ -374,7 +381,7 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
         }
         else{
             for(j=0;j<genes_per_person;j++){
-                new_auxiliary->R1[j]=temp1->person_in_group[person_counter1]->gene_R2[j];
+                new_auxiliary->R2[j]=temp2->person_in_group[person_counter2]->gene_R2[j];
             }
         }
     }
@@ -421,7 +428,6 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
     for(i=0;i<genes_per_person;i++){
         new_person->gene_R1[i]=auxiliary->R1[i];
         new_person->gene_R2[i]=auxiliary->R2[i];
-       /* printf("R1: %d R2: %d \n",new_person->gene_R1[i],new_person->gene_R2[i]); */
     
     }/*
     printf("\n");
@@ -433,7 +439,6 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
     }
 */
     new_person=create_mutations(new_person,mutation_rate);
-
     for(i=0;i<genes_per_person;i++){
         for(j=0;j<genes_per_person;j++){
             /*new_person->gene_interactions[i][j]=random_normal_distrubution(0,sqrt(10));*/

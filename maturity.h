@@ -10,18 +10,20 @@ void create_maturity_step(person *individual,int step){
     for (c = 0; c < genes_per_person; c++) {
         for (k = 0; k < genes_per_person; k++) {
             /*ekei pou exei to vector of signs na balw to gene_counts*/
-            sum = sum + individual->gene_interactions[c][k]*individual->vector_of_signs[k];
+           /* sum = sum + individual->gene_interactions[c][k]*individual->vector_of_signs[k];*/
+            sum = sum + individual->gene_interactions[c][k]*individual->gene_counts[k];
         }
 
         non_descrete_res[c] = sum;
+        if(non_descrete_res[c]>0){
+            individual->vector_of_signs[c]=1;
+        }
+        else {
+                individual->vector_of_signs[c]=0;
+        }
         sum = 0;
     }
-    /*antwni edw*/
-    for (i=0;i<genes_per_person;i++){
-        individual->gene_counts[i]=non_descrete_res[i];
-    }
-
-    make_discrete(individual,non_descrete_res);
+    
 
     for(i=0;i<genes_per_person;i++){
       /*  printf("current sign %d stin thesi %d\n",individual->vector_of_signs[i],i); */
@@ -31,7 +33,7 @@ void create_maturity_step(person *individual,int step){
 
    /* printf(" %d \n",sum);  */
     position=binary_to_decimal(sum);
-   /* printf("position Array = %ld\n",binary_to_decimal(position)); */
+    /*printf("position Array = %ld\n",position);*/
 
     if(individual->maturity_array[position]==0){
         individual->maturity_array[position]=step;
