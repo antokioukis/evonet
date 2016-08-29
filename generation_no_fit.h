@@ -43,20 +43,22 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_R1R2_swapping(int nu
     for(i=0;i<genes_per_person;i++){
         if(i<genes_from_first_parent){
             new_auxiliary->R1[i]=temp1->person_in_group[person_counter1]->gene_R1[i];
+	    new_auxiliary->R2[i]=temp1->person_in_group[person_counter1]->gene_R2[i];
         }
         else{
             new_auxiliary->R1[i]=temp2->person_in_group[person_counter2]->gene_R1[i];
+	    new_auxiliary->R2[i]=temp2->person_in_group[person_counter2]->gene_R2[i];
         }
     }
 
-    for(i=0;i<genes_per_person;i++){
-        if(i<genes_from_first_parent){
-            new_auxiliary->R2[i]=temp2->person_in_group[person_counter2]->gene_R2[i];
-        }
-        else{
-            new_auxiliary->R2[i]=temp1->person_in_group[person_counter1]->gene_R2[i];
-        }
-    }
+    /* for(i=0;i<genes_per_person;i++){ */
+    /*     if(i<genes_from_first_parent){ */
+    /* 	  new_auxiliary->R2[i]=temp2->person_in_group[person_counter2]->gene_R2[i]; */
+    /*     } */
+    /*     else{ */
+    /* 	  new_auxiliary->R2[i]=temp1->person_in_group[person_counter1]->gene_R2[i]; */
+    /*     } */
+    /* } */
     /*
     printf("Pira apo prwto patera %d gonidia\n", genes_from_first_parent);
     for(i=0;i<max_genes_per_person;i++){

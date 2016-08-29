@@ -48,6 +48,7 @@ long int binary_to_decimal(long int num){
         sum = sum + rem * pow(2,power);
         power++;
     }
+    
     return sum;
 }
 
@@ -82,14 +83,19 @@ float eucledian_distance(int final_form[],int optimal[]){
     int i;
 
     for(i=0;i<genes_per_person;i++){
-        difference=final_form[i]-optimal[i];
+        difference= final_form[i] - optimal[i];
         difference=difference*difference;
         distance+=difference;
         difference=0;
     }
+    
     distance=sqrt(distance);
+    
     return distance;
 }
+
+
+
 /*
 int decimal_to_binary(int n) {
     int remainder; 
