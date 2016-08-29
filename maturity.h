@@ -40,6 +40,7 @@ void create_maturity_step(person *individual,int step){
     }
     else{
         individual->periodos=step-individual->maturity_array[position];
+        if(individual->periodos>1) printf("DING DING\n");
         individual->mature=true;
     }
 }
