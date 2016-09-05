@@ -221,7 +221,7 @@ int main(int argc, char** argv){
             continue;
         }
 
-        if( strcmp(argv[i], "-desout" ) == 0 ){
+        if( strcmp(argv[i], "-disout" ) == 0 ){
             discreteOutput=fopen(argv[++i],"w");
             continue;
         }

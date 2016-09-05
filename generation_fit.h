@@ -22,7 +22,7 @@ void calculate_fitness(int num_of_gen,float lamda){
             
             /*parousiazei kikliko equilibrium*/
             if(atomo->periodos>1){
-
+		printf("DING DING\n");
 	      num_of_steps=atomo->periodos;
                 /*kane pollaplisiasmous osous exeis periodo (proxwra bimata)*/
                 /*NEEDS MORE TESTING , printf ka8e apotelesma pou mpainei kai bgainei apo to matrix multiplication*/

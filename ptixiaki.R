@@ -1,42 +1,54 @@
+#####################################################################################
+#initialization
+#!/usr/bin/env Rscript
+args = commandArgs(trailingOnly=TRUE)
+
+if (length(args)==0) {
+  stop("At least one argument must be supplied (input file).n", call.=FALSE)
+}
+
+#####################################################################################
 #fitness images export
 setwd("~/Dropbox/Sxoli/ptixiaki/evo3/")
 
-my_fitness=read.table("fitness.txt")
+my_fitness=read.table(args[6])
 
 fitness_of_generation<-as.vector(unlist(my_fitness[4]))
 num_of_generation<-as.vector(as.numeric(unlist(my_fitness[1])))
 
-png(filename="~/Dropbox/Sxoli/ptixiaki/evo3/fit10.png")
-plot(num_of_generation,fitness_of_generation,main="s^2 = 10",type="l",xlab="Generation Number",ylab="Generation Fitness")
-dev.off()
+png(filename=args[1])
+plot(num_of_generation,fitness_of_generation,main= args[5] ,type="l",xlab="Generation Number",ylab="Generation Fitness")
 
+#####################################################################################
 #matrix interaction export
 
-interaction_matrixes=read.table("newMatrix.txt")
+interaction_matrixes=read.table(args[7])
 
-dim(interaction_matrixes)
+interaction_matrixes[interaction_matrixes == 0] <- NA
 
-
-##interaction_matrixes[interaction_matrixes == 0] <- NA
-auxMatrix <- interaction_matrixes; #[interaction_matrixes == 0] <- NA
-auxMatrix[auxMatrix == 0] <- NA
-
-auxMatrix[[21000]]
-
-atomo <- split(interaction_matrixes,rep(1:21000,each=10))
-auxAtomo <- split(auxMatrix,rep(1:21000,each=10))
+atomo <- split(interaction_matrixes,rep(1:(as.numeric(args[3])*as.numeric(args[4])),each=10))
 
 findNAs <- function(element){
-    apply(element, 2, function(x){ sum(is.na(x))})
+  apply(element, 2, function(x){ sum(is.na(x))})
 }
 
-length(atomo)
-for(i in 1:1000){
-  kenes_stiles[i]<-sum(is.na.data.frame(atomo[i]))/10
-  sum<-0
-}
+kenes_stiles<-lapply(atomo,findNAs)
 
-png(filename="~/Dropbox/Sxoli/ptixiaki/evo3/non_interaction.png")
-hist(kenes_stiles,main="Non Interacting Genes",xlab="Number of non interacting Genes",ylab="Number of Individuals")
+#####################################################################################
+###R1R2
 
+my_R1R2=read.table(args[8])
+
+#split ana generation
+generation_R1R2 <- split(my_R1R2,rep(1:args[4],each=10*as.numeric(args[3])))
+
+mesoi_oroi<-c(1:args[4])
+for(i in 1:args[4]){
+  mesoi_oroi[i]<-mean(unlist(generation_R1R2[[i]]))
+} 
+
+png(filename=args[2])
+plot(num_of_generation,mesoi_oroi,main="R1R2",type="l",xlab="Generation Number",ylab="mean R1R2")
 dev.off()
+
+

@@ -12,8 +12,6 @@ void extract_R1R2_generation(FILE *f, int num_of_gen){
         exit(1);
     }
 
-    fprintf(f, "Generation %d: Population: %d Number of Genes: %d\n", num_of_gen,curr_num_of_groups*persons_per_group,genes_per_person);
-
     for(k=0;k<curr_num_of_groups;k++){
         for(l=0;l<persons_per_group;l++){
             for(i=0;i<genes_per_person;i++){
@@ -47,8 +45,6 @@ void extract_discrete_generation(FILE *f, int num_of_gen){
         exit(1);
     }
 
-    fprintf(f, "Generation %d: Population: %d Number of Genes: %d\n", num_of_gen,curr_num_of_groups*persons_per_group,genes_per_person);
-
     for(k=0;k<curr_num_of_groups;k++){
         for(l=0;l<persons_per_group;l++){
             for(i=0;i<genes_per_person;i++){
@@ -73,8 +69,7 @@ void extract_gene_dependancies_matrix_generation(FILE* f, int num_of_gen){
     int k,l,i,j;
     
     group *temp;
-
-    
+  
     temp=generation_array[num_of_gen]->groups_list;
 
     if (f == NULL)
@@ -82,8 +77,6 @@ void extract_gene_dependancies_matrix_generation(FILE* f, int num_of_gen){
         printf("Error opening file!\n");
         exit(1);
     }
-    fprintf(f, "\n");
-    fprintf(f, "Generation %d: Population: %d Number of Genes: %d\n", num_of_gen,curr_num_of_groups*persons_per_group,genes_per_person);
     for(k=0;k<curr_num_of_groups;k++){
         for(l=0;l<persons_per_group;l++){
             for(i=0;i<genes_per_person;i++){
@@ -115,7 +108,6 @@ void extract_gene_counts_generation(FILE *f, int num_of_gen){
         exit(1);
     }
 
-    fprintf(f, "Generation %d: Population: %d Number of Genes: %d\n", num_of_gen,curr_num_of_groups*persons_per_group,genes_per_person);
     for(k=0;k<curr_num_of_groups;k++){
         for(l=0;l<persons_per_group;l++){
             for(i=0;i<genes_per_person;i++){
@@ -137,5 +129,5 @@ void extract_fitness_generation(FILE *f, int num_of_gen){
         exit(1);
     }
 
-    fprintf(f, "Generation %d: Population: %d Number of Genes: %d Fitness of Generation: %f\n", num_of_gen,curr_num_of_groups*persons_per_group,genes_per_person,generation_array[num_of_gen]->sum_of_fitness/(curr_num_of_groups*persons_per_group));
+    fprintf(f, "%d %d %d %f\n", num_of_gen,curr_num_of_groups*persons_per_group,genes_per_person,generation_array[num_of_gen]->sum_of_fitness/(curr_num_of_groups*persons_per_group));
 }
