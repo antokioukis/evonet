@@ -189,7 +189,7 @@ group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2,int min_c
 
 
 /*return pointer to new population. New population is array of pointers to groups.*/
-population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count){
+population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count,int robust_or_not){
     int i;
     /*int j;*/
     group *temp;
@@ -216,7 +216,7 @@ population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene
 
         }
        /* printf("Created Group: %d\n",curr_num_of_groups); */
-        curr_num_of_groups++;
+        if(robust_or_not)curr_num_of_groups++;
     }
 /*
     temp=new_population->groups_list;

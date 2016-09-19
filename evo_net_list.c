@@ -15,18 +15,22 @@
 #include "maturity.h"
 #include "events.h"
 #include "extract.h"
+#include "robustness.h"
 
 void create_generations(int fitness,float lamda,int num_of_parents,int number_of_groups_wanted,int row_swapping,
                         int min_gene_R1R2,int max_gene_R1R2,int freq,
                         int min_count,int max_count,int generations_wanted,
-                        int generation_change,int pop_size_change,double mutation_rate,
-                        FILE *r1r2Output, FILE *matrixOutput, FILE *countsOutput,FILE *fitnessOutput,FILE *discreteOutput){
-    int i;
+                        int generation_change,int pop_size_change,double mutation_rate,int robustness, int robust_changes,
+                        FILE *r1Output, FILE *r2Output,FILE *matrixOutput, FILE *countsOutput,FILE *fitnessOutput,
+                        FILE *discreteOutput,FILE *robustOutput){
+    int i,k,l;
+    population *robust_population;
+    group* temp_robust_group,*temp_normal_group;
 
     for(i=0;i<generations_wanted;i++){
 
         if(i==0){
-            generation_array[0]=create_population(number_of_groups_wanted,min_gene_R1R2,max_gene_R1R2,min_count,max_count);
+            generation_array[0]=create_population(number_of_groups_wanted,min_gene_R1R2,max_gene_R1R2,min_count,max_count,1);
         }
         else{
             if(fitness){
@@ -36,7 +40,8 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
                 generation_array[i]=create_gen_population_no_fit(i,num_of_parents,row_swapping,min_count,max_count,mutation_rate);
             }
         }
-	if(i==generation_change){
+	    
+        if(i==generation_change){
             if(curr_num_of_groups*persons_per_group>pop_size_change){
                 delete_groups(curr_num_of_groups-(pop_size_change/persons_per_group),i);
             }
@@ -45,12 +50,39 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
             }
         }
 
+        /* ROBUSTNESS */
+        if(i%freq==0 && robustness) {
+            robust_population = create_population(curr_num_of_groups,min_gene_R1R2,max_gene_R1R2,min_count,max_count,0);
+            temp_robust_group=robust_population->groups_list;
+            temp_normal_group=generation_array[i]->groups_list;
+
+            for(k=0;k<curr_num_of_groups;k++){ /*sarwse olo ton pli8ismo kai deep copy*/
+                /*deep copy atomou*/
+                for(l=0;l<persons_per_group;l++){
+                    temp_robust_group->person_in_group[l]=deep_copy_person(temp_robust_group->person_in_group[l],temp_normal_group->person_in_group[l]);
+                }
+
+                if(temp_robust_group->next!=NULL&&temp_normal_group->next!=NULL){
+                    temp_robust_group=temp_robust_group->next;
+                    temp_normal_group=temp_normal_group->next;
+                }
+            }
+
+            for(k=0;k<curr_num_of_groups-1;k++){
+                temp_robust_group=temp_robust_group->prev;
+            }
+
+            robust_population->groups_list=temp_robust_group;
+            check_robustness(robustOutput,robust_population,robust_changes,1,1);
+        }
+        /*END OF ROBUSTNESS*/
+
         mature_generation(generation_array[i]);
         calculate_fitness(i,lamda);
 
         if(i%freq==0){
             printf("Generation %d Simulated. \n",i);
-            extract_R1R2_generation(r1r2Output, i);
+            extract_R1R2_generation(r1Output, r2Output,i);
             extract_gene_dependancies_matrix_generation(matrixOutput, i);
             extract_gene_counts_generation(countsOutput, i);
             extract_discrete_generation(discreteOutput,i);
@@ -69,6 +101,9 @@ void print_help(void){
     printf("-min_count X -max_count X:  Width of gene_counts selection (Integers)\n");
     printf("-n X:                       Number of genes per person (Integer)\n");
     printf("-mutrate X:                 Mutation Rate (Double) (Default: 0.001) \n");
+    printf("-rob X:                     Check for robustness (Binary) \n");
+    printf("-num_of_rob_mutation X:     Number of mutations per robustness check (Integer) \n");
+
 
     printf("\n");
     printf("-N X:           Number of persons to be simulated (Integer)\n");
@@ -79,12 +114,13 @@ void print_help(void){
     
     printf("\n");
     printf("-freq X:        Frequency of export of data (Integer)\n");
-    printf("-r1r2out X:     Write R1R2_output at specified file (File) (Default R1R2.txt)\n");
+    printf("-r1out X:     Write R1_output at specified file (File) (Default R1.txt)\n");
+    printf("-r2out X:     Write R2_output at specified file (File) (Default R2.txt)\n");
     printf("-matout X:      Write gene_interaction_matrix_output at specified file (Default matrix.txt) \n");
     printf("-gencout X:     Write gene_counts_output at specified file (Default counts.txt)\n");
     printf("-fitout X:      Write fitness_output at specified file (Default fitness.txt)\n");
     printf("-disout X:      Write discrete_output at specified file (Default discrete.txt)\n");
-
+    printf("-robout X:      Write robust_output at specified file (Default robustness.txt)\n");
 
     exit(0);
 }
@@ -109,14 +145,18 @@ int main(int argc, char** argv){
     int generation_change=-1;
     int pop_size_change;
     double mutation_rate=0.001;
+    int robustness=1;
+    int robust_changes=0;
 
-    FILE *r1r2Output, *matrixOutput, *countsOutput, *fitnessOutput, *discreteOutput;
+    FILE *r1Output,*r2Output, *matrixOutput, *countsOutput, *fitnessOutput, *discreteOutput, *robustOutput;
 
-    r1r2Output=NULL;
+    r2Output=NULL;
+    r1Output=NULL;
     matrixOutput=NULL;
     countsOutput=NULL;
     fitnessOutput=NULL;
     discreteOutput=NULL;
+    robustOutput=NULL;
 
     srand (time(NULL));
 
@@ -201,8 +241,13 @@ int main(int argc, char** argv){
             continue;
         }
 
-        if( strcmp(argv[i], "-r1r2out" ) == 0 ){
-            r1r2Output=fopen(argv[++i],"w");
+        if( strcmp(argv[i], "-r1out" ) == 0 ){
+            r1Output=fopen(argv[++i],"w");
+            continue;
+        }
+
+        if( strcmp(argv[i], "-r2out" ) == 0 ){
+            r2Output=fopen(argv[++i],"w");
             continue;
         }
 
@@ -226,6 +271,11 @@ int main(int argc, char** argv){
             continue;
         }
 
+        if( strcmp(argv[i], "-robout" ) == 0 ){
+            robustOutput=fopen(argv[++i],"w");
+            continue;
+        }
+
         if( strcmp(argv[i], "-help" ) == 0 ){
             print_help();
         }
@@ -235,28 +285,42 @@ int main(int argc, char** argv){
             continue;
         }
 
+        if( strcmp(argv[i], "-rob" ) == 0 ){
+            robustness=atof(argv[++i]);
+            continue;
+        }
+
+        if( strcmp(argv[i], "-num_of_rob_mutation" ) == 0 ){
+            robust_changes=atoi(argv[++i]);
+            continue;
+        }
+
         fprintf(stderr, "Argument %s is invalid\n\n\n", argv[i]);
         print_help();
         
     }
 
-    if(r1r2Output==NULL)   r1r2Output = fopen("R1R2.txt", "w");
+    if(r1Output==NULL)   r1Output = fopen("R1.txt", "w");
+    if(r2Output==NULL)   r2Output = fopen("R2.txt", "w");
     if(matrixOutput==NULL) matrixOutput = fopen("matrix.txt", "w");
     if(countsOutput==NULL) countsOutput = fopen("counts.txt", "w");
     if(fitnessOutput==NULL) fitnessOutput = fopen("fitness.txt", "w");
     if(discreteOutput==NULL) discreteOutput = fopen("discrete.txt", "w");
+    if(robustOutput==NULL) robustOutput = fopen("robustness.txt", "w");
 
 
     create_generations(fitness,lamda,num_of_parents,
         groups_wanted,R1R2_swapping,min_gene_R1R2,max_gene_R1R2,freq,min_count,max_count,
-        generations,generation_change,pop_size_change,mutation_rate,
-         r1r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput);
+        generations,generation_change,pop_size_change,mutation_rate,robustness,robust_changes,
+         r1Output, r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput,robustOutput);
 
-    fclose(r1r2Output);
+    fclose(r1Output);
+    fclose(r2Output);
     fclose(matrixOutput);
     fclose(countsOutput);
     fclose(fitnessOutput);
     fclose(discreteOutput);
+    fclose(robustOutput);
 
     return 0;
 }

@@ -1,8 +1,38 @@
+person *deep_copy_person(person *temp_robust_person,person *temp_normal_person){
+
+    int j,m;
+
+    temp_robust_person->periodos=temp_normal_person->periodos;
+    temp_robust_person->mature=temp_normal_person->mature;
+    temp_robust_person->fitness=temp_normal_person->fitness;
+    temp_robust_person->id=temp_normal_person->id;
+
+    for(j=0;j<max_genes_per_person;j++){
+        temp_robust_person->gene_counts[j]=temp_normal_person->gene_counts[j];
+    }
+
+    for(j=0;j<max_genes_per_person;j++){
+        temp_robust_person->vector_of_signs[j]=temp_normal_person->vector_of_signs[j];
+        temp_robust_person->gene_R1[j]=temp_normal_person->gene_R1[j];
+        temp_robust_person->gene_R2[j]=temp_normal_person->gene_R2[j];
+    }
+
+    for(j=0;j<max_genes_per_person;j++){
+        for(m=0;m<max_genes_per_person;m++){
+            temp_robust_person->gene_interactions[j][m]=temp_normal_person->gene_interactions[j][m];
+        }
+    }
+
+    for(j=0;j<1024;j++){
+        temp_robust_person->maturity_array[j]=temp_normal_person->maturity_array[j];
+    }
+    return temp_robust_person;
+}
+
 person *create_specific_mutations(person *individual,int num_of_mutations,int last_bit, int other_bits){
 
   /*create mutations*/
     int result=0;
-    gsl_rng * r;
     int num_of_gene_to_mutate, magic_number = 0;
     int bit_mutation,to_be_mutated;
     int which_R1R2;
@@ -79,21 +109,17 @@ person *create_specific_mutations(person *individual,int num_of_mutations,int la
 
 
 
-void check_robustness(FILE *robustOutput, int num_of_gen, int num_of_mutations, int last_bit, int other_bits){
-	population *new_population;
-    population *temp_population;
+void check_robustness(FILE *robustOutput, population *new_population, int num_of_mutations, int last_bit, int other_bits){
 	person *temp_person;
-	group *temp_group,*head_group;
+	group *temp_group;
 	int k,l,i,j;
-	int t;
 
-	/*xwris na peira3w ta idi iparxonta, ftiaxnw deep copy tis genias pou me noiazei*/    
-    new_population = generation_array[num_of_gen];
+    temp_group=new_population->groups_list;
 
     /*ri3e mutations ston matrix*/
     for(k=0;k<curr_num_of_groups;k++){ /*sarwse olo ton pli8ismo kai ri3e mutations se olous*/
         for(l=0;l<persons_per_group;l++){
-            temp_person=new_population->groups_list->person_in_group[l];
+            temp_person=temp_group->person_in_group[l];
             temp_person=create_specific_mutations(temp_person,num_of_mutations,last_bit,other_bits);
 
     		for(i=0;i<genes_per_person;i++){
@@ -105,18 +131,19 @@ void check_robustness(FILE *robustOutput, int num_of_gen, int num_of_mutations, 
         		}
     		}
 
-            new_population->groups_list->person_in_group[l]=temp_person;
+            temp_group->person_in_group[l]=temp_person;
 
     	}
-    	if(new_population->groups_list->next!=NULL){
-            new_population->groups_list=new_population->groups_list->next;
+    	if(temp_group->next!=NULL){
+            temp_group=temp_group->next;
     	}
     }
 
     for(k=0;k<curr_num_of_groups-1;k++){
-        new_population->groups_list=new_population->groups_list->prev;
+        temp_group=temp_group->prev;
     }
 
+    new_population->groups_list=temp_group;
     /*kane mature tin genia*/
     mature_generation(new_population);
     /*printf("%d\n",new_population->groups_list->next->person_in_group[1]->periodos);*/

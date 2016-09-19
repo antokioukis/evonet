@@ -1,5 +1,3 @@
-population *active_population;
-
 void create_maturity_step(person *individual,int step){
     int i,k,c;
     unsigned int position;
