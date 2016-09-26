@@ -23,30 +23,31 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
                         int generation_change,int pop_size_change,double mutation_rate,int robustness, int robust_changes,
                         FILE *r1Output, FILE *r2Output,FILE *matrixOutput, FILE *countsOutput,FILE *fitnessOutput,
                         FILE *discreteOutput,FILE *robustOutput){
-    int i,k,l;
+    int i,k,l,p,f;
     population *robust_population;
     group* temp_robust_group,*temp_normal_group;
+    int temp;
 
     for(i=0;i<generations_wanted;i++){
-
         if(i==0){
-            generation_array[0]=create_population(number_of_groups_wanted,min_gene_R1R2,max_gene_R1R2,min_count,max_count,1);
+            generation_array[i%2]=create_population(number_of_groups_wanted,min_gene_R1R2,max_gene_R1R2,min_count,max_count,1);
         }
         else{
+            if (i%2==0) temp=2; else temp=1;
             if(fitness){
-                generation_array[i]=create_gen_population_fit(i,num_of_parents,row_swapping,min_count,max_count,mutation_rate);
+                generation_array[i%2]=create_gen_population_fit(temp,num_of_parents,row_swapping,min_count,max_count,mutation_rate);
             }
             else{
-                generation_array[i]=create_gen_population_no_fit(i,num_of_parents,row_swapping,min_count,max_count,mutation_rate);
+                generation_array[i%2]=create_gen_population_no_fit(temp,num_of_parents,row_swapping,min_count,max_count,mutation_rate);
             }
         }
 	    
         if(i==generation_change){
             if(curr_num_of_groups*persons_per_group>pop_size_change){
-                delete_groups(curr_num_of_groups-(pop_size_change/persons_per_group),i);
+                delete_groups(curr_num_of_groups-(pop_size_change/persons_per_group),i%2);
             }
             else{
-                insert_groups((pop_size_change/persons_per_group)-curr_num_of_groups,lamda,i,num_of_parents,fitness,row_swapping,min_count,max_count,mutation_rate);
+                insert_groups((pop_size_change/persons_per_group)-curr_num_of_groups,lamda,i%2,num_of_parents,fitness,row_swapping,min_count,max_count,mutation_rate);
             }
         }
 
@@ -54,7 +55,7 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
         if(i%freq==0 && robustness) {
             robust_population = create_population(curr_num_of_groups,min_gene_R1R2,max_gene_R1R2,min_count,max_count,0);
             temp_robust_group=robust_population->groups_list;
-            temp_normal_group=generation_array[i]->groups_list;
+            temp_normal_group=generation_array[i%2]->groups_list;
 
             for(k=0;k<curr_num_of_groups;k++){ /*sarwse olo ton pli8ismo kai deep copy*/
                 /*deep copy atomou*/
@@ -77,16 +78,30 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
         }
         /*END OF ROBUSTNESS*/
 
-        mature_generation(generation_array[i]);
-        calculate_fitness(i,lamda);
+        /*FREEING MEMORY*/
+        if(i!=0){
+            for(p=0;p<curr_num_of_groups;p++){
+                for(f=0;f<persons_per_group;f++){
+                    free(generation_array[temp-1]->groups_list->person_in_group[f]);
+                }
+
+                if(generation_array[temp-1]->groups_list->next!=NULL){
+                    generation_array[temp-1]->groups_list=generation_array[temp-1]->groups_list->next;
+                }
+            }
+        }
+        /*END OF FREEING MEMEORY*/
+
+        mature_generation(generation_array[i%2]);
+        calculate_fitness(i%2,lamda);
 
         if(i%freq==0){
             printf("Generation %d Simulated. \n",i);
-            extract_R1R2_generation(r1Output, r2Output,i);
-            extract_gene_dependancies_matrix_generation(matrixOutput, i);
-            extract_gene_counts_generation(countsOutput, i);
-            extract_discrete_generation(discreteOutput,i);
-            extract_fitness_generation(fitnessOutput,i);
+            extract_R1R2_generation(r1Output, r2Output,i%2);
+            extract_gene_dependancies_matrix_generation(matrixOutput, i%2);
+            extract_gene_counts_generation(countsOutput, i%2);
+            extract_discrete_generation(discreteOutput,i%2);
+            extract_fitness_generation(fitnessOutput,i%2);
         }
     }
 }
