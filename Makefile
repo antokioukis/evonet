@@ -8,5 +8,8 @@ clean:
 	> robustness.txt
 	> R1.txt
 	> R2.txt
+	> apomonwmenoi.txt
+	> countNa.txt
+	> robust_percent.txt
 	rm evonet
 	clear

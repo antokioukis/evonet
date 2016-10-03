@@ -160,7 +160,7 @@ int main(int argc, char** argv){
     int generation_change=-1;
     int pop_size_change;
     double mutation_rate=0.001;
-    int robustness=1;
+    int robustness=0;
     int robust_changes=0;
 
     FILE *r1Output,*r2Output, *matrixOutput, *countsOutput, *fitnessOutput, *discreteOutput, *robustOutput;

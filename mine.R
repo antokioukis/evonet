@@ -16,21 +16,53 @@ png(filename=args[1])
 plot(num_of_generation*as.numeric(args[4]),fitness_of_generation,main= args[3] ,type="l",xlab="Generation Number",ylab="Generation Fitness")
 
 ##################################################################################################
+
 #interaction matrixes
 number=0
 my_interaction_matrixes=as.data.frame(read.table(args[9]))
 
 my_interaction_matrixes[my_interaction_matrixes == 0.0] <- NA
 
-number=as.integer(args[2])*as.integer(args[4])
+#number=as.integer(args[2])*as.integer(args[4])
+#generations <- split(my_interaction_matrixes,rep(1:as.integer(args[3]),each=number))
 
-generations <- split(my_interaction_matrixes,rep(1:as.integer(args[3]),each=number))
+count_NAs_generations<-function(x){
+	range1=(x*10000)+1
+	range2=(x*10000)+10000
+	return (sum(is.na(my_interaction_matrixes[range1:range2,1:10])))
+}
 
-atomo<- my_interaction_matrixes[1:10,1:10]
-atomo[,1:10]
+sink("countNa.txt")
+for (i in 1:args[3]-1){
+	print(count_NAs_generations(i))
+}
+sink()
 
-atomo<- my_interaction_matrixes[11:20,1:10]
-atomo[,1:10]
+
+	############apomonwmenoi komboi #########################################################
+my_interaction_matrixes=as.data.frame(read.table(args[9]))
+
+#an mia grammi exei 9 midenika tote exoume apomwnomeno kombo
+sink("apomonwmenoi.txt")
+for (i in 1:args[3]-1){
+	range3=(i*10000)+1
+	range4=(i*10000)+10000
+	generation=my_interaction_matrixes[range3:range4,]
+	apomonwmenoi=generation[rowSums(generation==0.0)==10,]
+	print(dim(apomonwmenoi))
+}
+sink()
+
+#an mia grammi exei 9 midenika tote exoume apomwnomeno kombo
+sink("ri8mizomena.txt")
+for (i in 1:args[3]-1){
+	range3=(i*10000)+1
+	range4=(i*10000)+10000
+	generation=my_interaction_matrixes[range3:range4,]
+	ri8mizomena=generation[rowSums(generation==0.0)<=1,]
+	print(dim(ri8mizomena))
+}
+sink()
 
 ##################################################################################################
 ##check robustness

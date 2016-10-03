@@ -1,45 +1,45 @@
 void create_maturity_step(person *individual,int step){
-    int i,k,c;
-    unsigned int position;
-    int sum=0;
-    float non_descrete_res[max_genes_per_person]={0,0,0,0,0,0,0,0,0,0};
+	int i;
+	float res_of_mult;
+	int temp_vector[max_genes_per_person];	
+	int position;
 
-    /*matrix multiplication*/
-    for (c = 0; c < genes_per_person; c++) {
-        for (k = 0; k < genes_per_person; k++) {
-            /*ekei pou exei to vector of signs na balw to gene_counts*/
-           /* sum = sum + individual->gene_interactions[c][k]*individual->vector_of_signs[k];*/
-            sum = sum + individual->gene_interactions[c][k]*individual->gene_counts[k];
-        }
+	printf("STEP:%d\n",step);
 
-        non_descrete_res[c] = sum;
-        if(non_descrete_res[c]>0){
-            individual->vector_of_signs[c]=1;
-        }
-        else {
-                individual->vector_of_signs[c]=0;
-        }
-        sum = 0;
-    }
-    
+	for(i=0;i<genes_per_person;i++){
+		/*if(step==1) res_of_mult=matrix_multiplication(individual->gene_interactions,individual->gene_counts,i);
+		else res_of_mult=matrix_multiplication(individual->gene_interactions,individual->vector_of_signs,i);*/
+		res_of_mult=matrix_multiplication(individual->gene_interactions,individual->vector_of_signs,i);
+		/*printf("mult:%f\n",res_of_mult);*/
+	
+		if (res_of_mult>0) temp_vector[i]=1;
+		else temp_vector[i]=0; 
+	}
 
-    for(i=0;i<genes_per_person;i++){
-      /*  printf("current sign %d stin thesi %d\n",individual->vector_of_signs[i],i); */
-        sum+=individual->vector_of_signs[i]*(pow(10,i));
-        /*printf("current Sum %d\n",sum);*/
-    }
+	/*printf("new_vector\n");*/
+	for(i=0;i<genes_per_person;i++){
+		printf("%d",temp_vector[i]);
+	}
+	printf("\n");
 
-   /* printf(" %d \n",sum);  */
-    position=binary_to_decimal(sum);
-    /*printf("position Array = %ld\n",position);*/
+	position=vector_to_decimal(temp_vector);
+	printf("position %d\n",position);
 
-    if(individual->maturity_array[position]==0){
-        individual->maturity_array[position]=step;
-    }
-    else{
-        individual->periodos=step-individual->maturity_array[position];
-        individual->mature=true;
-    }
+ 	if(individual->maturity_array[position]==0){
+        	individual->maturity_array[position]=step;
+		printf("More maturity steps Needed\n");
+    	}
+    	else{
+       		individual->periodos=step-individual->maturity_array[position];
+        	printf("Periodos: %d\n",individual->periodos);
+        	individual->mature=true;
+    	}
+
+	if(!individual->mature){
+		for(i=0;i<genes_per_person;i++){
+			individual->vector_of_signs[i]=temp_vector[i];
+		}
+	}
 }
 
 bool check_population_mature(population *new_population){
@@ -64,7 +64,7 @@ bool check_population_mature(population *new_population){
 void mature_generation(population *new_population){
     group *temp=new_population->groups_list;
     /*int ID; */
-    int step=0;
+    int step=1;
     int k,l;
 
     while(!check_population_mature(new_population)){
@@ -73,8 +73,8 @@ void mature_generation(population *new_population){
             for(l=0;l<persons_per_group;l++){
                 if(!temp->person_in_group[l]->mature){
      /*               ID=temp->person_in_group[l]->id;
-                      printf("group:%d Atomo me ID %d xreiazetai maturity step\n",k,ID);
-       */             create_maturity_step(temp->person_in_group[l],step);
+                      	printf("group:%d Atomo me ID %d xreiazetai maturity step\n",k,ID);
+*/       		create_maturity_step(temp->person_in_group[l],step);
                 }
             }
             if(temp->next!=NULL){
@@ -84,4 +84,6 @@ void mature_generation(population *new_population){
         step++;
         temp=new_population->groups_list;
     }
+
+   /* printf("STEPS NEEDED:%d\n",step); */
 }

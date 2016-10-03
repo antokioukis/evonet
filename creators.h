@@ -171,15 +171,16 @@ person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2,int min_count,
 /*return pointer to new group. New group is array of pointers to persons.*/
 group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count){
     int i;
+    /*int j;*/
     group *new_group;
     new_group = (group*)calloc(1, sizeof(group));
     new_group->group_number=group_num;
     for(i=0;i<persons_per_group;i++){
         new_group->person_in_group[i]=create_person(i,min_gene_R1R2,max_gene_R1R2,min_count,max_count); /*create pointer to person, save on the groups array , argument is the personal id */
         
-       /* for (j=0;j<genes_per_person;j++){
-            printf("panw gene_counts[%d]: %d \n",j,new_group->person_in_group[i]->gene_counts[j]);
-        } */
+        /*for (j=0;j<genes_per_person;j++){
+            printf("panw vector_of_signs[%d]: %d \n",j,new_group->person_in_group[i]->vector_of_signs[j]);
+        }*/
 
     }
     return new_group;
@@ -191,7 +192,7 @@ group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2,int min_c
 /*return pointer to new population. New population is array of pointers to groups.*/
 population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count,int robust_or_not){
     int i;
-    /*int j;*/
+    /*int k,j;*/
     group *temp;
 
     population *new_population;
@@ -224,7 +225,7 @@ population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene
         printf("Group Num:%d\n",i);
         for(j=0;j<persons_per_group;j++){
             for(k=0;k<genes_per_person;k++){
-            printf("personal id %d\n", temp->person_in_group[j]->gene_counts[k]);
+            printf("gene vector[%d]: %d\n",k, temp->person_in_group[j]->vector_of_signs[k]);
             }
         }
         temp=temp->next;
