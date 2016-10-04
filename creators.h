@@ -142,6 +142,8 @@ person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2,int min_count,
    /* printf("Sto atomo me id: %d \n",new_person->id); */
 
     for(i=0;i<genes_per_person;i++){
+        new_person->vector_of_signs[i]=0;
+        if(i%2==0)
         new_person->vector_of_signs[i]=1;  /* first generation so gene_counts always positive on the vector -> 1 */
     }
 

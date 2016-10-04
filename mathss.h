@@ -58,13 +58,13 @@ float matrix_multiplication(float matrix[max_genes_per_person][max_genes_per_per
 	float old_result=0;	
 	
 	/*to vector pernaei swsta*/ 
-	if(row==0){
+	/*if(row==0){
 		for (c=0;c<genes_per_person;c++){
 			printf("%d",vector[c]);
 		}
 		printf("\n");
 	}
- 
+ */
 	for (c = 0; c < genes_per_person; c++) {
 		result = old_result + matrix[row][c]*vector[c];
 		/*printf("%f=%f+%f*%d\n",result,old_result,matrix[row][c],vector[c]);*/
@@ -115,7 +115,6 @@ float eucledian_distance(int final_form[],int optimal[]){
         difference= final_form[i] - optimal[i];
         difference=difference*difference;
         distance+=difference;
-        difference=0;
     }
     
     distance=sqrt(distance);

@@ -8,7 +8,7 @@ void calculate_fitness(int num_of_gen,float lamda){
     float distance;
     float non_descrete_res[max_genes_per_person];
     int sum=0;
-    int optimal[max_genes_per_person]={1,1,1,1,1,1,1,1,1,1};
+    int optimal[max_genes_per_person]={1,1,1,1,1,0,0,0,0,0};
     group* temp;
 
     /*printf("num_of_gen:%d \n",num_of_gen);*/
@@ -22,7 +22,7 @@ void calculate_fitness(int num_of_gen,float lamda){
             
             /*parousiazei kikliko equilibrium*/
             if(atomo->periodos>1){
-		printf("DING DING\n");
+		      printf("DING DING\n");
 	      num_of_steps=atomo->periodos;
                 /*kane pollaplisiasmous osous exeis periodo (proxwra bimata)*/
                 /*NEEDS MORE TESTING , printf ka8e apotelesma pou mpainei kai bgainei apo to matrix multiplication*/
@@ -421,8 +421,14 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
         new_person->gene_counts[i]=rand_interval(min_count,max_count);
     }
 
-    for(i=0;i<genes_per_person;i++){
+    /*for(i=0;i<genes_per_person;i++){
         new_person->vector_of_signs[i]=1;
+    }*/
+
+    for(i=0;i<genes_per_person;i++){
+        new_person->vector_of_signs[i]=0;
+        if(i%2==0)
+        new_person->vector_of_signs[i]=1;  /* first generation so gene_counts always positive on the vector -> 1 */
     }
 
 /*    printf("Creating Inheritance\n");*/

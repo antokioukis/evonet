@@ -92,7 +92,7 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
         }
         /*END OF FREEING MEMEORY*/
 
-        mature_generation(generation_array[i%2]);
+        mature_generation(generation_array[i%2],1);
         calculate_fitness(i%2,lamda);
 
         if(i%freq==0){

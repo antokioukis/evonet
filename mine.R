@@ -77,11 +77,10 @@ simVector <- sapply(x, function(i){
            mean(unlist(strsplit(a[i,], split="")) == unlist(strsplit(b[i,], split="")))
        })
 
-simMatrix <- matrix(simVector, ncol=1000, byrow=TRUE)
+simMatrix <- matrix(simVector, ncol=100, byrow=TRUE)
 
 aveSimilarity <- apply(simMatrix, 1, mean)
 
 sink(args[10])
 aveSimilarity
 sink()
-

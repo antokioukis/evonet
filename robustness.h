@@ -145,7 +145,7 @@ void check_robustness(FILE *robustOutput, population *new_population, int num_of
 
     new_population->groups_list=temp_group;
     /*kane mature tin genia*/
-    mature_generation(new_population);
+    mature_generation(new_population,0);
     /*printf("%d\n",new_population->groups_list->next->person_in_group[1]->periodos);*/
 /*    
     temp_group=new_population->groups_list;
