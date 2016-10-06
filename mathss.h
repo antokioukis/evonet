@@ -24,33 +24,7 @@ double random_normal_distrubution (double mu, double sigma){
     return (mu + sigma * (double) X1);
 }
 
-/*concatenate the vector to create 1 binary integer*/
-unsigned int concatenate(unsigned x, unsigned y) {
-
-  /* mporeis na baleis pow = 2? */
-
-    unsigned pow = 10;
-
-    /* check if this line is needed */
-    while(y >= pow)
-        pow *= 10;
-    return x * pow + y;
-}
-
 /*convert binary 101010101 representing discrete genes of that step to integer used for comparison*/
-
-long int binary_to_decimal(long int num){
-    long int rem,sum=0,power=0;
-
-    while(num>0){
-        rem = num%10;
-        num = num/10;
-        sum = sum + rem * pow(2,power);
-        power++;
-    }
-    
-    return sum;
-}
 
 float matrix_multiplication(float matrix[max_genes_per_person][max_genes_per_person],int vector[max_genes_per_person],int row){
 	int c;
@@ -77,9 +51,12 @@ int vector_to_decimal(int vector[max_genes_per_person]){
 	int i;
 	int result=0;
 	
-	for(i=0;i<genes_per_person;i++){
-		result=result+vector[i]*pow(2,i);
-	}
+    for (i=0;i<genes_per_person;i++){
+        result=result<<1;
+        result=result+vector[i];
+        /*printf("%d\n",result);*/
+    }
+
 	return result;
 }
 
@@ -121,23 +98,6 @@ float eucledian_distance(int final_form[],int optimal[]){
     
     return distance;
 }
-
-
-
-/*
-int decimal_to_binary(int n) {
-    int remainder; 
-    int binary = 0, i = 1;
-     
-    while(n != 0) {
-        remainder = n%2;
-        n = n/2;
-        binary= binary + (remainder*i);
-        i = i*10;
-    }
-    return binary;
-}
-*/
 
 int NumberOfSetBits(int i){
     i = i - ((i >> 1) & 0x55555555);

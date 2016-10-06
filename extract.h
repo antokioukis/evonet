@@ -37,7 +37,6 @@ void extract_R1R2_generation(FILE *f1,FILE *f2, int num_of_gen){
 
 void extract_discrete_generation(FILE *f, int num_of_gen){
     int k,l,i;
-    int sum=0;
     group *temp;
 
     /* f = fopen("R1R2.txt", "a"); */
@@ -53,11 +52,9 @@ void extract_discrete_generation(FILE *f, int num_of_gen){
         for(l=0;l<persons_per_group;l++){
             for(i=0;i<genes_per_person;i++){
         /*      printf("current sign %d stin thesi %d\n",individual->vector_of_signs[i],i); */
-                sum+=temp->person_in_group[l]->vector_of_signs[i]*(pow(10,i));
                 fprintf(f,"%d",temp->person_in_group[l]->vector_of_signs[i]);
             }
             fprintf(f, "\n");
-            sum=0;
         }
 
         if(temp->next!=NULL){
@@ -139,7 +136,7 @@ void extract_fitness_generation(FILE *f, int num_of_gen){
 
 void extract_robustness(FILE *f,population *new_population){
     group* temp;
-    int k,l,i,sum;
+    int k,l,i;
 
     temp=new_population->groups_list;
     
@@ -153,11 +150,9 @@ void extract_robustness(FILE *f,population *new_population){
         for(l=0;l<persons_per_group;l++){
             for(i=0;i<genes_per_person;i++){
         /*      printf("current sign %d stin thesi %d\n",individual->vector_of_signs[i],i); */
-                sum+=temp->person_in_group[l]->vector_of_signs[i]*(pow(10,i));
                 fprintf(f,"%d",temp->person_in_group[l]->vector_of_signs[i]);
             }
             fprintf(f, "\n");
-            sum=0;
         }
 
         if(temp->next!=NULL){
