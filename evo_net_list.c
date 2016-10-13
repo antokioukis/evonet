@@ -1,21 +1,17 @@
-#include <stdbool.h>
-#include <stdlib.h>
-#include <math.h>
 #include <time.h>
 #include <string.h>
-#include <gsl/gsl_rng.h>
-#include <gsl/gsl_randist.h>
-#include <assert.h>
+#include <stdio.h>
+#include <math.h>
 
-#include "structs.h"
-#include "mathss.h"
-#include "creators.h"
+int curr_num_of_groups;
+
+#include "robustness.h"
+#include "extract.h"
 #include "generation_fit.h"
-#include "generation_no_fit.h"
 #include "maturity.h"
 #include "events.h"
-#include "extract.h"
-#include "robustness.h"
+#include "generation_no_fit.h"
+
 
 void create_generations(int fitness,float lamda,int num_of_parents,int number_of_groups_wanted,int row_swapping,
                         int min_gene_R1R2,int max_gene_R1R2,int freq,
@@ -41,7 +37,7 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
                 generation_array[i%2]=create_gen_population_no_fit(temp,num_of_parents,row_swapping,min_count,max_count,mutation_rate);
             }
         }
-	    
+
         if(i==generation_change){
             if(curr_num_of_groups*persons_per_group>pop_size_change){
                 delete_groups(curr_num_of_groups-(pop_size_change/persons_per_group),i%2);
@@ -126,7 +122,7 @@ void print_help(void){
     printf("-selection X:   Inheritance based on fitness or neutral (Binary)\n");
     printf("-s2 X:          s^2 for the fitness function (Float)\n");
     printf("-eN X Y :       Create event at generation X, persons after event Y (Integers)\n");
-    
+
     printf("\n");
     printf("-freq X:        Frequency of export of data (Integer)\n");
     printf("-r1out X:     Write R1_output at specified file (File) (Default R1.txt)\n");
@@ -163,7 +159,10 @@ int main(int argc, char** argv){
     int robustness=0;
     int robust_changes=0;
 
+
     FILE *r1Output,*r2Output, *matrixOutput, *countsOutput, *fitnessOutput, *discreteOutput, *robustOutput;
+
+    curr_num_of_groups=0;
 
     r2Output=NULL;
     r1Output=NULL;
@@ -217,7 +216,7 @@ int main(int argc, char** argv){
             freq = atoi(argv[++i]);
             continue;
         }
-      
+
         if( strcmp(argv[i], "-min_R1R2" ) == 0 ){
             min_gene_R1R2 = atoi(argv[++i]);
             continue;
@@ -312,7 +311,7 @@ int main(int argc, char** argv){
 
         fprintf(stderr, "Argument %s is invalid\n\n\n", argv[i]);
         print_help();
-        
+
     }
 
     if(r1Output==NULL)   r1Output = fopen("R1.txt", "w");

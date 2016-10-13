@@ -1,3 +1,10 @@
+#ifndef STRUCTS_H
+#define STRUCTS_H
+#include <stdbool.h>
+#include <stdlib.h>
+
+
+
 #define max_generations 50001
 #define persons_per_group 10
 #define num_of_groups 10000
@@ -41,9 +48,7 @@ typedef struct population{
 }population;
 
 population *generation_array[max_generations];
- 
-struct group *group_head = NULL;
-
-int curr_num_of_groups=0;
 
 int genes_per_person;
+
+#endif
