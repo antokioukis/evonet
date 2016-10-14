@@ -1,4 +1,3 @@
-
 SOURCES =  evo_net_list.c creators.c events.c extract.c generation_fit.c generation_no_fit.c mathss.c maturity.c robustness.c  
 OBJECTS = $(SOURCES:%.c=%.o)
 TARGET = evonet
@@ -11,7 +10,7 @@ all: $(TARGET)
 	gcc -ansi -Wall -pedantic $< -c -o $@
 
 $(TARGET): $(OBJECTS)
-	gcc -lm -lpthread -lgsl -lgslcblas $(OBJECTS) -o $@
+	gcc $(OBJECTS) -o $@ -lm -lpthread -lgsl -lgslcblas
 
 clean:
 	rm -f $(TARGET)
