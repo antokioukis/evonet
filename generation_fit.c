@@ -1,6 +1,7 @@
 #include "generation_fit.h"
 
 extern int curr_num_of_groups;
+
 void calculate_fitness(int num_of_gen,float lamda){
     int i,j,k,c,t;
     /*int w,n;*/
@@ -11,7 +12,7 @@ void calculate_fitness(int num_of_gen,float lamda){
     float distance;
     float non_descrete_res[max_genes_per_person];
     int sum=0;
-    int optimal[max_genes_per_person]={1,1,1,1,1,0,0,0,0,0};
+    int optimal[max_genes_per_person]={1,1,1,1,1,1,1,1,1,1};
     group* temp;
 
     /*printf("num_of_gen:%d \n",num_of_gen);*/
@@ -90,91 +91,71 @@ void calculate_fitness(int num_of_gen,float lamda){
 
 
 R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_gen){
-  float fitness_array[(num_of_groups*persons_per_group)];
-  /*  int theseis_pinaka=num_of_groups*persons_per_group; */
-  int counter=0;
-  int i,j;
-  double fitness_asked=0;
-  int group_counter,person_counter;
-  group *temp=generation_array[num_of_gen-1]->groups_list;
-  R1_R2_auxiliary *new_auxiliary;
+    float fitness_array[(num_of_groups*persons_per_group)];
+/*  int theseis_pinaka=num_of_groups*persons_per_group; */
+    int counter=0;
+    int counter1=0;
+    int i,j;
+    double fitness_asked1=0;
+    int group_counter1,person_counter1;
+    group *temp=generation_array[num_of_gen-1]->groups_list;
+    group *temp1=generation_array[num_of_gen-1]->groups_list;
+    R1_R2_auxiliary *new_auxiliary;
 
-  /*  printf("Fitted fathers no_combinations\n"); */
-  new_auxiliary = (R1_R2_auxiliary*)calloc(1, sizeof(R1_R2_auxiliary));
+   /* printf("Fitted fathers row_swapping\n");*/
 
-  /*pinakas fitness einai to dianisma me ta miki analoga me to poso fitted einai*/
-  for(i=0;i<curr_num_of_groups;i++){
-    for(j=0;j<persons_per_group;j++){
-      if(i==0 && j==0){
-	fitness_array[counter]=temp->person_in_group[j]->fitness;
-      }
-      else{
-	fitness_array[counter] = fitness_array[counter-1] + temp->person_in_group[j]->fitness;
-      }
-      /* printf("Atomiko FItness: %f \n",temp->person_in_group[j]->fitness);*/
-      /*  printf("Fitness_array[%d]:%f \n",counter,fitness_array[counter]);*/
-      counter++;
+    new_auxiliary = (R1_R2_auxiliary*)calloc(1, sizeof(R1_R2_auxiliary));
+
+    /*pinakas fitness einai to dianisma me ta miki analoga me to poso fitted einai*/
+    for(i=0;i<curr_num_of_groups;i++){
+        for(j=0;j<persons_per_group;j++){
+            if(i==0&&j==0){
+                fitness_array[counter]=temp->person_in_group[j]->fitness;
+            }
+            else{
+                fitness_array[counter]=fitness_array[counter-1]+temp->person_in_group[j]->fitness;
+            }
+            counter++;
+        }
+        if(temp->next!=NULL){
+            temp=temp->next;
+       }
     }
 
-    if(temp->next!=NULL){
-      temp=temp->next;
-    }
-  }
 
+/*    printf("Fitness_array[%d]= %f \n",theseis_pinaka-1,fitness_array[theseis_pinaka-1]);*/
+/*    printf("Fitness of generation = %f  \n",generation_array[num_of_gen-1]->sum_of_fitness);*/
 
-  /*    printf("Fitness_array[%d]= %f \n",theseis_pinaka-1,fitness_array[theseis_pinaka-1]);*/
-  /*    printf("Fitness of generation = %f  \n",generation_array[num_of_gen-1]->sum_of_fitness);*/
+    /*na brw to fitness pou zitaei kai apo ekei mesa na brw ton patera*/
+    fitness_asked1=((double)rand() / RAND_MAX)*generation_array[num_of_gen-1]->sum_of_fitness;
+    /*printf("fitness_asked: %f \n",fitness_asked);*/
 
-  /*na brw to fitness pou zitaei kai apo ekei mesa na brw ton patera*/
-  assert( generation_array[num_of_gen-1]->sum_of_fitness == fitness_array[counter -1]);
-
-  fitness_asked=( (double)rand() / RAND_MAX) * generation_array[num_of_gen-1]->sum_of_fitness;
-  /*  printf("fitness1_asked: %f \n",fitness_asked1); */
-
-  counter=0;
-  while(fitness_asked > fitness_array[counter]){
-    counter++;
-  }
-
-  /* printf("Counter2= %d\n",counter1); */
-
-  group_counter=counter/persons_per_group;
-  person_counter=counter%persons_per_group;
-
-  for(i=0;i<group_counter;i++){
-    if(temp->next!=NULL){
-      temp=temp->next;
-    }
-  }
-
-  /* printf("ID patera %d ID patera %d \n",generation_array[num_of_gen-1]->group_in_population[group_counter1]->person_in_group[person_counter1]->id,generation_array[num_of_gen-1]->group_in_population[group_counter2]->person_in_group[person_counter2]->id);
-   */
-
-  for(i=0;i<genes_per_person;i++){
-    new_auxiliary->R1[i]=temp->person_in_group[person_counter]->gene_R1[i];
-  }
-
-  for(i=0;i<genes_per_person;i++){
-    new_auxiliary->R2[i]=temp->person_in_group[person_counter]->gene_R2[i];
-  }
-
-
-  /*
-    printf("Pira apo prwto patera %d gonidia\n", genes_from_first_parent);
-    for(i=0;i<max_genes_per_person;i++){
-    printf("R1:%d R2: %d\n", new_auxiliary->R1[i],new_auxiliary->R2[i]);
+    counter1=0;
+    while(fitness_asked1>fitness_array[counter1]){
+        counter1++;
     }
 
-  */
-  /*
-    for (i = 0; i < max_genes_per_person; i++){
-    for(j=0;j<max_genes_per_person;j++){
-    printf("%d ",new_auxiliary->dependancies[i][j]);
+      /* printf("Counter= %d\n",counter);*/
+
+    group_counter1=counter1/persons_per_group;
+    person_counter1=counter1%persons_per_group;
+
+
+    for(i=0;i<group_counter1;i++){
+        if(temp1->next!=NULL){
+            temp1=temp1->next;
+       }
     }
-    printf("\n");
+
+    for(i=0;i<genes_per_person;i++){
+        new_auxiliary->R1[i]=temp1->person_in_group[person_counter1]->gene_R1[i];
     }
-  */
-  return new_auxiliary;
+
+    for(i=0;i<genes_per_person;i++){
+        new_auxiliary->R2[i]=temp1->person_in_group[person_counter1]->gene_R2[i];
+    }
+
+    return new_auxiliary;
 }
 
 R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int num_of_gen){
