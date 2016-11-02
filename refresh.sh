@@ -1,10 +1,26 @@
 make clean
 make all
 
-./evonet -selection 1 -s2 5  -N 100 -ploidy 2 -swapping 1 -freq 100 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations 1001 -n 10 -rob 1 -num_of_rob_mutation 50
+#./evonet -selection 1 -s2 5  -N 1000 -ploidy 1 -swapping 1 -freq 100 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations 1001 -n 10 -rob 1 -num_of_rob_mutation 50
 
 #prwtos N |generation num |freq 10 |n 10 |fitness file |matrix file |discrete file |robustness file |
-Rscript mine.R fitness.png 100 1\1 10 10 fitness.txt discrete.txt robustness.txt matrix.txt robust_percent.txt
+#Rscript mine.R fitness.png 100 11 10 10 fitness.txt discrete.txt robustness.txt matrix.txt robust_percent.txt
+
+./evonet -selection 1 -s2 5  -N 1000 -ploidy 2 -swapping 1 -freq 100 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations 101 -n 10 -rob 1 -num_of_rob_mutation 1
+#Rscript mine.R fitness.png 100 11 10 10 fitness.txt discrete.txt robustness.txt matrix.txt robust_percent1.txt
+mv apomonwmenoi.txt apomonwmenoi1.txt
+
+#./evonet -selection 1 -s2 5  -N 1000 -ploidy 1 -swapping 1 -freq 100 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations 101 -n 10 -rob 1 -num_of_rob_mutation 10
+#Rscript mine.R fitness.png 100 11 10 10 fitness.txt discrete.txt robustness.txt matrix.txt robust_percent10.txt
+mv apomonwmenoi.txt apomonwmenoi10.txt
+
+#./evonet -selection 1 -s2 5  -N 1000 -ploidy 1 -swapping 1 -freq 100 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations 101 -n 10 -rob 1 -num_of_rob_mutation 25
+#Rscript mine.R fitness.png 100 11 10 10 fitness.txt discrete.txt robustness.txt matrix.txt robust_percent25.txt
+mv apomonwmenoi.txt apomonwmenoi25.txt
+
+#./evonet -selection 1 -s2 5  -N 1000 -ploidy 1 -swapping 1 -freq 100 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations 101 -n 10 -rob 1 -num_of_rob_mutation 50
+#Rscript mine.R fitness.png 100 11 10 10 fitness.txt discrete.txt robustness.txt matrix.txt robust_percent50.txt
+mv apomonwmenoi.txt apomonwmenoi50.txt
 
 echo Assoi sto period.txt:
 grep -o "1" period.txt | wc -l

@@ -1,11 +1,9 @@
 #include "creators.h"
 extern int curr_num_of_groups;
-person *create_mutations(person *individual,double mu){
+person *create_mutations(person *individual,double mu,gsl_rng *r){
 
   /*create mutations*/
-    const gsl_rng_type * T;
     int result=0;
-    gsl_rng * r;
     int num_of_gene_to_mutate, magic_number = 0;
     int bit_mutation,to_be_mutated;
     int which_R1R2;
@@ -14,20 +12,12 @@ person *create_mutations(person *individual,double mu){
     unsigned int num_of_mutations;
     int euros_kouba;
 
-    /* create a generator chosen by the
-    environment variable GSL_RNG_TYPE */
-
-    gsl_rng_env_setup();
-
-    T = gsl_rng_default;
-    r = gsl_rng_alloc (T);
-
     /* print n random variates chosen from
     the poisson distribution with mean
          parameter mu */
 
     num_of_mutations = gsl_ran_poisson (r, mu);
-    /*printf("num of mutations: %d\n",num_of_mutations);*/
+    /*printf("num of mutations: %u\n",num_of_mutations);*/
 
     euros_kouba=99/genes_per_person;
 
@@ -37,7 +27,6 @@ person *create_mutations(person *individual,double mu){
       num_of_gene_to_mutate=rand() % genes_per_person;
       /* the mutation probability for the last bit is 100 less */
       bit_mutation=rand() % 100;
-
       /*special case, changing the last bit changes the interaction */
       if(bit_mutation==0){
         if(which_R1R2){
@@ -85,7 +74,6 @@ person *create_mutations(person *individual,double mu){
       }
     }
 
-    gsl_rng_free (r);
     return individual;
 }
 

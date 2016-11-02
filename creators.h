@@ -1,12 +1,11 @@
 #ifndef CREATORS_H
 #define CREATORS_H
 
-
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 #include "mathss.h"
 
-person *create_mutations(person *individual,double mu);
+person *create_mutations(person *individual,double mu,gsl_rng *r);
 
 float create_gene_interactions(int R1,int R2);
 

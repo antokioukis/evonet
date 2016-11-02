@@ -16,7 +16,7 @@ int curr_num_of_groups;
 void create_generations(int fitness,float lamda,int num_of_parents,int number_of_groups_wanted,int row_swapping,
                         int min_gene_R1R2,int max_gene_R1R2,int freq,
                         int min_count,int max_count,int generations_wanted,
-                        int generation_change,int pop_size_change,double mutation_rate,int robustness, int robust_changes,
+                        int generation_change,int pop_size_change,double mutation_rate,int robustness, int robust_changes,gsl_rng *r,
                         FILE *r1Output, FILE *r2Output,FILE *matrixOutput, FILE *countsOutput,FILE *fitnessOutput,
                         FILE *discreteOutput,FILE *robustOutput){
     int i,k,l,p,f;
@@ -31,10 +31,10 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
         else{
             if (i%2==0) temp=2; else temp=1;
             if(fitness){
-                generation_array[i%2]=create_gen_population_fit(temp,num_of_parents,row_swapping,min_count,max_count,mutation_rate);
+                generation_array[i%2]=create_gen_population_fit(temp,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r);
             }
             else{
-                generation_array[i%2]=create_gen_population_no_fit(temp,num_of_parents,row_swapping,min_count,max_count,mutation_rate);
+                generation_array[i%2]=create_gen_population_no_fit(temp,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r);
             }
         }
 
@@ -43,7 +43,7 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
                 delete_groups(curr_num_of_groups-(pop_size_change/persons_per_group),i%2);
             }
             else{
-                insert_groups((pop_size_change/persons_per_group)-curr_num_of_groups,lamda,i%2,num_of_parents,fitness,row_swapping,min_count,max_count,mutation_rate);
+                insert_groups((pop_size_change/persons_per_group)-curr_num_of_groups,lamda,i%2,num_of_parents,fitness,row_swapping,min_count,max_count,mutation_rate,r);
             }
         }
 
@@ -159,6 +159,9 @@ int main(int argc, char** argv){
     int robustness=0;
     int robust_changes=0;
 
+    const gsl_rng_type * T;
+    gsl_rng * r;
+
 
     FILE *r1Output,*r2Output, *matrixOutput, *countsOutput, *fitnessOutput, *discreteOutput, *robustOutput;
 
@@ -173,6 +176,15 @@ int main(int argc, char** argv){
     robustOutput=NULL;
 
     srand (time(NULL));
+
+    /* create a generator chosen by the
+    environment variable GSL_RNG_TYPE */
+
+    gsl_rng_env_setup();
+
+    T = gsl_rng_default;
+    r = gsl_rng_alloc (T);
+
 
     for( i = 1; i < argc; ++i){
         /* neutral or selection */
@@ -325,9 +337,10 @@ int main(int argc, char** argv){
 
     create_generations(fitness,lamda,num_of_parents,
         groups_wanted,R1R2_swapping,min_gene_R1R2,max_gene_R1R2,freq,min_count,max_count,
-        generations,generation_change,pop_size_change,mutation_rate,robustness,robust_changes,
+        generations,generation_change,pop_size_change,mutation_rate,robustness,robust_changes,r,
          r1Output, r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput,robustOutput);
 
+    gsl_rng_free (r);
     fclose(r1Output);
     fclose(r2Output);
     fclose(matrixOutput);

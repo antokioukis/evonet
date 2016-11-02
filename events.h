@@ -9,7 +9,6 @@
 
 void delete_groups(int groups_to_delete,int num_of_generation);
 
-void insert_groups(int groups_to_insert,float lamda,int num_of_generation,int num_of_parents,int fitness,int row_swapping,int min_count,int max_count,double mutation_rate);
+void insert_groups(int groups_to_insert,float lamda,int num_of_generation,int num_of_parents,int fitness,int row_swapping,int min_count,int max_count,double mutation_rate,gsl_rng *r);
 
-void create_event(int type_of_event,float lamda,int groups_affected,int num_of_generation,int num_of_parents, int fitness, int row_swapping,int min_count,int max_count,double mutation_rate);
 #endif
