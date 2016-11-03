@@ -444,6 +444,13 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
     }
 */
     new_person=create_mutations(new_person,mutation_rate,r);
+    /*for(i=0;i<genes_per_person;i++){
+        if(new_person->gene_R1[i]>100) printf("neo R1[%d]=%d\n",i,new_person->gene_R1[i]);
+    }
+    for(i=0;i<genes_per_person;i++){
+        if(new_person->gene_R2[i]>100) printf("neo R2[%d]=%d\n",i,new_person->gene_R2[i]); 
+    }
+    */
     for(i=0;i<genes_per_person;i++){
         for(j=0;j<genes_per_person;j++){
             /*new_person->gene_interactions[i][j]=random_normal_distrubution(0,sqrt(10));*/

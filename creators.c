@@ -1,6 +1,39 @@
 #include "creators.h"
 extern int curr_num_of_groups;
-person *create_mutations(person *individual,double mu,gsl_rng *r){
+
+person *deep_copy_person(person *destination,person *arrival){
+
+    int j,m;
+
+    destination->periodos=arrival->periodos;
+    destination->mature=arrival->mature;
+    destination->fitness=arrival->fitness;
+    destination->id=arrival->id;
+
+    for(j=0;j<max_genes_per_person;j++){
+        destination->gene_counts[j]=arrival->gene_counts[j];
+    }
+
+    for(j=0;j<max_genes_per_person;j++){
+        destination->vector_of_signs[j]=arrival->vector_of_signs[j];
+        destination->gene_R1[j]=arrival->gene_R1[j];
+        destination->gene_R2[j]=arrival->gene_R2[j];
+    }
+
+    for(j=0;j<max_genes_per_person;j++){
+        for(m=0;m<max_genes_per_person;m++){
+            destination->gene_interactions[j][m]=arrival->gene_interactions[j][m];
+        }
+    }
+
+    for(j=0;j<1024;j++){
+        destination->maturity_array[j]=arrival->maturity_array[j];
+    }
+    return destination;
+}
+
+
+person *create_mutations(person *foreigner,double mu,gsl_rng *r){
 
   /*create mutations*/
     int result=0;
@@ -11,6 +44,7 @@ person *create_mutations(person *individual,double mu,gsl_rng *r){
     int koubas=0;
     unsigned int num_of_mutations;
     int euros_kouba;
+    person *individual;
 
     /* print n random variates chosen from
     the poisson distribution with mean
@@ -19,7 +53,12 @@ person *create_mutations(person *individual,double mu,gsl_rng *r){
     num_of_mutations = gsl_ran_poisson (r, mu);
     /*printf("num of mutations: %u\n",num_of_mutations);*/
 
-    euros_kouba=99/genes_per_person;
+    euros_kouba=99/sensitivity;
+
+    /*deep copy foreigner se temp*/
+    individual = (person*)calloc(1, sizeof(person));
+    individual=deep_copy_person(individual,foreigner);
+
 
     for(j=0;j<num_of_mutations;j++){
       which_R1R2=rand()%2;
@@ -54,21 +93,24 @@ person *create_mutations(person *individual,double mu,gsl_rng *r){
         while(bit_mutation>koubas){
           koubas=koubas+euros_kouba;
         }
-        koubas=koubas/genes_per_person;
+
+        koubas=koubas/(sensitivity/10);
 
         if(which_R1R2){
           to_be_mutated=individual->gene_R1[num_of_gene_to_mutate];
           magic_number = 1 << koubas;
           result = to_be_mutated ^ magic_number;
-          /*printf("palio: %d, koubas: %d, kainourio: %d\n", to_be_mutated, koubas, result);*/
+         /* printf("palio: %d, koubas: %d, kainourio: %d\n", to_be_mutated, koubas, result); */ 
           individual->gene_R1[num_of_gene_to_mutate]=result;
+         /* printf("kainourio: %d\n", individual->gene_R1[num_of_gene_to_mutate]); */
         }
         else{
           to_be_mutated=individual->gene_R2[num_of_gene_to_mutate];
           magic_number = 1 << koubas;
           result = to_be_mutated ^ magic_number;
-          /*printf("palio: %d, koubas: %d, kainourio: %d\n", to_be_mutated, koubas, result);*/
+         /* printf("palio: %d, koubas: %d, kainourio: %d\n", to_be_mutated, koubas, result); */
           individual->gene_R2[num_of_gene_to_mutate]=result;
+         /* printf("kainourio: %d\n", individual->gene_R2[num_of_gene_to_mutate]); */
         }
 
       }

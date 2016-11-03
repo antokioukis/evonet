@@ -10,7 +10,7 @@
 #define num_of_groups 10000
 #define max_genes_per_person 10
 #define rate_of_mutation 1
-
+#define sensitivity 30
 
 typedef struct R1_R2_auxiliary{
     int R1[max_genes_per_person];

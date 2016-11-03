@@ -56,7 +56,7 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
             for(k=0;k<curr_num_of_groups;k++){ /*sarwse olo ton pli8ismo kai deep copy*/
                 /*deep copy atomou*/
                 for(l=0;l<persons_per_group;l++){
-                    temp_robust_group->person_in_group[l]=deep_copy_person(temp_robust_group->person_in_group[l],temp_normal_group->person_in_group[l]);
+                    temp_robust_group->person_in_group[l]=deep_copy_person_robust(temp_robust_group->person_in_group[l],temp_normal_group->person_in_group[l]);
                 }
 
                 if(temp_robust_group->next!=NULL&&temp_normal_group->next!=NULL){

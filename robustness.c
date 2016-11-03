@@ -1,6 +1,6 @@
 #include "robustness.h"
 extern int curr_num_of_groups;
-person *deep_copy_person(person *temp_robust_person,person *temp_normal_person){
+person *deep_copy_person_robust(person *temp_robust_person,person *temp_normal_person){
 
     int j,m;
 
@@ -50,7 +50,7 @@ person *create_specific_mutations(person *individual,int num_of_mutations,int la
     the poisson distribution with mean
          parameter mu */
 
-    euros_kouba=99/genes_per_person;
+    euros_kouba=99/sensitivity;
 
     for(j=0;j<num_of_mutations;j++){
       which_R1R2=rand()%2;
@@ -86,7 +86,7 @@ person *create_specific_mutations(person *individual,int num_of_mutations,int la
         while(bit_mutation>koubas){
           koubas=koubas+euros_kouba;
         }
-        koubas=koubas/genes_per_person;
+        koubas=koubas/(sensitivity/10);
 
         if(which_R1R2){
           to_be_mutated=individual->gene_R1[num_of_gene_to_mutate];
