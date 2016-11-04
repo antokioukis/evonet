@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <math.h>
 
-int curr_num_of_groups;
-
 #include "robustness.h"
 #include "extract.h"
 #include "generation_fit.h"
@@ -12,11 +10,15 @@ int curr_num_of_groups;
 #include "events.h"
 #include "generation_no_fit.h"
 
+int curr_num_of_groups;
+int sensitivity;
 
 void create_generations(int fitness,float lamda,int num_of_parents,int number_of_groups_wanted,int row_swapping,
                         int min_gene_R1R2,int max_gene_R1R2,int freq,
                         int min_count,int max_count,int generations_wanted,
-                        int generation_change,int pop_size_change,double mutation_rate,int robustness, int robust_changes,gsl_rng *r,
+                        int generation_change,int pop_size_change,double mutation_rate,
+                        int robustness, int robust_changes,int robust_last_bit,
+                        gsl_rng *r,
                         FILE *r1Output, FILE *r2Output,FILE *matrixOutput, FILE *countsOutput,FILE *fitnessOutput,
                         FILE *discreteOutput,FILE *robustOutput){
     int i,k,l,p,f;
@@ -70,7 +72,7 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
             }
 
             robust_population->groups_list=temp_robust_group;
-            check_robustness(robustOutput,robust_population,robust_changes,1,1);
+            check_robustness(robustOutput,robust_population,robust_changes,robust_last_bit,1,r);
         }
         /*END OF ROBUSTNESS*/
 
@@ -114,6 +116,8 @@ void print_help(void){
     printf("-mutrate X:                 Mutation Rate (Double) (Default: 0.001) \n");
     printf("-rob X:                     Check for robustness (Binary) \n");
     printf("-num_of_rob_mutation X:     Number of mutations per robustness check (Integer) \n");
+    printf("-rob_last                   On robust mutations change last bit of R1 R2 interactions (Binary)\n");
+    printf("-sense X:                   Number of sensitivity in R1 and R2 (Default:30)");
 
 
     printf("\n");
@@ -158,6 +162,7 @@ int main(int argc, char** argv){
     double mutation_rate=0.001;
     int robustness=0;
     int robust_changes=0;
+    int robust_last_bit=0;
 
     const gsl_rng_type * T;
     gsl_rng * r;
@@ -165,6 +170,7 @@ int main(int argc, char** argv){
 
     FILE *r1Output,*r2Output, *matrixOutput, *countsOutput, *fitnessOutput, *discreteOutput, *robustOutput;
 
+    sensitivity=30;
     curr_num_of_groups=0;
 
     r2Output=NULL;
@@ -321,6 +327,20 @@ int main(int argc, char** argv){
             continue;
         }
 
+        if( strcmp(argv[i], "-sense" ) == 0 ){
+            sensitivity=atoi(argv[++i]);
+            continue;
+        }
+
+        if( strcmp(argv[i], "-rob_last" ) == 0 ){
+            robust_last_bit=atoi(argv[++i]);
+            if( robust_last_bit != 0 && robust_last_bit != 1 ){
+                printf("wrong number on -rob_last use 0 or 1\n");
+                exit(1);
+            }
+            continue;
+        }
+
         fprintf(stderr, "Argument %s is invalid\n\n\n", argv[i]);
         print_help();
 
@@ -337,7 +357,7 @@ int main(int argc, char** argv){
 
     create_generations(fitness,lamda,num_of_parents,
         groups_wanted,R1R2_swapping,min_gene_R1R2,max_gene_R1R2,freq,min_count,max_count,
-        generations,generation_change,pop_size_change,mutation_rate,robustness,robust_changes,r,
+        generations,generation_change,pop_size_change,mutation_rate,robustness,robust_changes,robust_last_bit,r,
          r1Output, r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput,robustOutput);
 
     gsl_rng_free (r);

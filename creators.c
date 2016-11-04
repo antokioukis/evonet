@@ -1,5 +1,6 @@
 #include "creators.h"
 extern int curr_num_of_groups;
+extern int sensitivity;
 
 person *deep_copy_person(person *destination,person *arrival){
 
@@ -38,12 +39,12 @@ person *create_mutations(person *foreigner,double mu,gsl_rng *r){
   /*create mutations*/
     int result=0;
     int num_of_gene_to_mutate, magic_number = 0;
-    int bit_mutation,to_be_mutated;
+    double bit_mutation;
+    int to_be_mutated;
     int which_R1R2;
     int j=0;
     int koubas=0;
     unsigned int num_of_mutations;
-    int euros_kouba;
     person *individual;
 
     /* print n random variates chosen from
@@ -53,8 +54,10 @@ person *create_mutations(person *foreigner,double mu,gsl_rng *r){
     num_of_mutations = gsl_ran_poisson (r, mu);
     /*printf("num of mutations: %u\n",num_of_mutations);*/
 
-    euros_kouba=99/sensitivity;
+    /*koubas=gsl_rng_uniform(r);
 
+   / euros_kouba=99/sensitivity;
+*/
     /*deep copy foreigner se temp*/
     individual = (person*)calloc(1, sizeof(person));
     individual=deep_copy_person(individual,foreigner);
@@ -65,9 +68,11 @@ person *create_mutations(person *foreigner,double mu,gsl_rng *r){
       /* todo genes_per_person instead of max_genes_per_person */
       num_of_gene_to_mutate=rand() % genes_per_person;
       /* the mutation probability for the last bit is 100 less */
-      bit_mutation=rand() % 100;
+      bit_mutation=gsl_rng_uniform_pos(r);
+
       /*special case, changing the last bit changes the interaction */
-      if(bit_mutation==0){
+      if(bit_mutation<=0.01){
+       /* printf("bit:mutation %f\n",bit_mutation); */
         if(which_R1R2){
             /*no fuss an einai monos ari8mos,to ipoloipo bgainei 1, afairwntas 1, ton kaneis zigo kai den peirazeis to ipoloipo binary represantation*/
             if(individual->gene_R1[num_of_gene_to_mutate]%2){
@@ -90,17 +95,13 @@ person *create_mutations(person *foreigner,double mu,gsl_rng *r){
       }
       else{
         /*bres poios koubas einai */
-        while(bit_mutation>koubas){
-          koubas=koubas+euros_kouba;
-        }
-
-        koubas=koubas/(sensitivity/10);
+        koubas=gsl_rng_uniform_int(r,sensitivity);
 
         if(which_R1R2){
           to_be_mutated=individual->gene_R1[num_of_gene_to_mutate];
           magic_number = 1 << koubas;
           result = to_be_mutated ^ magic_number;
-         /* printf("palio: %d, koubas: %d, kainourio: %d\n", to_be_mutated, koubas, result); */ 
+          /*printf("palio: %d, koubas: %d, kainourio: %d\n", to_be_mutated, koubas, result);  */
           individual->gene_R1[num_of_gene_to_mutate]=result;
          /* printf("kainourio: %d\n", individual->gene_R1[num_of_gene_to_mutate]); */
         }
@@ -108,9 +109,9 @@ person *create_mutations(person *foreigner,double mu,gsl_rng *r){
           to_be_mutated=individual->gene_R2[num_of_gene_to_mutate];
           magic_number = 1 << koubas;
           result = to_be_mutated ^ magic_number;
-         /* printf("palio: %d, koubas: %d, kainourio: %d\n", to_be_mutated, koubas, result); */
+          /*printf("palio: %d, koubas: %d, kainourio: %d\n", to_be_mutated, koubas, result); */
           individual->gene_R2[num_of_gene_to_mutate]=result;
-         /* printf("kainourio: %d\n", individual->gene_R2[num_of_gene_to_mutate]); */
+          /*printf("kainourio: %d\n", individual->gene_R2[num_of_gene_to_mutate]); */
         }
 
       }

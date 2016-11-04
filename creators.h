@@ -5,6 +5,8 @@
 #include <gsl/gsl_rng.h>
 #include "mathss.h"
 
+person *deep_copy_person(person *destination,person *arrival);
+
 person *create_mutations(person *individual,double mu,gsl_rng *r);
 
 float create_gene_interactions(int R1,int R2);

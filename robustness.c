@@ -1,5 +1,7 @@
 #include "robustness.h"
 extern int curr_num_of_groups;
+extern int sensitivity;
+
 person *deep_copy_person_robust(person *temp_robust_person,person *temp_normal_person){
 
     int j,m;
@@ -31,16 +33,16 @@ person *deep_copy_person_robust(person *temp_robust_person,person *temp_normal_p
     return temp_robust_person;
 }
 
-person *create_specific_mutations(person *individual,int num_of_mutations,int last_bit, int other_bits){
+person *create_specific_mutations(person *individual,int num_of_mutations,int last_bit, int other_bits,gsl_rng *r){
 
   /*create mutations*/
     int result=0;
     int num_of_gene_to_mutate, magic_number = 0;
-    int bit_mutation,to_be_mutated;
+    double bit_mutation;
+    int to_be_mutated;
     int which_R1R2;
     int j=0;
     int koubas=0;
-    int euros_kouba;
 
     /* create a generator chosen by the
     environment variable GSL_RNG_TYPE */
@@ -50,17 +52,15 @@ person *create_specific_mutations(person *individual,int num_of_mutations,int la
     the poisson distribution with mean
          parameter mu */
 
-    euros_kouba=99/sensitivity;
-
     for(j=0;j<num_of_mutations;j++){
       which_R1R2=rand()%2;
       /* todo genes_per_person instead of max_genes_per_person */
       num_of_gene_to_mutate=rand() % genes_per_person;
       /* the mutation probability for the last bit is 100 less */
-      bit_mutation=rand() % 100;
+       bit_mutation=gsl_rng_uniform_pos(r);
 
       /*special case, changing the last bit changes the interaction an den to exei dwsei o xristis den mporei na allaxei auto to bit*/
-      if(bit_mutation==0 && last_bit){
+      if(bit_mutation<=0.01 && last_bit){
         if(which_R1R2){
             /*no fuss an einai monos ari8mos,to ipoloipo bgainei 1, afairwntas 1, ton kaneis zigo kai den peirazeis to ipoloipo binary represantation*/
             if(individual->gene_R1[num_of_gene_to_mutate]%2){
@@ -81,12 +81,8 @@ person *create_specific_mutations(person *individual,int num_of_mutations,int la
             }
         }
       }
-      else if(other_bits){
-        /*bres poios koubas einai */
-        while(bit_mutation>koubas){
-          koubas=koubas+euros_kouba;
-        }
-        koubas=koubas/(sensitivity/10);
+        
+        koubas=gsl_rng_uniform_int(r,sensitivity);
 
         if(which_R1R2){
           to_be_mutated=individual->gene_R1[num_of_gene_to_mutate];
@@ -102,16 +98,13 @@ person *create_specific_mutations(person *individual,int num_of_mutations,int la
           /*printf("palio: %d, koubas: %d, kainourio: %d\n", to_be_mutated, koubas, result);*/
           individual->gene_R2[num_of_gene_to_mutate]=result;
         }
-
-      }
     }
-
     return individual;
 }
 
 
 
-void check_robustness(FILE *robustOutput, population *new_population, int num_of_mutations, int last_bit, int other_bits){
+void check_robustness(FILE *robustOutput, population *new_population, int num_of_mutations, int last_bit, int other_bits,gsl_rng *r){
 	person *temp_person;
 	group *temp_group;
 	int k,l,i,j;
@@ -122,7 +115,7 @@ void check_robustness(FILE *robustOutput, population *new_population, int num_of
     for(k=0;k<curr_num_of_groups;k++){ /*sarwse olo ton pli8ismo kai ri3e mutations se olous*/
         for(l=0;l<persons_per_group;l++){
             temp_person=temp_group->person_in_group[l];
-            temp_person=create_specific_mutations(temp_person,num_of_mutations,last_bit,other_bits);
+            temp_person=create_specific_mutations(temp_person,num_of_mutations,last_bit,other_bits,r);
 
     		for(i=0;i<genes_per_person;i++){
         		for(j=0;j<genes_per_person;j++){

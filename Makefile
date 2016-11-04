@@ -10,7 +10,7 @@ all: $(TARGET)
 	gcc -ansi -Wall -pedantic $< -c -o $@
 
 $(TARGET): $(OBJECTS)
-	gcc $(OBJECTS) -o $@ -lm -lpthread -lgsl -lgslcblas
+	gcc $(OBJECTS) -o $@ -lm -lgsl -lgslcblas
 
 clean:
 	rm  $(TARGET)
