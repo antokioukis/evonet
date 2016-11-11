@@ -27,12 +27,10 @@ person *deep_copy_person(person *destination,person *arrival){
         }
     }
 
-    for(j=0;j<1024;j++){
+    for(j=0;j<size_of_maturity_array;j++){
         destination->maturity_array[j]=arrival->maturity_array[j];
     }
-
     free(arrival);
-
     return destination;
 }
 
@@ -119,7 +117,6 @@ person *create_mutations(person *foreigner,double mu,gsl_rng *r){
 
       }
     }
-
     return individual;
 }
 
@@ -222,7 +219,6 @@ group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2,int min_c
 
     }
     return new_group;
-    curr_num_of_groups++;
 }
 
 

@@ -37,5 +37,6 @@ make all
 #sed '10,10!d' steps.txt | grep -o "3" | wc -l
 #sed '11,11!d' steps.txt | grep -o "3" | wc -l
 
-valgrind --leak-check=yes --track-origins=yes ./evonet -selection 1 -s2 5  -N 1000 -ploidy 1 -swapping 1 -freq 10 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations 51 -n 10 -rob 1 -num_of_rob_mutation 10 -rob_last 0
+
+./evonet -selection 1 -s2 5  -N 1000 -ploidy 1 -swapping 1 -freq 10 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations 101 -n 10 -rob 1 -num_of_rob_mutation 10 -rob_last 0
 #valgrind --leak-check=full --show-leak-kinds=all ./evonet -selection 1 -s2 5  -N 1000 -ploidy 1 -swapping 1 -freq 10 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations 101 -n 10 -rob 1 -num_of_rob_mutation 10 -rob_last 0

@@ -372,6 +372,7 @@ int main(int argc, char** argv){
         generations,generation_change,pop_size_change,mutation_rate,robustness,robust_changes,robust_last_bit,r,
          r1Output, r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput,robustOutput);
 
+
     gsl_rng_free (r);
     fclose(r1Output);
     fclose(r2Output);

@@ -27,7 +27,7 @@ person *deep_copy_person_robust(person *temp_robust_person,person *temp_normal_p
         }
     }
 
-    for(j=0;j<1024;j++){
+    for(j=0;j<size_of_maturity_array;j++){
         temp_robust_person->maturity_array[j]=temp_normal_person->maturity_array[j];
     }
     return temp_robust_person;
