@@ -8,9 +8,9 @@
 #define max_generations 50001
 #define persons_per_group 10
 #define num_of_groups 10000
-#define max_genes_per_person 20
+#define max_genes_per_person 10
 #define rate_of_mutation 1
-#define size_of_maturity_array 1048576
+#define size_of_maturity_array 1024
 
 typedef struct R1_R2_auxiliary{
     int R1[max_genes_per_person];

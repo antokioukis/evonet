@@ -12,7 +12,7 @@ void calculate_fitness(int num_of_gen,float lamda){
     float distance;
     float non_descrete_res[max_genes_per_person];
     int sum=0;
-    int optimal[max_genes_per_person]={1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+    int optimal[max_genes_per_person]={1,1,1,1,1,1,1,1,1,1};
     group* temp;
 
     /*printf("num_of_gen:%d \n",num_of_gen);*/
