@@ -73,6 +73,18 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
 
             robust_population->groups_list=temp_robust_group;
             check_robustness(robustOutput,robust_population,robust_changes,robust_last_bit,1,r);
+            /*freeing memory from robustness*/
+            for(k=0;k<curr_num_of_groups;k++){
+                for(l=0;l<persons_per_group;l++){
+                    free(temp_robust_group->person_in_group[l]);
+                }
+
+                if(temp_robust_group->next!=NULL){
+                    temp_robust_group=temp_robust_group->next;
+                }
+            }
+
+            free(robust_population);
         }
         /*END OF ROBUSTNESS*/
 

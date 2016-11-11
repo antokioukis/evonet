@@ -397,6 +397,7 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
     /*int j;*/
     R1_R2_auxiliary *auxiliary;
     person *new_person;
+    
     new_person = (person*)calloc(1, sizeof(person));
 
     new_person->id=id;

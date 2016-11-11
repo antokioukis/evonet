@@ -30,6 +30,9 @@ person *deep_copy_person(person *destination,person *arrival){
     for(j=0;j<1024;j++){
         destination->maturity_array[j]=arrival->maturity_array[j];
     }
+
+    free(arrival);
+
     return destination;
 }
 
