@@ -7,7 +7,7 @@ TARGET = evonet
 all: $(TARGET)
 
 %.o: %.c
-	gcc -ansi -Wall -pedantic $< -c -o $@
+	gcc -ansi -Wall -pedantic -g $< -c -o $@
 
 $(TARGET): $(OBJECTS)
 	gcc $(OBJECTS) -o $@ -lm -lgsl -lgslcblas -g

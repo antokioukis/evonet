@@ -30,7 +30,7 @@ person *deep_copy_person(person *destination,person *arrival){
     for(j=0;j<size_of_maturity_array;j++){
         destination->maturity_array[j]=arrival->maturity_array[j];
     }
-    free(arrival);
+
     return destination;
 }
 
@@ -62,7 +62,7 @@ person *create_mutations(person *foreigner,double mu,gsl_rng *r){
     /*deep copy foreigner se temp*/
     individual = (person*)calloc(1, sizeof(person));
     individual=deep_copy_person(individual,foreigner);
-
+    free(foreigner);
 
     for(j=0;j<num_of_mutations;j++){
       which_R1R2=rand()%2;
@@ -85,12 +85,12 @@ person *create_mutations(person *foreigner,double mu,gsl_rng *r){
             }
         }
         else{
-            if(individual->gene_R1[num_of_gene_to_mutate]%2){
-                individual->gene_R1[num_of_gene_to_mutate]=individual->gene_R2[num_of_gene_to_mutate]-1;
+            if(individual->gene_R2[num_of_gene_to_mutate]%2){
+                individual->gene_R2[num_of_gene_to_mutate]=individual->gene_R2[num_of_gene_to_mutate]-1;
             }
             /*no fuss an einai monos ari8mos,to ipoloipo bgainei 1, afairwntas 1, ton kaneis zigo kai den peirazeis to ipoloipo binary represantation*/
             else{
-                individual->gene_R1[num_of_gene_to_mutate]=individual->gene_R2[num_of_gene_to_mutate]+1;
+                individual->gene_R2[num_of_gene_to_mutate]=individual->gene_R2[num_of_gene_to_mutate]+1;
             }
         }
       }
