@@ -25,3 +25,17 @@ lines(anakata,col="green",type="l",xlab="Generation Number",ylab="Generation Fit
 legend('bottomright', legend=c("0000000000","1111100000","1010101010","1111111111") , lty=1, col=c('red', 'black', 'green','blue'), bty='n', cex=.75)
 
 dev.off()
+
+
+############################################################################################
+interaction<-as.data.frame(read.table("/home/antonios/Dropbox/sxoli/ptixiaki/evo3/matrix.txt"))
+for (i in 0:10){ #10 sto final loop
+  range3=(i*10000)+1
+  range4=(i*10000)+10000
+  generation<-interaction[range3:range4,]
+  #to 1 edw einai gia to prwto gonidio
+  gene2<-generation[seq(2,10000, by=10 ),]
+  average_out_degree=mean(10-rowSums(gene2==0.0))
+  print(average_out_degree)
+}
+
