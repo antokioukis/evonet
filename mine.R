@@ -88,31 +88,79 @@ sink()
 ###################################################################################################
 ###### create graph fitness + number of generations needed to 90%
 
-anakata=read.table("/home/antonios/Dropbox/sxoli/ptixiaki/evo3/fitnessanakata.txt")
-deka_assoi=read.table("/home/antonios/Dropbox/sxoli/ptixiaki/evo3/fitnessdekaassoi.txt")
-deka_midenika=read.table("/home/antonios/Dropbox/sxoli/ptixiaki/evo3/fitnessmidenika.txt")
-pente_assoi_pente_midenika=read.table("/home/antonios/Dropbox/sxoli/ptixiaki/evo3/fitnesspenteassoi.txt")
+#anakata=read.table("/home/antonios/Dropbox/sxoli/ptixiaki/evo3/fitnessanakata.txt")
+#deka_assoi=read.table("/home/antonios/Dropbox/sxoli/ptixiaki/evo3/fitnessdekaassoi.txt")
+#deka_midenika=read.table("/home/antonios/Dropbox/sxoli/ptixiaki/evo3/fitnessmidenika.txt")
+#pente_assoi_pente_midenika=read.table("/home/antonios/Dropbox/sxoli/ptixiaki/evo3/fitnesspenteassoi.txt")
 
-anakata <- anakata[-c(50:101), ]
-deka_assoi <- deka_assoi[-c(50:101), ]
-deka_midenika <- deka_midenika [-c(50:101), ]
-pente_assoi_pente_midenika <- pente_assoi_pente_midenika [-c(50:501),]
+#anakata <- anakata[-c(50:101), ]
+#deka_assoi <- deka_assoi[-c(50:101), ]
+#deka_midenika <- deka_midenika [-c(50:101), ]
+#pente_assoi_pente_midenika <- pente_assoi_pente_midenika [-c(50:501),]
 
-anakata <- anakata[,-c(1, 2, 3) ]
-deka_assoi <- deka_assoi[,-c(1, 2, 3) ]
-deka_midenika <- deka_midenika [,-c(1, 2, 3) ]
-pente_assoi_pente_midenika <- pente_assoi_pente_midenika [,-c(1, 2, 3) ]
+#anakata <- anakata[,-c(1, 2, 3) ]
+#deka_assoi <- deka_assoi[,-c(1, 2, 3) ]
+#deka_midenika <- deka_midenika [,-c(1, 2, 3) ]
+#pente_assoi_pente_midenika <- pente_assoi_pente_midenika [,-c(1, 2, 3) ]
 
-png(filename="fitness_generations")
+#png(filename="fitness_generations")
 
-plot(deka_midenika,col="red",type="l",xlab="Generation Number",ylab="Generation Fitness")
-lines(deka_assoi,col="blue",type="l",xlab="Generation Number",ylab="Generation Fitness")
+#plot(deka_midenika,col="red",type="l",xlab="Generation Number",ylab="Generation Fitness")
+#lines(deka_assoi,col="blue",type="l",xlab="Generation Number",ylab="Generation Fitness")
 
-lines(pente_assoi_pente_midenika,col="black",type="l",xlab="Generation Number",ylab="Generation Fitness")
-lines(anakata,col="green",type="l",xlab="Generation Number",ylab="Generation Fitness")
+#lines(pente_assoi_pente_midenika,col="black",type="l",xlab="Generation Number",ylab="Generation Fitness")
+#lines(anakata,col="green",type="l",xlab="Generation Number",ylab="Generation Fitness")
 
-legend('bottomright', legend=c("0000000000","1111100000","1010101010","1111111111") , lty=1, col=c('red', 'black', 'green','blue'), bty='n', cex=.75)
+#legend('bottomright', legend=c("0000000000","1111100000","1010101010","1111111111") , lty=1, col=c('red', 'black', 'green','blue'), bty='n', cex=.75)
 
-dev.off()
+#dev.off()
 
 ###################################################################################################
+# indegree outdegree of graph of genes indegree ri8mizetai outdegree ri8mizei
+###########################################################################################
+interaction<-as.data.frame(read.table("/home/antonios/Dropbox/sxoli/ptixiaki/evo3/matrix.txt"))
+
+out_matrix = matrix(nrow=10,ncol=10) # ka8eta ta gonidia orizontia pws e3elissontai ston xrono
+in_matrix = matrix(nrow=10,ncol=10) # ka8eta ta gonidia orizontia pws e3elissontai ston xrono
+
+outdegree<-function(n){
+  for (i in 1:args[4]){ #10 sto final loop
+    range3=(i*10000)+1
+    range4=(i*10000)+10000
+    generation<-interaction[range3:range4,]
+    #to 1 edw einai gia to prwto gonidio
+    gene<-generation[seq(n,10000, by=10 ),]
+    average_out_degree=mean(10-rowSums(gene==0.0))
+    #print(average_out_degree)
+    out_matrix[n,i]<-average_out_degree
+  }
+  return(out_matrix)
+}
+
+indegree<-function(n){
+  for (i in 1:args[4]){ #10 sto final loop
+    range3=(i*10000)+1
+    range4=(i*10000)+10000
+    generation<-interaction[range3:range4,]
+    #to n edw einai gia to poio gonidio
+    gene<-generation[,n]
+    average_in_degree=mean(10000-sum(gene==0.0))
+    #print(average_in_degree)
+    in_matrix[n,i]<-average_in_degree/1000
+  }
+  return(in_matrix)
+}
+
+for (i in 1:args[4]){
+  out_matrix<-outdegree(i)
+  in_matrix<-indegree(i)
+}
+
+print("Out-degree matrix in the passing of generations")
+print(out_matrix)
+print("In-degree matrix in the passing of generations")
+print(in_matrix)
+
+#print(rowMeans(out_matrix, na.rm = FALSE, dims = 1))
+#print(rowMeans(in_matrix, na.rm = FALSE, dims = 1))
+

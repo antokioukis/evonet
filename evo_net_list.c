@@ -133,7 +133,8 @@ void print_help(void){
     printf("-rob X:                     Check for robustness (Binary) \n");
     printf("-num_of_rob_mutation X:     Number of mutations per robustness check (Integer) \n");
     printf("-rob_last                   On robust mutations change last bit of R1 R2 interactions (Binary)\n");
-    printf("-sense X:                   Number of sensitivity in R1 and R2 (Default:30)");
+    printf("-sense X:                   Number of sensitivity in R1 and R2 (Default:30)\n");
+    printf("-mod_change X:              Number of generation after which the evolutionary model changes (Default:-1)\n");
 
 
     printf("\n");
@@ -145,8 +146,8 @@ void print_help(void){
 
     printf("\n");
     printf("-freq X:        Frequency of export of data (Integer)\n");
-    printf("-r1out X:     Write R1_output at specified file (File) (Default R1.txt)\n");
-    printf("-r2out X:     Write R2_output at specified file (File) (Default R2.txt)\n");
+    printf("-r1out X:       Write R1_output at specified file (File) (Default R1.txt)\n");
+    printf("-r2out X:       Write R2_output at specified file (File) (Default R2.txt)\n");
     printf("-matout X:      Write gene_interaction_matrix_output at specified file (Default matrix.txt) \n");
     printf("-gencout X:     Write gene_counts_output at specified file (Default counts.txt)\n");
     printf("-fitout X:      Write fitness_output at specified file (Default fitness.txt)\n");
