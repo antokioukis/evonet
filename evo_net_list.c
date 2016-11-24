@@ -13,7 +13,7 @@
 int curr_num_of_groups;
 int sensitivity;
 
-void create_generations(int fitness,float lamda,int num_of_parents,int number_of_groups_wanted,int row_swapping,
+void create_generations(int fitness,int model_change,float lamda,int num_of_parents,int number_of_groups_wanted,int row_swapping,
                         int min_gene_R1R2,int max_gene_R1R2,int freq,
                         int min_count,int max_count,int generations_wanted,
                         int generation_change,int pop_size_change,double mutation_rate,
@@ -32,6 +32,7 @@ void create_generations(int fitness,float lamda,int num_of_parents,int number_of
         }
         else{
             if (i%2==0) temp=2; else temp=1;
+            if (model_change==i){if (fitness) fitness=0; else fitness=1;}
             if(fitness){
                 generation_array[i%2]=create_gen_population_fit(temp,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r);
             }
@@ -159,6 +160,7 @@ void print_help(void){
 
 int main(int argc, char** argv){
     int i;
+    int model_change;
     int generations;
     int min_count;
     int max_count;
@@ -187,6 +189,7 @@ int main(int argc, char** argv){
 
     sensitivity=30;
     curr_num_of_groups=0;
+    model_change=-1;
 
     r2Output=NULL;
     r1Output=NULL;
@@ -347,6 +350,11 @@ int main(int argc, char** argv){
             continue;
         }
 
+        if( strcmp(argv[i], "-mod_change" ) == 0 ){
+            model_change=atoi(argv[++i]);
+            continue;
+        }
+
         if( strcmp(argv[i], "-rob_last" ) == 0 ){
             robust_last_bit=atoi(argv[++i]);
             if( robust_last_bit != 0 && robust_last_bit != 1 ){
@@ -370,7 +378,7 @@ int main(int argc, char** argv){
     if(robustOutput==NULL) robustOutput = fopen("robustness.txt", "w");
 
 
-    create_generations(fitness,lamda,num_of_parents,
+    create_generations(fitness,model_change,lamda,num_of_parents,
         groups_wanted,R1R2_swapping,min_gene_R1R2,max_gene_R1R2,freq,min_count,max_count,
         generations,generation_change,pop_size_change,mutation_rate,robustness,robust_changes,robust_last_bit,r,
          r1Output, r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput,robustOutput);
