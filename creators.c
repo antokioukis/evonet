@@ -174,17 +174,21 @@ person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2,int min_count,
     new_person->mature=0;
    /* printf("Sto atomo me id: %d \n",new_person->id); */
 
-    for(i=0;i<genes_per_person;i++){
-        new_person->vector_of_signs[i]=0;
-        if(i%2==0)
-        new_person->vector_of_signs[i]=1;  /* first generation so gene_counts always positive on the vector -> 1 */
-    }
 
     for (i=0;i<genes_per_person;i++){
         new_person->gene_R1[i]=rand_interval(min_gene_R1R2,max_gene_R1R2);
         new_person->gene_R2[i]=rand_interval(min_gene_R1R2,max_gene_R1R2);
 
         new_person->gene_counts[i]=rand_interval(min_count,max_count);
+    }
+
+    for(i=0;i<genes_per_person;i++){
+        if (new_person->gene_counts[i]>0){
+            new_person->vector_of_signs[i]=1;  /* first generation so gene_counts always positive on the vector -> 1 */
+        }
+        else{
+            new_person->vector_of_signs[i]=0;
+        }
     }
 
     for(i=0;i<genes_per_person;i++){
