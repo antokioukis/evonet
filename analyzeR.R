@@ -1,4 +1,4 @@
-a <- read.table("R1.txt")
+a <- read.table("run4/R1.txt")
 
 dec2bin <- function(x, n=10)
 {
@@ -51,10 +51,7 @@ getGenerationAlignment <- function(a, ## dataset
 }
 
 
-a
-al <- getGenerationAlignment(a[,1], g=75, n=10, k=1000, ss=10, gindex=1, regLength=30)
-
-unique(al)
+al <- getGenerationAlignment(a[,1], g=5000, n=10, k=500, ss=30, gindex=2, regLength=30)
 
 
-write.table(sort(getGenerationAlignment(a[,1], g=75, n=10, k=1000, gindex=1, regLength=30)), file='R1.alignment', quote=F, row.names=F, col.names=F)
+write.table(sort(getGenerationAlignment(a[,1], g=9999, n=10, ss=30, k=500, gindex=1, regLength=30)), file='R1.alignment', quote=F, row.names=F, col.names=F)

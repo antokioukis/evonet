@@ -1,6 +1,37 @@
 #include "extract.h"
+#include <assert.h>
 
 extern int curr_num_of_groups;
+
+void extract_neutRegion1_generation(FILE *f, int num_of_gen){
+    int i = 0, j = 0, k = 0, l = 0;
+    group *temp = generation_array[num_of_gen] -> groups_list;
+  
+    if(f == NULL){
+        fprintf(stderr, "Error opening a file for outputing neutral regions\n");
+        assert(f != NULL);
+    }
+  
+    for(k=0;k<curr_num_of_groups;k++){
+        for(l=0;l<persons_per_group;l++){
+            /* for(i=0;i<genes_per_person;i++){ */
+            i = 0;
+            fprintf(f, "%d,%d\t", k, l);
+            for(j = 0; j < neutRegionLength; ++j){
+                fprintf(f, "%d",temp->person_in_group[l]->neutRegion1[i][j]);
+            }
+    	   fprintf(f, "\n");
+            /* } */
+        } 
+        if(temp->next!=NULL){
+            temp=temp->next;
+        }
+    }
+    
+    return;
+}
+
+
 void extract_R1R2_generation(FILE *f1,FILE *f2, int num_of_gen){
     int k,l,i;
 
@@ -28,7 +59,7 @@ void extract_R1R2_generation(FILE *f1,FILE *f2, int num_of_gen){
                 fprintf(f2, "%d \n",temp->person_in_group[l]->gene_R2[i]);
             }
         }
-
+    
         if(temp->next!=NULL){
                 temp=temp->next;
         }

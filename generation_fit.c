@@ -90,7 +90,7 @@ void calculate_fitness(int num_of_gen,float lamda){
 }
 
 
-R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_gen){
+R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_gen, int id){
     float fitness_array[(num_of_groups*persons_per_group)];
 /*  int theseis_pinaka=num_of_groups*persons_per_group; */
     int counter=0;
@@ -101,6 +101,7 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
     group *temp=generation_array[num_of_gen-1]->groups_list;
     group *temp1=generation_array[num_of_gen-1]->groups_list;
     R1_R2_auxiliary *new_auxiliary;
+    
 
    /* printf("Fitted fathers row_swapping\n");*/
 
@@ -109,7 +110,7 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
     /*pinakas fitness einai to dianisma me ta miki analoga me to poso fitted einai*/
     for(i=0;i<curr_num_of_groups;i++){
         for(j=0;j<persons_per_group;j++){
-            if(i==0&&j==0){
+            if(i==0 && j==0){
                 fitness_array[counter]=temp->person_in_group[j]->fitness;
             }
             else{
@@ -117,9 +118,9 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
             }
             counter++;
         }
-        if(temp->next!=NULL){
+ /*       if(temp->next!=NULL){*/ 
             temp=temp->next;
-       }
+       
     }
 
 
@@ -134,6 +135,8 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
     while(fitness_asked1>fitness_array[counter1]){
         counter1++;
     }
+
+    /*fprintf(stderr, "%d:%d:%d,",num_of_gen, id,  counter1);*/
 
       /* printf("Counter= %d\n",counter);*/
 
@@ -154,7 +157,12 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
     for(i=0;i<genes_per_person;i++){
         new_auxiliary->R2[i]=temp1->person_in_group[person_counter1]->gene_R2[i];
     }
-
+    
+    for(i=0; i<genes_per_person; ++i)
+        for(j = 0; j < neutRegionLength; ++j)
+	       new_auxiliary->neutRegion1[i][j] = temp1->person_in_group[person_counter1]->neutRegion1[i][j];
+    
+    
     return new_auxiliary;
 }
 
@@ -422,12 +430,12 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
             auxiliary=choose_fitted_father_dependencies_combined_row_swapping(num_of_gen);
         }
         else{
-            auxiliary=choose_fitted_father_dependencies_combined_R1R2_swapping(num_of_gen);
+	  auxiliary=choose_fitted_father_dependencies_combined_R1R2_swapping(num_of_gen);
         }
        /* printf("Atomo %d\n",id); */
     }
     else{
-        auxiliary=choose_fitted_father_dependencies_no_combinations(num_of_gen);
+      auxiliary=choose_fitted_father_dependencies_no_combinations(num_of_gen, id);
     }
 
     /*printf("Created Person\n");*/
@@ -435,7 +443,25 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
         new_person->gene_R1[i]=auxiliary->R1[i];
         new_person->gene_R2[i]=auxiliary->R2[i];
 
-    }/*
+    }
+
+    for(i=0; i<genes_per_person; ++i){
+        for(j = 0; j < neutRegionLength; ++j){
+	       new_person-> neutRegion1[i][j] = auxiliary-> neutRegion1[i][j];
+        }
+    }
+
+    
+    for(i=0; i<genes_per_person; ++i){
+        for(j = 0; j < neutRegionLength; ++j){
+	       if( new_person-> neutRegion1[i][j] == 1 ){
+	           mutatedSites[i][j] = 1;
+	        }
+        }
+    }
+
+
+    /*
     printf("\n");
     for (i = 0; i < max_genes_per_person; i++){
         for(j=0;j<max_genes_per_person;j++){
@@ -444,7 +470,9 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
         printf("\n");
     }
 */
-    new_person=create_mutations(new_person,mutation_rate,r);
+    
+    /* new_person=create_mutations(new_person,mutation_rate,r);w */
+    
     /*for(i=0;i<genes_per_person;i++){
         if(new_person->gene_R1[i]>100) printf("neo R1[%d]=%d\n",i,new_person->gene_R1[i]);
     }
@@ -488,9 +516,19 @@ population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row
     int i;
     group *temp;
 
-    population *new_population;
-    new_population = (population*)calloc(1, sizeof(population));
+    population *new_population = (population*)calloc(1, sizeof(population));
 
+    /* printf("apos: %d, total mutations: %d\n", apos, total_mutations); */
+    
+    apos = 0;
+    total_mutations = 0;
+
+    /* printf("1. mutation vector............\n"); */
+    /* for( i = 0; i < neutRegionLength; ++i) */
+    /*   printf("%d", mutatedSites[0][i]); */
+    /* printf("\n"); */
+
+    
     for(i=0;i<curr_num_of_groups;i++){
         if(i==0){
             /*printf("Head on the group_list of the generation 0");*/
@@ -508,6 +546,59 @@ population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row
             temp->next->prev=temp;
         }
     }
+    
+    
+    /* create_mutation_vector(num_of_gen-1, 0); */
     /*printf("Generation Created\n");*/
+
+    
+    /* printf("\n2. mutation vector............\n"); */
+    /* for( i = 0; i < neutRegionLength; ++i) */
+    /*   printf("%d", mutatedSites[0][i]); */
+    /* printf("\n"); */
+
+    
     return new_population;
 }
+
+void mutate_population(population *pop, double mu, gsl_rng *r){
+    int i = 0, j = 0;
+    group *group = pop -> groups_list;
+  
+    for( i = 0; i < curr_num_of_groups; ++i){
+        assert(group != NULL); 
+        for( j = 0; j < persons_per_group; ++j ){
+            group -> person_in_group[j] = create_mutations(group->person_in_group[j], mu,  r);
+        }
+        group = group->next;
+    }     
+}
+
+
+void create_mutation_vector(int num_of_gen, int agene){
+  
+    int i=0, j=0, k=0, breakflag = 0;
+    group *temp; /*=generation_array[num_of_gen-1]->groups_list; */
+
+    for(k = 0; k < neutRegionLength; ++k){
+        breakflag = 0;
+        temp=generation_array[num_of_gen]->groups_list;
+        assert( temp != NULL);
+        mutatedSites[agene][k] = 0;
+        for( i =0; i < curr_num_of_groups; ++i){
+	        for(j = 0; j < persons_per_group; ++j){
+	            if( temp->person_in_group[j]->neutRegion1[agene][k] == 1 ){
+		            mutatedSites[agene][k] = 1;
+		            breakflag = 1;
+		            break;
+		        }
+	        }
+            if(breakflag){
+                breakflag = 0;
+	           break;
+	        }
+	    temp = temp -> next;
+	   }
+    }
+}
+	   

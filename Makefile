@@ -13,7 +13,7 @@ $(TARGET): $(OBJECTS)
 	gcc $(OBJECTS) -o $@ -lm -lgsl -lgslcblas -g
 
 clean:
+	clear
 	rm  $(TARGET)
 	rm  $(OBJECTS)
 	rm -f *.txt
-	clear

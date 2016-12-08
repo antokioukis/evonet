@@ -5,16 +5,19 @@
 
 
 
-#define max_generations 50001
+#define max_generations 2
 #define persons_per_group 10
 #define num_of_groups 10000
 #define max_genes_per_person 10
 #define rate_of_mutation 1
 #define size_of_maturity_array 1024
+#define neutRegionLength 2000
+
 
 typedef struct R1_R2_auxiliary{
-    int R1[max_genes_per_person];
-    int R2[max_genes_per_person];
+  int R1[max_genes_per_person];
+  int R2[max_genes_per_person];
+  bool neutRegion1[max_genes_per_person][neutRegionLength];
 }R1_R2_auxiliary;
 
 typedef struct person{
@@ -33,6 +36,8 @@ typedef struct person{
     int gene_R1[max_genes_per_person]; /*gia ka8e gonidio, to [10] einai oti 8a paw mexri ton 2^10 san max integer*/
     int gene_R2[max_genes_per_person];
 
+  bool neutRegion1[max_genes_per_person][neutRegionLength]; /* for each gene create a neutral region of length neutRegionLength */
+
 }person;
 
 typedef struct group{
@@ -49,6 +54,10 @@ typedef struct population{
 
 population *generation_array[max_generations];
 
-int genes_per_person;
+int genes_per_person, backmutations;
+
+bool mutatedSites[max_genes_per_person][neutRegionLength];
+
+int apos, total_mutations;
 
 #endif

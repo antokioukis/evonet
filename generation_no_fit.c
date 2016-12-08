@@ -160,7 +160,7 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_row_swapping(int num
 R1_R2_auxiliary *choose_random_father_dependencies_no_combinations(int num_of_gen){
     int group_counter=0;
     int person_counter=0;
-    int id_patera,i;
+    int id_patera,i, j;
     R1_R2_auxiliary *new_auxiliary;
 
 
@@ -168,13 +168,13 @@ R1_R2_auxiliary *choose_random_father_dependencies_no_combinations(int num_of_ge
     new_auxiliary = (R1_R2_auxiliary*)calloc(1, sizeof(R1_R2_auxiliary));
 
     id_patera=rand()%(curr_num_of_groups*persons_per_group);
-    /*printf("ID_patera:%d \n",id_patera); */
+    /* printf("ID_patera:%d \n",id_patera); */
 
     /*printf("Random father no combinations\n");*/
 
     group_counter=id_patera/persons_per_group;
     person_counter=id_patera%persons_per_group;
-    /*printf("Group_of_father %d Person_on_group %d \n",group_counter,person_counter); */
+    /* printf("Group_of_father %d Person_on_group %d \n",group_counter,person_counter); */
     for(i=0;i<group_counter;i++){
         temp=temp->next;
     }
@@ -186,6 +186,10 @@ R1_R2_auxiliary *choose_random_father_dependencies_no_combinations(int num_of_ge
     for(i=0;i<genes_per_person;i++){
         new_auxiliary->R2[i]=temp->person_in_group[person_counter]->gene_R2[i];
     }
+
+    for(i=0; i<genes_per_person; ++i)
+        for(j = 0; j < neutRegionLength; ++j)
+	       new_auxiliary->neutRegion1[i][j] = temp->person_in_group[person_counter]->neutRegion1[i][j];
 
     /*create_mutations(new_dependancies);*/
     return new_auxiliary;
@@ -203,11 +207,14 @@ person *gen_create_person_no_fit(int id,int num_of_gen, int num_of_parents,int r
 
     for (i=0;i<genes_per_person;i++){
         new_person->gene_counts[i]=rand_interval(min_count,max_count);
+	/* pavlos 25.11.2016 */
+	if (new_person->gene_counts[i]>0)
+	  new_person->vector_of_signs[i]=1;
     }
-
-    for(i=0;i<genes_per_person;i++){
-        new_person->vector_of_signs[i]=1;
-    }
+    
+    /* for(i=0;i<genes_per_person;i++){ */
+    /*     new_person->vector_of_signs[i]=1; */
+    /* } */
 
 /*    printf("Creating Inheritance\n");*/
     if(num_of_parents){
@@ -223,26 +230,46 @@ person *gen_create_person_no_fit(int id,int num_of_gen, int num_of_parents,int r
     }
 
     for(i=0;i<genes_per_person;i++){
-        new_person->gene_R1[i]=auxiliary->R1[i];
-        new_person->gene_R2[i]=auxiliary->R2[i];
-       /* printf("R1: %d R2: %d \n",new_person->gene_R1[i],new_person->gene_R2[i]); */
+      new_person->gene_R1[i]=auxiliary->R1[i];
+      new_person->gene_R2[i]=auxiliary->R2[i];
+      /* printf("R1: %d R2: %d \n",new_person->gene_R1[i],new_person->gene_R2[i]); */
 
-    }/*
-    printf("\n");
-    for (i = 0; i < max_genes_per_person; i++){
-        for(j=0;j<max_genes_per_person;j++){
-            printf("%f ",new_person->gene_interactions[i][j]);
+    }
+
+    for(i=0; i<genes_per_person; ++i){
+        for(j = 0; j < neutRegionLength; ++j){
+           new_person-> neutRegion1[i][j] = auxiliary-> neutRegion1[i][j];
         }
-        printf("\n");
     }
-*/
-    new_person=create_mutations(new_person,mutation_rate,r);
-    /*for(i=0;i<genes_per_person;i++){
-        if(new_person->gene_R1[i]>100) printf("neo R1[%d]=%d\n",i,new_person->gene_R1[i]);
+
+    
+    for(i=0; i<genes_per_person; ++i){
+        for(j = 0; j < neutRegionLength; ++j){
+           if( new_person-> neutRegion1[i][j] == 1 ){
+               mutatedSites[i][j] = 1;
+            }
+        }
     }
-    for(i=0;i<genes_per_person;i++){
-        if(new_person->gene_R2[i]>100) printf("neo R2[%d]=%d\n",i,new_person->gene_R2[i]); 
-    }*/
+
+ 
+    /* printf("\n"); */
+    /* for (i = 0; i < max_genes_per_person; i++){ */
+    /*     for(j=0;j<max_genes_per_person;j++){ */
+    /*         printf("%f ",new_person->gene_interactions[i][j]); */
+    /*     } */
+    /*     printf("\n"); */
+    /* } */
+    
+    /*new_person=create_mutations(new_person,mutation_rate,r);*/
+
+
+    
+    /* for(i=0;i<genes_per_person;i++){ */
+    /*   printf("neo R1[%d]=%d, ... %d (%d)\n",i,new_person->gene_R1[i], auxiliary->R1[i], new_person->gene_R1[i] == auxiliary->R1[i]); */
+    /* } */
+    /* for(i=0;i<genes_per_person;i++){ */
+    /*   printf("neo R2[%d]=%d, ... %d (%d)\n",i,new_person->gene_R2[i], auxiliary->R2[i], new_person->gene_R2[i] == auxiliary->R2[i]);  */
+    /* } */
 
     for(i=0;i<genes_per_person;i++){
         for(j=0;j<genes_per_person;j++){

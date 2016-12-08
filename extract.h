@@ -15,4 +15,5 @@ void extract_gene_counts_generation(FILE *f, int num_of_gen);
 void extract_fitness_generation(FILE *f, int num_of_gen);
 
 void extract_robustness(FILE *f,population *new_population);
+void extract_neutRegion1_generation(FILE *f, int num_of_gen);
 #endif

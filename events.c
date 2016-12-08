@@ -15,6 +15,7 @@ void delete_groups(int groups_to_delete,int num_of_generation){
 		if(generation_array[num_of_generation]!=0){
 			for(l=0;l<persons_per_group;l++){
 				generation_array[num_of_generation]->sum_of_fitness=generation_array[num_of_generation]->sum_of_fitness-temp->person_in_group[l]->fitness;
+				free(temp->person_in_group[l]);
 			}
 		}
 		temp=temp->prev;
@@ -35,19 +36,19 @@ void insert_groups(int groups_to_insert,float lamda,int num_of_generation,int nu
 	for(i=0;i<groups_to_insert;i++){
 		if(fitness==0){
 			if(num_of_parents==0){
-				temp->next=gen_create_group_no_fit(curr_num_of_groups+1,num_of_generation,0,row_swapping,min_count,max_count,mutation_rate,r);
+				temp->next=gen_create_group_no_fit(curr_num_of_groups+1,num_of_generation+1,0,row_swapping,min_count,max_count,mutation_rate,r);
 			}
 			else{
-				temp->next=gen_create_group_no_fit(curr_num_of_groups+1,num_of_generation,1,row_swapping,min_count,max_count,mutation_rate,r);
+				temp->next=gen_create_group_no_fit(curr_num_of_groups+1,num_of_generation+1,1,row_swapping,min_count,max_count,mutation_rate,r);
 			}
 
 		}
 		else{
 			if(num_of_parents==0){
-				temp->next=gen_create_group_fit(curr_num_of_groups+1,num_of_generation,0,row_swapping,min_count,max_count,mutation_rate,r);
+				temp->next=gen_create_group_fit(curr_num_of_groups+1,num_of_generation+1,0,row_swapping,min_count,max_count,mutation_rate,r);
 			}
 			else{
-				temp->next=gen_create_group_fit(curr_num_of_groups+1,num_of_generation,1,row_swapping,min_count,max_count,mutation_rate,r);
+				temp->next=gen_create_group_fit(curr_num_of_groups+1,num_of_generation+1,1,row_swapping,min_count,max_count,mutation_rate,r);
 			}
 		}
 

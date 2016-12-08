@@ -4,13 +4,18 @@ extern int sensitivity;
 
 person *deep_copy_person(person *destination,person *arrival){
 
-    int j,m;
+  int j,m, i;
 
     destination->periodos=arrival->periodos;
     destination->mature=arrival->mature;
     destination->fitness=arrival->fitness;
     destination->id=arrival->id;
 
+    for( i = 0; i < max_genes_per_person; ++i)
+      for( j = 0; j < neutRegionLength; ++j)
+	destination -> neutRegion1[i][j] = arrival -> neutRegion1[i][j];
+    
+    
     for(j=0;j<max_genes_per_person;j++){
         destination->gene_counts[j]=arrival->gene_counts[j];
     }
@@ -45,15 +50,20 @@ person *create_mutations(person *foreigner,double mu,gsl_rng *r){
     int which_R1R2;
     int j=0;
     int koubas=0;
-    unsigned int num_of_mutations;
-    person *individual;
-
+    unsigned int num_of_mutations = 0, num_of_neutral_mutations = 0;
+    person *individual = NULL; 
+    
     /* print n random variates chosen from
     the poisson distribution with mean
          parameter mu */
 
     num_of_mutations = gsl_ran_poisson (r, mu);
-    /*printf("num of mutations: %u\n",num_of_mutations);*/
+    
+    num_of_neutral_mutations = gsl_ran_poisson(r, 0.1); /*mu * neutRegionLength / sensitivity);*/
+
+    
+    
+    /*printf("num of mutations: %u, neutral: %u\n",num_of_mutations, num_of_neutral_mutations); */
 
     /*koubas=gsl_rng_uniform(r);
 
@@ -64,6 +74,34 @@ person *create_mutations(person *foreigner,double mu,gsl_rng *r){
     individual=deep_copy_person(individual,foreigner);
     free(foreigner);
 
+    for( j = 0; j < num_of_neutral_mutations; ++j)
+      {
+	/* choose a gene to mutate */
+	int agene = 0; /*gsl_rng_uniform_int(r, max_genes_per_person);*/
+	/* choose a position */
+	
+	
+		
+	if(apos > neutRegionLength-1)
+	  break;
+	
+	if( mutatedSites[agene][apos] == 1 )
+	  {
+	    ++apos;
+	    --j;
+	    continue;
+	  }
+	else
+	  {
+	    total_mutations++;
+	    individual -> neutRegion1[agene][apos] = 1;
+	    mutatedSites[agene][apos] = 1;
+	    ++apos;
+	  }
+	
+      }
+    
+
     for(j=0;j<num_of_mutations;j++){
       which_R1R2=rand()%2;
       /* todo genes_per_person instead of max_genes_per_person */
@@ -72,7 +110,7 @@ person *create_mutations(person *foreigner,double mu,gsl_rng *r){
       bit_mutation=gsl_rng_uniform_pos(r);
 
       /*special case, changing the last bit changes the interaction */
-      if(bit_mutation<=0.01){
+      if(bit_mutation<=0.1){
        /* printf("bit:mutation %f\n",bit_mutation); */
         if(which_R1R2){
             /*no fuss an einai monos ari8mos,to ipoloipo bgainei 1, afairwntas 1, ton kaneis zigo kai den peirazeis to ipoloipo binary represantation*/
@@ -174,11 +212,16 @@ person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2,int min_count,
     new_person->mature=0;
    /* printf("Sto atomo me id: %d \n",new_person->id); */
 
+    /* I create a new neutral region linked with the person. 
+       If there is recombination, probably this is not correct 
+    */
+    for( i = 0; i < genes_per_person; ++i)
+      for( j = 0; j < neutRegionLength; ++j)
+	new_person -> neutRegion1[i][j] = 0;
 
     for (i=0;i<genes_per_person;i++){
         new_person->gene_R1[i]=rand_interval(min_gene_R1R2,max_gene_R1R2);
         new_person->gene_R2[i]=rand_interval(min_gene_R1R2,max_gene_R1R2);
-
         new_person->gene_counts[i]=rand_interval(min_count,max_count);
     }
 
