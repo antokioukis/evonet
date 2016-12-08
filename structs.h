@@ -36,7 +36,7 @@ typedef struct person{
     int gene_R1[max_genes_per_person]; /*gia ka8e gonidio, to [10] einai oti 8a paw mexri ton 2^10 san max integer*/
     int gene_R2[max_genes_per_person];
 
-  bool neutRegion1[max_genes_per_person][neutRegionLength]; /* for each gene create a neutral region of length neutRegionLength */
+    bool neutRegion1[max_genes_per_person][neutRegionLength]; /* for each gene create a neutral region of length neutRegionLength */
 
 }person;
 

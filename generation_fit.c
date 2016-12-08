@@ -298,6 +298,9 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
     double fitness_asked2=0;
     int group_counter1,person_counter1,group_counter2,person_counter2;
     int which_parent;
+
+    int k;
+
     group *temp=generation_array[num_of_gen-1]->groups_list;
     group *temp1=generation_array[num_of_gen-1]->groups_list;
     group *temp2=generation_array[num_of_gen-1]->groups_list;
@@ -367,13 +370,25 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
         which_parent=rand()%2;
         /*row_swapping*/
         if(which_parent==0){
+            /*printf("Apo prwto theseis+euros:%d thesi_neutral:%d euros:%d\n",thesi_neutral+euros,thesi_neutral,euros);*/
             for(j=0;j<genes_per_person;j++){
                 new_auxiliary->R1[j]=temp1->person_in_group[person_counter1]->gene_R1[j];
+                /*NEW CODE*/
+                for(k=0;k<neutRegionLength;k++){
+                    new_auxiliary->neutRegion1[i][k]=temp1->person_in_group[person_counter1]->neutRegion1[i][k];
+                }
+                /*++++++*/
             }
         }
         else{
+            /*printf("Apo deutero theseis+euros:%d thesi_neutral:%d euros:%d\n",thesi_neutral+euros,thesi_neutral,euros);*/
             for(j=0;j<genes_per_person;j++){
                 new_auxiliary->R1[j]=temp2->person_in_group[person_counter2]->gene_R1[j];
+                /*NEW CODE*/
+                for(k=0;k<neutRegionLength;k++){
+                    new_auxiliary->neutRegion1[i][k]=temp1->person_in_group[person_counter1]->neutRegion1[i][k];
+                }
+                /*++++++*/
             }
         }
     }

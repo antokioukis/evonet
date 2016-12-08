@@ -46,11 +46,11 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_R1R2_swapping(int nu
     for(i=0;i<genes_per_person;i++){
         if(i<genes_from_first_parent){
             new_auxiliary->R1[i]=temp1->person_in_group[person_counter1]->gene_R1[i];
-	    new_auxiliary->R2[i]=temp1->person_in_group[person_counter1]->gene_R2[i];
+            new_auxiliary->R2[i]=temp1->person_in_group[person_counter1]->gene_R2[i];
         }
         else{
             new_auxiliary->R1[i]=temp2->person_in_group[person_counter2]->gene_R1[i];
-	    new_auxiliary->R2[i]=temp2->person_in_group[person_counter2]->gene_R2[i];
+	        new_auxiliary->R2[i]=temp2->person_in_group[person_counter2]->gene_R2[i];
         }
     }
 
@@ -83,7 +83,9 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_R1R2_swapping(int nu
 R1_R2_auxiliary *choose_random_father_dependencies_combined_row_swapping(int num_of_gen){
     int group_counter1=0;
     int person_counter1=0;
-    int id_patera1,i,j;
+    int id_patera1;
+
+    int i,j,k;
 
     int group_counter2=0;
     int person_counter2=0;
@@ -126,13 +128,25 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_row_swapping(int num
         which_parent=rand()%2;
         /*row_swapping*/
         if(which_parent==0){
+            /*printf("Apo prwto theseis+euros:%d thesi_neutral:%d euros:%d\n",thesi_neutral+euros,thesi_neutral,euros);*/
             for(j=0;j<genes_per_person;j++){
                 new_auxiliary->R1[j]=temp1->person_in_group[person_counter1]->gene_R1[j];
+                /*NEW CODE*/
+                for(k=0;k<neutRegionLength;k++){
+                    new_auxiliary->neutRegion1[i][k]=temp1->person_in_group[person_counter1]->neutRegion1[i][k];
+                }
+                /*++++++*/
             }
         }
         else{
+            /*printf("Apo deutero theseis+euros:%d thesi_neutral:%d euros:%d\n",thesi_neutral+euros,thesi_neutral,euros);*/
             for(j=0;j<genes_per_person;j++){
-                new_auxiliary->R1[j]=temp1->person_in_group[person_counter2]->gene_R1[j];
+                new_auxiliary->R1[j]=temp2->person_in_group[person_counter2]->gene_R1[j];
+                /*NEW CODE*/
+                for(k=0;k<neutRegionLength;k++){
+                    new_auxiliary->neutRegion1[i][k]=temp1->person_in_group[person_counter1]->neutRegion1[i][k];
+                }
+                /*++++++*/
             }
         }
     }
@@ -147,9 +161,10 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_row_swapping(int num
         }
         else{
             for(j=0;j<genes_per_person;j++){
-                new_auxiliary->R1[j]=temp1->person_in_group[person_counter1]->gene_R2[j];
+                new_auxiliary->R2[j]=temp2->person_in_group[person_counter2]->gene_R2[j];
             }
         }
+
     }
 
     return new_auxiliary;
