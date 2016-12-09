@@ -11,7 +11,7 @@
 #define max_genes_per_person 10
 #define rate_of_mutation 1
 #define size_of_maturity_array 1024
-#define neutRegionLength 2000
+#define neutRegionLength 1000
 
 
 typedef struct R1_R2_auxiliary{

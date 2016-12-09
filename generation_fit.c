@@ -173,7 +173,7 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int nu
     int genes_from_first_parent;
     int counter1=0;
     int counter2=0;
-    int i,j;
+    int i,j,k;
     double fitness_asked1=0;
     double fitness_asked2=0;
     int group_counter1,person_counter1,group_counter2,person_counter2;
@@ -259,13 +259,21 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int nu
 
     for(i=0;i<genes_per_person;i++){
         if(i<genes_from_first_parent){
-	  new_auxiliary->R1[i]=temp1->person_in_group[person_counter1]->gene_R1[i];
-	  new_auxiliary->R2[i]=temp1->person_in_group[person_counter1]->gene_R2[i];
+            new_auxiliary->R1[i]=temp1->person_in_group[person_counter1]->gene_R1[i];
+            new_auxiliary->R2[i]=temp1->person_in_group[person_counter1]->gene_R2[i];
+            /*NEW CODE*/
+            for(k=0;k<neutRegionLength;k++){
+                new_auxiliary->neutRegion1[i][k]=temp1->person_in_group[person_counter1]->neutRegion1[i][k];
+            }
         }
 
         else{
-	  new_auxiliary->R1[i]=temp2->person_in_group[person_counter2]->gene_R1[i];
-	  new_auxiliary->R2[i]=temp2->person_in_group[person_counter2]->gene_R2[i];
+            new_auxiliary->R1[i]=temp2->person_in_group[person_counter2]->gene_R1[i];
+            new_auxiliary->R2[i]=temp2->person_in_group[person_counter2]->gene_R2[i];
+            /*NEW CODE*/
+            for(k=0;k<neutRegionLength;k++){
+                    new_auxiliary->neutRegion1[i][k]=temp2->person_in_group[person_counter2]->neutRegion1[i][k];
+            }
         }
 
     }
@@ -445,7 +453,7 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
             auxiliary=choose_fitted_father_dependencies_combined_row_swapping(num_of_gen);
         }
         else{
-	  auxiliary=choose_fitted_father_dependencies_combined_R1R2_swapping(num_of_gen);
+	       auxiliary=choose_fitted_father_dependencies_combined_R1R2_swapping(num_of_gen);
         }
        /* printf("Atomo %d\n",id); */
     }

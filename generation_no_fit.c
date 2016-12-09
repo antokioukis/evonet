@@ -4,7 +4,7 @@ extern int curr_num_of_groups;
 R1_R2_auxiliary *choose_random_father_dependencies_combined_R1R2_swapping(int num_of_gen){
     int id_patera1,id_patera2;
     int genes_from_first_parent;
-    int i;
+    int i,k;
     int group_counter1,person_counter1,group_counter2,person_counter2;
     group *temp1=generation_array[num_of_gen-1]->groups_list;
     group *temp2=generation_array[num_of_gen-1]->groups_list;
@@ -47,10 +47,18 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_R1R2_swapping(int nu
         if(i<genes_from_first_parent){
             new_auxiliary->R1[i]=temp1->person_in_group[person_counter1]->gene_R1[i];
             new_auxiliary->R2[i]=temp1->person_in_group[person_counter1]->gene_R2[i];
+            /*NEW CODE*/
+            for(k=0;k<neutRegionLength;k++){
+                    new_auxiliary->neutRegion1[i][k]=temp2->person_in_group[person_counter2]->neutRegion1[i][k];
+            }
         }
         else{
             new_auxiliary->R1[i]=temp2->person_in_group[person_counter2]->gene_R1[i];
 	        new_auxiliary->R2[i]=temp2->person_in_group[person_counter2]->gene_R2[i];
+            /*NEW CODE*/
+            for(k=0;k<neutRegionLength;k++){
+                    new_auxiliary->neutRegion1[i][k]=temp2->person_in_group[person_counter2]->neutRegion1[i][k];
+            }
         }
     }
 
