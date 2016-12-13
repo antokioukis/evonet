@@ -3,7 +3,7 @@
 
 extern int curr_num_of_groups;
 
-void extract_neutRegion1_generation(FILE *f, int num_of_gen){
+void extract_neutRegion1_generation(FILE *f, int num_of_gen, int indexOfGene){
     int i = 0, j = 0, k = 0, l = 0;
     group *temp = generation_array[num_of_gen] -> groups_list;
   
@@ -13,19 +13,19 @@ void extract_neutRegion1_generation(FILE *f, int num_of_gen){
     }
   
     for(k=0;k<curr_num_of_groups;k++){
-        for(l=0;l<persons_per_group;l++){
-            /* for(i=0;i<genes_per_person;i++){ */
-            i = 0;
-            fprintf(f, "%d,%d\t", k, l);
-            for(j = 0; j < neutRegionLength; ++j){
-                fprintf(f, "%d",temp->person_in_group[l]->neutRegion1[i][j]);
-            }
-    	   fprintf(f, "\n");
-            /* } */
-        } 
-        if(temp->next!=NULL){
-            temp=temp->next;
-        }
+      for(l=0;l<persons_per_group;l++){
+	/* for(i=0;i<genes_per_person;i++){ */
+	i = indexOfGene;
+	fprintf(f, "%d,%d\t", k, l);
+	for(j = 0; j < neutRegionLength; ++j){
+	  fprintf(f, "%d",temp->person_in_group[l]->neutRegion1[i][j]);
+	}
+	fprintf(f, "\n");
+	/* } */
+      } 
+      if(temp->next!=NULL){
+	temp=temp->next;
+      }
     }
     
     return;

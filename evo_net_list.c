@@ -35,7 +35,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
                         FILE *r1Output, FILE *r2Output,FILE *matrixOutput, FILE *countsOutput,FILE *fitnessOutput,
                         FILE *discreteOutput,FILE *robustOutput, FILE* neutralOutput){
   
-  int i,k,l,f,j,ii,temp_for_free;
+  int i,k,l,f,j,ii,temp_for_free, geneID;
   population *robust_population = NULL;
   group* temp_robust_group = NULL,*temp_normal_group = NULL;
   int temp = 0;
@@ -150,7 +150,10 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
             extract_gene_counts_generation(countsOutput, i%2);
             extract_discrete_generation(discreteOutput,i%2);
             extract_fitness_generation(fitnessOutput,i%2);
-            extract_neutRegion1_generation(neutralOutput, i%2);
+	    
+	    for( geneID = 0; geneID < genes_per_person; ++geneID)
+	      extract_neutRegion1_generation(neutralOutput, i%2, geneID);
+	    
         }
     }
 
