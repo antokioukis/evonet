@@ -27,7 +27,7 @@ void delete_groups(int groups_to_delete,int num_of_generation){
 }
 
 void insert_groups(int groups_to_insert,float lamda,int num_of_generation,int num_of_parents,int fitness,int row_swapping,int min_count,int max_count,
-	double mutation_rate,gsl_rng *r){
+	double mutation_rate,gsl_rng *r, FILE *f){
 	int i;
 	group *temp=generation_array[num_of_generation]->groups_list;
 	while(temp->next!=NULL){
@@ -45,10 +45,10 @@ void insert_groups(int groups_to_insert,float lamda,int num_of_generation,int nu
 		}
 		else{
 			if(num_of_parents==0){
-				temp->next=gen_create_group_fit(curr_num_of_groups+1,num_of_generation+1,0,row_swapping,min_count,max_count,mutation_rate,r);
+				temp->next=gen_create_group_fit(curr_num_of_groups+1,num_of_generation+1,0,row_swapping,min_count,max_count,mutation_rate,r,f);
 			}
 			else{
-				temp->next=gen_create_group_fit(curr_num_of_groups+1,num_of_generation+1,1,row_swapping,min_count,max_count,mutation_rate,r);
+				temp->next=gen_create_group_fit(curr_num_of_groups+1,num_of_generation+1,1,row_swapping,min_count,max_count,mutation_rate,r,f);
 			}
 		}
 

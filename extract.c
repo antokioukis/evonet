@@ -3,32 +3,35 @@
 
 extern int curr_num_of_groups;
 
-void extract_neutRegion1_generation(FILE *f, int num_of_gen, int indexOfGene){
+void* extract_neutRegion1_generation(void *auxialiary){
     int i = 0, j = 0, k = 0, l = 0;
-    group *temp = generation_array[num_of_gen] -> groups_list;
+    thread_auxialiary *temp_auxialiary=auxialiary;
+    group *temp = generation_array[temp_auxialiary->num_of_gen] -> groups_list;
   
-    if(f == NULL){
+   /* printf("num_of_gen %d,index %d\n",temp_auxialiary->num_of_gen,temp_auxialiary->index_of_gene); */
+
+    if(temp_auxialiary->f == NULL){
         fprintf(stderr, "Error opening a file for outputing neutral regions\n");
-        assert(f != NULL);
+        assert(temp_auxialiary->f != NULL);
     }
   
     for(k=0;k<curr_num_of_groups;k++){
-      for(l=0;l<persons_per_group;l++){
-	/* for(i=0;i<genes_per_person;i++){ */
-	i = indexOfGene;
-	fprintf(f, "%d,%d\t", k, l);
-	for(j = 0; j < neutRegionLength; ++j){
-	  fprintf(f, "%d",temp->person_in_group[l]->neutRegion1[i][j]);
-	}
-	fprintf(f, "\n");
-	/* } */
-      } 
-      if(temp->next!=NULL){
-	temp=temp->next;
-      }
+        for(l=0;l<persons_per_group;l++){
+	        i = temp_auxialiary->index_of_gene;
+	        fprintf(temp_auxialiary->f, "%d,%d\t", k, l);
+	        for(j = 0; j < neutRegionLength; ++j){
+	            fprintf(temp_auxialiary->f, "%d",temp->person_in_group[l]->neutRegion1[i][j]);
+	        }
+            fprintf(temp_auxialiary->f, "\n");
+        } 
+      
+        if(temp->next!=NULL){
+	       temp=temp->next;
+        }
     }
     
-    return;
+    free (temp_auxialiary);
+    return NULL;
 }
 
 

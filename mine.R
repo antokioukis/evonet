@@ -164,3 +164,14 @@ print(in_matrix)
 #print(rowMeans(out_matrix, na.rm = FALSE, dims = 1))
 #print(rowMeans(in_matrix, na.rm = FALSE, dims = 1))
 
+#######################################################################################################################
+######## father output
+#######################################################################################################################
+father <- as.data.frame(read.table("/home/antonios/Dropbox/sxoli/ptixiaki/evo3/run1/father.txt"))
+
+for(j in 1:args[3]-1){
+  tabulated<-tabulate(as.numeric(father[j,]))
+  zeros[j]<-sum(tabulated==0)
+}
+
+plot(1:args[3]-1,zeros,type="l")

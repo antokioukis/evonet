@@ -2,7 +2,8 @@
 #define STRUCTS_H
 #include <stdbool.h>
 #include <stdlib.h>
-
+#include <stdio.h>
+#include <pthread.h>
 
 
 #define max_generations 2
@@ -12,7 +13,13 @@
 #define rate_of_mutation 1
 #define size_of_maturity_array 1024
 #define neutRegionLength 1000
+#define number_of_threads max_genes_per_person
 
+typedef struct thread_auxialiary{
+    FILE *f;
+    int num_of_gen;
+    int index_of_gene;
+}thread_auxialiary;
 
 typedef struct R1_R2_auxiliary{
   int R1[max_genes_per_person];
