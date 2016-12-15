@@ -4,7 +4,6 @@
 #include <math.h>
 
 #include "robustness.h"
-#include "extract.h"
 #include "generation_fit.h"
 #include "maturity.h"
 #include "events.h"
@@ -13,8 +12,6 @@
 int curr_num_of_groups;
 int sensitivity;
 int event_index=0;
-
-
 
 
 void check_events(int generation_change[1000][2],int i,float lamda,int num_of_parents,int fitness,int row_swapping,
@@ -77,7 +74,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
 	           generation_array[i%2]=create_gen_population_fit(temp,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,fatherOutput);
             }
             else{
-                generation_array[i%2]=create_gen_population_no_fit(temp,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r);
+                generation_array[i%2]=create_gen_population_no_fit(temp,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,fatherOutput);
             }
 
             if( i % freq == 0){

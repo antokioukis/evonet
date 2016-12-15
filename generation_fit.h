@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include "extract.h"
 #include "creators.h"
 
 void calculate_fitness(int num_of_gen,float lamda);

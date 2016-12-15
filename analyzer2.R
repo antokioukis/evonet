@@ -1,7 +1,7 @@
 a <- read.table("R1.txt")
 
 
-dec2bin <- function(x, n=10)
+dec2bin <- function(x, n=30)
 {
     y <- ""
     for ( i in 1:n ){
@@ -10,8 +10,6 @@ dec2bin <- function(x, n=10)
     }
     return(y)
 }
-
-1:1000 %% 10 == 0
 
 getGenerationAlignment <- function(a, ## dataset
                                    g, ## generation
@@ -33,11 +31,23 @@ getGenerationAlignment <- function(a, ## dataset
     asample <- sample(x=b, size=ss, replace=F)
     alignment <- array("", ss)
     for( i in 1:ss){
-        alignment[i] <- dec2bin(asample[i], 10)
+        alignment[i] <- dec2bin(asample[i], 30)
     }
     return(alignment)
 }
 
-getGenerationAlignment(a[,1], g=10, n=10, k=100, gindex=1)
+#getGenerationAlignment(a[,1], g=10, n=10, k=100, gindex=1)
 
-write.table(sort(getGenerationAlignment(a[,1], g=10, n=10, k=100, ss=100, gindex=1)), file='R1.alignment', quote=F, row.names=F, col.names=F)
+write.table(getGenerationAlignment(a[,1], g=10, n=10, k=1000, ss=1000, gindex=1), file='R1.alignment', quote=F, row.names=F, col.names=F)
+
+R1_data=as.data.frame(read.table("R1.txt"))
+
+sink("R1.alignment")
+for (i in 1:11-1){
+    range1=(i*10000)+1
+    range2=(i*10000)+10000
+    generation=R1_data[range1:range2,]
+    print(count_NAs_generations(i))
+    print(dim(apomonwmenoi))
+}
+sink()

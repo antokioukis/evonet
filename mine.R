@@ -168,10 +168,14 @@ print(in_matrix)
 ######## father output
 #######################################################################################################################
 father <- as.data.frame(read.table("/home/antonios/Dropbox/sxoli/ptixiaki/evo3/run1/father.txt"))
-
-for(j in 1:args[3]-1){
+zeros=matrix(nrow=100,ncol=1)
+#j grammes sto father.txt
+for(j in 1:100){
   tabulated<-tabulate(as.numeric(father[j,]))
   zeros[j]<-sum(tabulated==0)
+  zeros[j]<-zeros[j]/10 #grammes sto father/10
 }
 
-plot(1:args[3]-1,zeros,type="l")
+png(filename="~/childer.png")
+plot(1:100,zeros,type="l",xlab="Generation Number",ylab="Persons without progeny(%)")
+dev.off()

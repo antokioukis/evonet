@@ -3,6 +3,20 @@
 
 extern int curr_num_of_groups;
 
+void extract_father(FILE *f,int father_number1, int father_number2){
+    if (f == NULL){
+        printf("Error opening file father_output!\n");
+        exit(1);
+    }
+
+    if(father_number2==-1){
+        fprintf(f, "%d ",father_number1);
+    }
+    else{
+        fprintf(f, "%d %d ",father_number1,father_number2);
+    }
+}
+
 void* extract_neutRegion1_generation(void *auxialiary){
     int i = 0, j = 0, k = 0, l = 0;
     thread_auxialiary *temp_auxialiary=auxialiary;

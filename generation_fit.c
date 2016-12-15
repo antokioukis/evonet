@@ -2,20 +2,6 @@
 
 extern int curr_num_of_groups;
 
-void extract_father(FILE *f,int father_number1, int father_number2){
-    if (f == NULL){
-        printf("Error opening file father_output!\n");
-        exit(1);
-    }
-
-    if(father_number2==-1){
-        fprintf(f, "%d ",father_number1);
-    }
-    else{
-        fprintf(f, "%d %d ",father_number1,father_number2);
-    }
-}
-
 void calculate_fitness(int num_of_gen,float lamda){
     int i,j,k,c,t;
     /*int w,n;*/

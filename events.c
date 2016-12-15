@@ -36,10 +36,10 @@ void insert_groups(int groups_to_insert,float lamda,int num_of_generation,int nu
 	for(i=0;i<groups_to_insert;i++){
 		if(fitness==0){
 			if(num_of_parents==0){
-				temp->next=gen_create_group_no_fit(curr_num_of_groups+1,num_of_generation+1,0,row_swapping,min_count,max_count,mutation_rate,r);
+				temp->next=gen_create_group_no_fit(curr_num_of_groups+1,num_of_generation+1,0,row_swapping,min_count,max_count,mutation_rate,r,f);
 			}
 			else{
-				temp->next=gen_create_group_no_fit(curr_num_of_groups+1,num_of_generation+1,1,row_swapping,min_count,max_count,mutation_rate,r);
+				temp->next=gen_create_group_no_fit(curr_num_of_groups+1,num_of_generation+1,1,row_swapping,min_count,max_count,mutation_rate,r,f);
 			}
 
 		}

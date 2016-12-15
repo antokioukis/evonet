@@ -18,4 +18,6 @@ void extract_robustness(FILE *f,population *new_population);
 
 void* extract_neutRegion1_generation(void *auxialiary);
 
+void extract_father(FILE *f,int father_number1, int father_number2);
+
 #endif
