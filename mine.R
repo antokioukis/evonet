@@ -7,7 +7,7 @@ args = commandArgs(trailingOnly=TRUE)
 #fitness image export
 
 
-my_fitness=read.table(args[6])
+my_fitness=read.table("~/Dropbox/sxoli/ptixiaki/evo3/run1/fitness.txt")
 
 fitness_of_generation<-as.vector(unlist(my_fitness[4]))
 num_of_generation<-(1:args[3]-1)
@@ -19,7 +19,7 @@ plot(num_of_generation*as.numeric(args[4]),fitness_of_generation,main= args[3] ,
 
 #interaction matrixes
 number=0
-my_interaction_matrixes=as.data.frame(read.table(args[9]))
+my_interaction_matrixes=as.data.frame("~/Dropbox/sxoli/ptixiaki/evo3/run1/matrix.txt")
 
 my_interaction_matrixes[my_interaction_matrixes == 0.0] <- NA
 
@@ -40,7 +40,7 @@ sink()
 
 
 	############apomonwmenoi komboi #########################################################
-my_interaction_matrixes=as.data.frame(read.table(args[9]))
+my_interaction_matrixes=as.data.frame("~/Dropbox/sxoli/ptixiaki/evo3/run1/matrix.txt")
 
 #an mia grammi exei 9 midenika tote exoume apomwnomeno kombo
 sink("apomonwmenoi.txt")
@@ -67,7 +67,7 @@ sink()
 ##################################################################################################
 ##check robustness
 
-a<- read.table(args[7], colClasses=c("character"))
+a<- read.table("~/Dropbox/sxoli/ptixiaki/evo3/run1/robustness.txt", colClasses=c("character"))
 b <- read.table(args[8], colClasses=c("character"))
 
 
@@ -169,13 +169,17 @@ print(in_matrix)
 #######################################################################################################################
 father <- as.data.frame(read.table("/home/antonios/Dropbox/sxoli/ptixiaki/evo3/run1/father.txt"))
 zeros=matrix(nrow=100,ncol=1)
+sorted=matrix(nrow=100,ncol=1)
+
 #j grammes sto father.txt
 for(j in 1:100){
   tabulated<-tabulate(as.numeric(father[j,]))
-  zeros[j]<-sum(tabulated==0)
-  zeros[j]<-zeros[j]/10 #grammes sto father/10
+  tabulated<-sort((tabulated),decreasing = TRUE)
+  sorted[j]<-tabulated[1]
+  #zeros[j]<-sum(tabulated==0)
+  #zeros[j]<-zeros[j]/10 #grammes sto father/10
 }
 
 png(filename="~/childer.png")
-plot(1:100,zeros,type="l",xlab="Generation Number",ylab="Persons without progeny(%)")
+plot(1:100,sorted,type="l",xlab="Generation Number",ylab="Persons without progeny(%)")
 dev.off()
