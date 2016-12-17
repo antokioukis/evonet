@@ -5,22 +5,22 @@ make all
 #r generations_Wanted
 #N pli8ismos
 n=1
-r=101
+r=11
 N=1000
 curDir=`pwd`
-for i in `seq 1 $n`;do
-    mkdir run$i
-    cd run$i
-    $curDir/evonet -selection 1 -s2 5 -N $N -ploidy 1 -swapping 0 -freq 10 -min_R1R2 32766 -max_R1R2 32767 -min_count 10 -max_count 10 -generations $r -n 10 -mutrate 0.1
-    cd $curDir
-done 2>out.txt
+#for i in `seq 1 $n`;do
+#    mkdir run$i
+#    cd run$i
+   $curDir/evonet -selection 0 -s2 5 -N $N -ploidy 2 -swapping 0 -freq 10 -min_R1R2 32766 -max_R1R2 32767 -min_count 10 -max_count 10 -generations $r -n 10 -mutrate 0.1
+#    cd $curDir
+#done 2>out.txt
 
 #./evonet -selection 1 -s2 5 -N $N -ploidy 2 -swapping 0 -freq 10 -min_R1R2 32766 -max_R1R2 32767 -min_count 10 -max_count 10 -generations $r -n 10
 #Rscript countMut.R
 
 #./evonet -selection 1 -s2 5  -N 1000 -ploidy 1 -swapping 1 -freq 100 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations 1001 -n 10 -rob 1 -num_of_rob_mutation 50
 #prwtos N |generation num |freq 10 |n 10 |fitness file |matrix file |discrete file |robustness file |
-Rscript mine.R fitness.png $N 11 10 10 fitness.txt discrete.txt robustness.txt matrix.txt robust_percent.txt
+#Rscript mine.R fitness.png $N 11 10 10 fitness.txt discrete.txt robustness.txt matrix.txt robust_percent.txt
 
 #optimal 1111111111 done
 #./evonet -selection 1 -s2 5  -N 1000 -ploidy 1 -swapping 1 -freq 10 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations 101 -n 10 -rob 1 -num_of_rob_mutation 50
@@ -50,4 +50,4 @@ Rscript mine.R fitness.png $N 11 10 10 fitness.txt discrete.txt robustness.txt m
 #sed '10,10!d' steps.txt | grep -o "3" | wc -l
 #sed '11,11!d' steps.txt | grep -o "3" | wc -l
 
-#$valgrind --leak-check=full --show-leak-kinds=all --show-reachable=no ./evonet -selection 1 -s2 5 -N 100 -ploidy 2 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations 3 -n 10
+#valgrind --leak-check=full --show-leak-kinds=all --show-reachable=no ./evonet -selection 1 -s2 5 -N 100 -ploidy 2 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations 3 -n 10

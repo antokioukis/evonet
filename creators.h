@@ -1,8 +1,7 @@
 #ifndef CREATORS_H
 #define CREATORS_H
 
-#include <gsl/gsl_randist.h>
-#include <gsl/gsl_rng.h>
+
 #include "mathss.h"
 
 person *deep_copy_person(person *destination,person *arrival);

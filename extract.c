@@ -2,8 +2,37 @@
 #include <assert.h>
 
 extern int curr_num_of_groups;
+extern int sensitivity;
+extern int **sensitivity_array;
 
-void extract_father(FILE *f,int father_number1, int father_number2){
+void extract_mutation_array(FILE *f,person *father1,person *father2){
+    int i;
+    if(father2!=NULL){
+        for(i=0;i<genes_per_person;i++){
+            if(father2->vector_of_signs[i]){
+                /*printf("assos2\n");*/
+                sensitivity_array[i][1]++;
+            }
+            else{
+               /* printf("miden2\n"); */
+                sensitivity_array[i][0]++;
+            }
+        }
+    }
+
+    for(i=0;i<genes_per_person;i++){
+        if(father1->vector_of_signs[i]){
+            /*printf("assos1\n"); */
+            sensitivity_array[i][1]++; 
+        }
+        else{
+            /*printf("miden1\n");*/
+            sensitivity_array[i][0]++;
+        }
+    }
+}
+
+void extract_father_id(FILE *f,int father_number1, int father_number2){
     if (f == NULL){
         printf("Error opening file father_output!\n");
         exit(1);

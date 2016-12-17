@@ -90,7 +90,7 @@ void calculate_fitness(int num_of_gen,float lamda){
 }
 
 
-R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_gen, int id, FILE *f){
+R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_gen, int id, FILE *f,FILE *d){
     float fitness_array[(num_of_groups*persons_per_group)];
 /*  int theseis_pinaka=num_of_groups*persons_per_group; */
     int counter=0;
@@ -137,7 +137,7 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
         counter1++;
     }
 
-    extract_father(f,counter1,counter2);
+    extract_father_id(f,counter1,counter2);
 
     /*fprintf(stderr, "%d:%d:%d,",num_of_gen, id,  counter1);*/
 
@@ -147,13 +147,13 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
     group_counter1=counter1/persons_per_group;
     person_counter1=counter1%persons_per_group;
 
-
-
     for(i=0;i<group_counter1;i++){
         if(temp1->next!=NULL){
             temp1=temp1->next;
        }
     }
+
+    extract_mutation_array(d,temp1->person_in_group[person_counter1],NULL);
 
     for(i=0;i<genes_per_person;i++){
         new_auxiliary->R1[i]=temp1->person_in_group[person_counter1]->gene_R1[i];
@@ -171,7 +171,7 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
     return new_auxiliary;
 }
 
-R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int num_of_gen,FILE *f){
+R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int num_of_gen,FILE *f,FILE *d){
     float fitness_array[(num_of_groups*persons_per_group)];
 /*  int theseis_pinaka=num_of_groups*persons_per_group; */
     int counter=0;
@@ -237,7 +237,7 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int nu
         counter2++;
     }
 
-    extract_father(f,counter1,counter2);
+    extract_father_id(f,counter1,counter2);
    /* printf("Counter2= %d\n",counter1); */
 
     group_counter1=counter1/persons_per_group;
@@ -258,6 +258,8 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int nu
             temp2=temp2->next;
        }
     }
+
+    extract_mutation_array(d,temp1->person_in_group[person_counter1],temp2->person_in_group[person_counter2]);
 
    /* printf("ID patera %d ID patera %d \n",generation_array[num_of_gen-1]->group_in_population[group_counter1]->person_in_group[person_counter1]->id,generation_array[num_of_gen-1]->group_in_population[group_counter2]->person_in_group[person_counter2]->id);
 */
@@ -301,7 +303,7 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int nu
     return new_auxiliary;
 }
 
-R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num_of_gen,FILE *f){
+R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num_of_gen,FILE *f,FILE *d){
     float fitness_array[(num_of_groups*persons_per_group)];
 /*  int theseis_pinaka=num_of_groups*persons_per_group; */
     int counter=0;
@@ -360,7 +362,7 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
         counter2++;
     }
 
-    extract_father(f,counter1,counter2);
+    extract_father_id(f,counter1,counter2);
    /* printf("Counter= %d\n",counter);*/
 
     group_counter1=counter1/persons_per_group;
@@ -381,6 +383,8 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
             temp2=temp2->next;
        }
     }
+
+    extract_mutation_array(d,temp1->person_in_group[person_counter1],temp2->person_in_group[person_counter2]);
 
     for(i=0;i<genes_per_person;i++){
         which_parent=rand()%2;
@@ -432,7 +436,7 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
 
 
 person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,
-    double mutation_rate,gsl_rng *r,FILE *f){
+    double mutation_rate,gsl_rng *r,FILE *f,FILE *d){
     int i,j;
     /*int j;*/
     R1_R2_auxiliary *auxiliary;
@@ -459,15 +463,15 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
 /*    printf("Creating Inheritance\n");*/
     if(num_of_parents){
         if(row_swapping){
-            auxiliary=choose_fitted_father_dependencies_combined_row_swapping(num_of_gen,f);
+            auxiliary=choose_fitted_father_dependencies_combined_row_swapping(num_of_gen,f,d);
         }
         else{
-	       auxiliary=choose_fitted_father_dependencies_combined_R1R2_swapping(num_of_gen,f);
+	       auxiliary=choose_fitted_father_dependencies_combined_R1R2_swapping(num_of_gen,f,d);
         }
        /* printf("Atomo %d\n",id); */
     }
     else{
-      auxiliary=choose_fitted_father_dependencies_no_combinations(num_of_gen, id,f);
+      auxiliary=choose_fitted_father_dependencies_no_combinations(num_of_gen, id,f,d);
     }
 
     /*printf("Created Person\n");*/
@@ -530,7 +534,7 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
 }
 
 group *gen_create_group_fit(int starting_id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,
-    double mutation_rate,gsl_rng *r,FILE *f){
+    double mutation_rate,gsl_rng *r,FILE *f,FILE *d){
     int i;
 
     group *new_group;
@@ -538,7 +542,7 @@ group *gen_create_group_fit(int starting_id,int num_of_gen, int num_of_parents,i
 /*printf("Group:%d \n",starting_id);*/
     for(i=0;i<persons_per_group;i++){
       /*  printf("Creating Atomo %d\n",i); */
-        new_group->person_in_group[i]=gen_create_person_fit(i,num_of_gen, num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,f);
+        new_group->person_in_group[i]=gen_create_person_fit(i,num_of_gen, num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,f,d);
         /*printf("Atomo created %d\n",i);*/
     }
     return new_group;
@@ -546,7 +550,7 @@ group *gen_create_group_fit(int starting_id,int num_of_gen, int num_of_parents,i
 
 
 population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,
-                                        double mutation_rate,gsl_rng *r,FILE *f){
+                                        double mutation_rate,gsl_rng *r,FILE *f,FILE *d){
     int i;
     group *temp;
 
@@ -566,7 +570,7 @@ population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row
     for(i=0;i<curr_num_of_groups;i++){
         if(i==0){
             /*printf("Head on the group_list of the generation 0");*/
-            new_population->groups_list=gen_create_group_fit(i,num_of_gen,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,f); /*create pointer to group_list, save on the population array*/
+            new_population->groups_list=gen_create_group_fit(i,num_of_gen,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,f,d); /*create pointer to group_list, save on the population array*/
             new_population->groups_list->next=NULL;
             new_population->groups_list->prev=NULL;
         }
@@ -575,12 +579,12 @@ population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row
             while(temp->next!=NULL){
                 temp=temp->next;
             }
-            temp->next=gen_create_group_fit(i,num_of_gen,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,f);
+            temp->next=gen_create_group_fit(i,num_of_gen,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,f,d);
             temp->next->next=NULL;
             temp->next->prev=temp;
         }
     }
-    /*gia to extract_fathers*/
+    /*gia to extract_fathers_id*/
     fprintf(f, "\n");
     
     /* create_mutation_vector(num_of_gen-1, 0); */

@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
-
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_rng.h>
 
 #define max_generations 2
 #define persons_per_group 10
@@ -14,6 +15,19 @@
 #define size_of_maturity_array 1024
 #define neutRegionLength 1000
 #define number_of_threads max_genes_per_person
+
+typedef struct thread_auxialiary_create_person{
+    int i;
+    int num_of_gen;
+    int num_of_parents;
+    int row_swapping;
+    int min_count;
+    int max_count;
+    double mutation_rate;
+    gsl_rng *r;
+    FILE *f;
+    FILE *d;
+}thread_auxialiary_create_person;
 
 typedef struct thread_auxialiary{
     FILE *f;
