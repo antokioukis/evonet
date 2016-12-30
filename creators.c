@@ -77,7 +77,7 @@ person *create_mutations(person *foreigner,double mu,gsl_rng *r){
     for( j = 0; j < num_of_neutral_mutations; ++j)
       {
 	/* choose a gene to mutate */
-	int agene = 0; /*gsl_rng_uniform_int(r, max_genes_per_person);*/
+	int agene = gsl_rng_uniform_int(r, max_genes_per_person);
 	/* choose a position */
 	
 	

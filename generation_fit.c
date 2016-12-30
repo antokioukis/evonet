@@ -282,6 +282,7 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int nu
             for(k=0;k<neutRegionLength;k++){
                     new_auxiliary->neutRegion1[i][k]=temp2->person_in_group[person_counter2]->neutRegion1[i][k];
             }
+            /*++++++*/
         }
 
     }
@@ -406,7 +407,7 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
                 new_auxiliary->R1[j]=temp2->person_in_group[person_counter2]->gene_R1[j];
                 /*NEW CODE*/
                 for(k=0;k<neutRegionLength;k++){
-                    new_auxiliary->neutRegion1[i][k]=temp1->person_in_group[person_counter1]->neutRegion1[i][k];
+                    new_auxiliary->neutRegion1[i][k]=temp2->person_in_group[person_counter1]->neutRegion1[i][k];
                 }
                 /*++++++*/
             }
@@ -491,6 +492,7 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
     for(i=0; i<genes_per_person; ++i){
         for(j = 0; j < neutRegionLength; ++j){
 	       if( new_person-> neutRegion1[i][j] == 1 ){
+             /*   printf("i=%d j=%d\n",i,j); */
 	           mutatedSites[i][j] = 1;
 	        }
         }
@@ -618,15 +620,16 @@ void create_mutation_vector(int num_of_gen, int agene){
   
     int i=0, j=0, k=0, breakflag = 0;
     group *temp; /*=generation_array[num_of_gen-1]->groups_list; */
-
+    /*printf("mpika agene: %d \n",agene); */
     for(k = 0; k < neutRegionLength; ++k){
         breakflag = 0;
         temp=generation_array[num_of_gen]->groups_list;
         assert( temp != NULL);
-        mutatedSites[agene][k] = 0;
+        /*mutatedSites[agene][k] = 0;*/
         for( i =0; i < curr_num_of_groups; ++i){
 	        for(j = 0; j < persons_per_group; ++j){
 	            if( temp->person_in_group[j]->neutRegion1[agene][k] == 1 ){
+                  /*  printf("pote sto if? agene %d \n",agene); */
 		            mutatedSites[agene][k] = 1;
 		            breakflag = 1;
 		            break;

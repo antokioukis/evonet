@@ -42,6 +42,8 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_R1R2_swapping(int nu
        }
     }
 
+    extract_mutation_array(d,temp1->person_in_group[person_counter1],temp2->person_in_group[person_counter2]);
+
    /* printf("ID patera %d ID patera %d \n",generation_array[num_of_gen-1]->group_in_population[group_counter1]->person_in_group[person_counter1]->id,generation_array[num_of_gen-1]->group_in_population[group_counter2]->person_in_group[person_counter2]->id);
 */
     genes_from_first_parent=rand()%genes_per_person;
@@ -138,7 +140,7 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_row_swapping(int num
         temp2=temp2->next;
     }
 
-    /*extract_mutation_array(d,temp1->person_in_group[person_counter1],temp2->person_in_group[person_counter2]); */
+    extract_mutation_array(d,temp1->person_in_group[person_counter1],temp2->person_in_group[person_counter2]);
 
     for(i=0;i<genes_per_person;i++){
         which_parent=rand()%2;
