@@ -122,3 +122,10 @@ unsigned int rand_interval(unsigned int min, unsigned int max){
 
     return min + (r / buckets);
 }
+
+unsigned concatenate(unsigned x, unsigned y) {
+    unsigned pow = 10;
+    while(y >= pow)
+        pow *= 10;
+    return x * pow + y;        
+}

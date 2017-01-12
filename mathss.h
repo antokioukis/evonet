@@ -23,4 +23,7 @@ float eucledian_distance(int final_form[],int optimal[]);
 int NumberOfSetBits(int i);
 
 unsigned int rand_interval(unsigned int min, unsigned int max);
+
+unsigned concatenate(unsigned x, unsigned y);
+
 #endif

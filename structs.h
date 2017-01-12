@@ -3,18 +3,19 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <pthread.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 
 #define max_generations 2
 #define persons_per_group 10
-#define num_of_groups 10000
+#define num_of_groups 1000
 #define max_genes_per_person 10
 #define rate_of_mutation 1
 #define size_of_maturity_array 1024
 #define neutRegionLength 1000
-#define number_of_threads max_genes_per_person
+#define number_of_threads 10
 
 typedef struct thread_auxialiary_create_person{
     int i;

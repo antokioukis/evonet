@@ -2,6 +2,65 @@
 extern int curr_num_of_groups;
 extern int sensitivity;
 
+/*1000 ta atoma 600=10 gonidia 30aria * 2 gia R1 R2 */
+int *create_genotype_hash(population *new_population){
+    int k,l,i,j,t;
+    group *temp;
+    char genotype_hash[10000][600];
+    static int array_genotype_occ[10000];
+    int hash_position=-1;
+    char str[600];
+    char hash_key[600];
+    int found_flag=0;
+
+    for(k=0;k<10000;k++){
+        array_genotype_occ[k]=0;
+    }
+    hash_key[0]=0;
+    
+    temp=new_population->groups_list;
+    for(k=0;k<curr_num_of_groups;k++){
+        for(l=0;l<persons_per_group;l++){
+            /*create genotype, which is also used as a hash_key*/
+            for(i=0;i<genes_per_person;i++){
+                sprintf(str, "%d", temp->person_in_group[l]->gene_R1[i]);
+                strcat(hash_key,str);
+            }
+            for(j=0;j<genes_per_person;j++){
+                sprintf(str, "%d", temp->person_in_group[l]->gene_R2[j]);
+                strcat(hash_key,str);
+            }
+            /*printf("hash_key:%s\n",hash_key);*/
+
+            /*got the key, seacrch if genotype already encountered*/
+            /*printf("hash_position %d\n",hash_position);*/
+            for(t=0;t<hash_position;t++){
+                if(strcmp(hash_key,genotype_hash[t])==0){
+                    /*printf("brika ton gonotipo\n");*/
+                    array_genotype_occ[t]++;
+                    found_flag=1;
+                }
+            }
+
+            if(found_flag==0){
+                /*printf("den brika ton gonotipo\n");*/
+                strcpy(genotype_hash[hash_position], hash_key);
+                array_genotype_occ[hash_position]++;
+                hash_position++;
+            }
+
+            hash_key[0]=0;
+            found_flag=0;
+
+        }
+        if(temp->next!=NULL){
+            temp=temp->next;
+        }
+    }
+
+    return array_genotype_occ;
+}
+
 person *deep_copy_person(person *destination,person *arrival){
 
   int j,m, i;

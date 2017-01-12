@@ -5,13 +5,13 @@ make all
 #r generations_Wanted
 #N pli8ismos
 n=1
-r=11
+r=111
 N=1000
 curDir=`pwd`
 #for i in `seq 1 $n`;do
 #    mkdir run$i
 #    cd run$i
-   $curDir/evonet -selection 0 -s2 5 -N $N -ploidy 2 -swapping 0 -freq 10 -min_R1R2 32766 -max_R1R2 32767 -min_count 10 -max_count 10 -generations $r -n 10 -mutrate 0.1
+   $curDir/evonet -selection 1 -s2 5 -N $N -ploidy 2 -swapping 0 -freq 10 -min_R1R2 11 -max_R1R2 11 -min_count 10 -max_count 10 -generations $r -n 10 -mutrate 0.1
 #    cd $curDir
 #done 2>out.txt
 

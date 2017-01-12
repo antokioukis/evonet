@@ -243,3 +243,20 @@ void extract_robustness(FILE *f,population *new_population){
 
     return;
 }
+
+void extract_genotype_occ(FILE *f,int genotype_occ[10000]){
+    int position=0;
+
+    if (f == NULL)
+    {
+        printf("Error opening file genotype\n");
+        exit(1);
+    }
+
+    while(position<10000-1){
+        if (genotype_occ[position]!=0) fprintf(f,"%d ",genotype_occ[position]);
+        position++;
+    }
+    fprintf(f, "\n");
+
+}
