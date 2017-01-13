@@ -3,11 +3,13 @@ extern int curr_num_of_groups;
 extern int sensitivity;
 
 /*1000 ta atoma 600=10 gonidia 30aria * 2 gia R1 R2 */
-int *create_genotype_hash(population *new_population){
+auxiliary_genotype_data *create_genotype_hash(population *new_population){
     int k,l,i,j,t;
     group *temp;
     char genotype_hash[10000][600];
+    auxiliary_genotype_data *genotype_data;
     static int array_genotype_occ[10000];
+    static float genotype_fitness[10000];
     int hash_position=-1;
     char str[600];
     char hash_key[600];
@@ -15,10 +17,15 @@ int *create_genotype_hash(population *new_population){
 
     for(k=0;k<10000;k++){
         array_genotype_occ[k]=0;
+        genotype_fitness[k]=0;
     }
+
+    genotype_data = (auxiliary_genotype_data*)calloc(1, sizeof(auxiliary_genotype_data));
+
     hash_key[0]=0;
     
     temp=new_population->groups_list;
+
     for(k=0;k<curr_num_of_groups;k++){
         for(l=0;l<persons_per_group;l++){
             /*create genotype, which is also used as a hash_key*/
@@ -46,6 +53,7 @@ int *create_genotype_hash(population *new_population){
                 /*printf("den brika ton gonotipo\n");*/
                 strcpy(genotype_hash[hash_position], hash_key);
                 array_genotype_occ[hash_position]++;
+                genotype_fitness[hash_position]=temp->person_in_group[l]->fitness;
                 hash_position++;
             }
 
@@ -58,7 +66,12 @@ int *create_genotype_hash(population *new_population){
         }
     }
 
-    return array_genotype_occ;
+    for(k=0;k<10000;k++){
+        genotype_data->array_genotype_occ[k]=array_genotype_occ[k];
+        genotype_data->genotype_fitness[k]=genotype_fitness[k];
+    }
+
+    return genotype_data;
 }
 
 person *deep_copy_person(person *destination,person *arrival){

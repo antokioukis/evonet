@@ -17,18 +17,10 @@
 #define neutRegionLength 1000
 #define number_of_threads 10
 
-typedef struct thread_auxialiary_create_person{
-    int i;
-    int num_of_gen;
-    int num_of_parents;
-    int row_swapping;
-    int min_count;
-    int max_count;
-    double mutation_rate;
-    gsl_rng *r;
-    FILE *f;
-    FILE *d;
-}thread_auxialiary_create_person;
+typedef struct auxiliary_genotype_data{
+    int array_genotype_occ[10000];
+    float genotype_fitness[10000];
+}auxiliary_genotype_data;
 
 typedef struct thread_auxialiary{
     FILE *f;

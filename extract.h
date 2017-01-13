@@ -20,6 +20,6 @@ void* extract_neutRegion1_generation(void *auxialiary);
 
 void extract_father(FILE *f,int father_number1, int father_number2);
 
-void extract_genotype_occ(FILE *f,int genotype_occ[10000]);
+void extract_genotype_occ(FILE *f,auxiliary_genotype_data *genotype_data);
 
 #endif

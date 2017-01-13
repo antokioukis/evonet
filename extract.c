@@ -244,7 +244,7 @@ void extract_robustness(FILE *f,population *new_population){
     return;
 }
 
-void extract_genotype_occ(FILE *f,int genotype_occ[10000]){
+void extract_genotype_occ(FILE *f,auxiliary_genotype_data* genotype_data){
     int position=0;
 
     if (f == NULL)
@@ -254,7 +254,7 @@ void extract_genotype_occ(FILE *f,int genotype_occ[10000]){
     }
 
     while(position<10000-1){
-        if (genotype_occ[position]!=0) fprintf(f,"%d ",genotype_occ[position]);
+        if (genotype_data->array_genotype_occ[position]!=0) fprintf(f,"%d %f",genotype_data->array_genotype_occ[position],genotype_data->genotype_fitness[position]);
         position++;
     }
     fprintf(f, "\n");

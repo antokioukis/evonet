@@ -18,5 +18,5 @@ population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene
 
 person *create_mutations(person *foreigner,double mu,gsl_rng *r);
 
-int *create_genotype_hash(population *new_population);
+auxiliary_genotype_data *create_genotype_hash(population *new_population);
 #endif

@@ -45,7 +45,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
     group* temp_robust_group = NULL;
     group *temp_normal_group = NULL;
     int temp = 0;
-    int *genotype_occ=NULL;
+    auxiliary_genotype_data *genotype_data=NULL;
     pthread_t tid[number_of_threads];
     char neutral_output_filename[sizeof "neutralOutput10000.txt"];
     thread_auxialiary *temp_auxialiary;
@@ -99,7 +99,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
             */    
         }
 
-        genotype_occ=create_genotype_hash(generation_array[i%2]);
+        genotype_data=create_genotype_hash(generation_array[i%2]);
         mutate_population(generation_array[i%2],mutation_rate,r);
 
         /* ROBUSTNESS */
@@ -164,6 +164,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
     
         mature_generation(generation_array[i%2],1);
         calculate_fitness(i%2,lamda);
+        genotype_data=create_genotype_hash(generation_array[i%2]);
         if(i%freq==0){
             printf("Generation %d Simulated. \n",i);
             extract_R1R2_generation(r1Output, r2Output,i%2);
@@ -171,7 +172,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
             extract_gene_counts_generation(countsOutput, i%2);
             extract_discrete_generation(discreteOutput,i%2);
             extract_fitness_generation(fitnessOutput,i%2);
-            extract_genotype_occ(genotypeOutput,genotype_occ);
+            extract_genotype_occ(genotypeOutput,genotype_data);
 	    
             /*THREADED EXTRACT*/
             for( geneID = 0; geneID < genes_per_person; ++geneID){
