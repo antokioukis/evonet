@@ -437,8 +437,9 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
 
 
 person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,
-    double mutation_rate,gsl_rng *r,FILE *f,FILE *d){
+    double mutation_rate,gsl_rng *r,int recomb_rate,FILE *f,FILE *d){
     int i,j;
+    int recomb_chance;
     /*int j;*/
     R1_R2_auxiliary *auxiliary;
     person *new_person;
@@ -460,9 +461,12 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
         if(i%2==0)
         new_person->vector_of_signs[i]=1;  /* first generation so gene_counts always positive on the vector -> 1 */
     }
+    
+    recomb_chance=rand()%100;
 
 /*    printf("Creating Inheritance\n");*/
-    if(num_of_parents){
+    if(num_of_parents && recomb_chance<=recomb_rate){
+       /* printf("diplos\n"); */
         if(row_swapping){
             auxiliary=choose_fitted_father_dependencies_combined_row_swapping(num_of_gen,f,d);
         }
@@ -536,7 +540,7 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
 }
 
 group *gen_create_group_fit(int starting_id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,
-    double mutation_rate,gsl_rng *r,FILE *f,FILE *d){
+    double mutation_rate,gsl_rng *r,int recomb_rate,FILE *f,FILE *d){
     int i;
 
     group *new_group;
@@ -544,7 +548,7 @@ group *gen_create_group_fit(int starting_id,int num_of_gen, int num_of_parents,i
 /*printf("Group:%d \n",starting_id);*/
     for(i=0;i<persons_per_group;i++){
       /*  printf("Creating Atomo %d\n",i); */
-        new_group->person_in_group[i]=gen_create_person_fit(i,num_of_gen, num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,f,d);
+        new_group->person_in_group[i]=gen_create_person_fit(i,num_of_gen, num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,recomb_rate,f,d);
         /*printf("Atomo created %d\n",i);*/
     }
     return new_group;
@@ -552,7 +556,7 @@ group *gen_create_group_fit(int starting_id,int num_of_gen, int num_of_parents,i
 
 
 population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,
-                                        double mutation_rate,gsl_rng *r,FILE *f,FILE *d){
+                                        double mutation_rate,gsl_rng *r,int recomb_rate,FILE *f,FILE *d){
     int i;
     group *temp;
 
@@ -572,7 +576,7 @@ population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row
     for(i=0;i<curr_num_of_groups;i++){
         if(i==0){
             /*printf("Head on the group_list of the generation 0");*/
-            new_population->groups_list=gen_create_group_fit(i,num_of_gen,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,f,d); /*create pointer to group_list, save on the population array*/
+            new_population->groups_list=gen_create_group_fit(i,num_of_gen,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,recomb_rate,f,d); /*create pointer to group_list, save on the population array*/
             new_population->groups_list->next=NULL;
             new_population->groups_list->prev=NULL;
         }
@@ -581,7 +585,7 @@ population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row
             while(temp->next!=NULL){
                 temp=temp->next;
             }
-            temp->next=gen_create_group_fit(i,num_of_gen,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,f,d);
+            temp->next=gen_create_group_fit(i,num_of_gen,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,recomb_rate,f,d);
             temp->next->next=NULL;
             temp->next->prev=temp;
         }

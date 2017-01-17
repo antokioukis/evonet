@@ -7,10 +7,10 @@ TARGET = evonet
 all: $(TARGET)
 
 %.o: %.c
-	gcc -ansi -pg -Wall -pedantic -g $< -c -o $@
+	gcc -ansi -Wall -pedantic -g $< -c -o $@
 
 $(TARGET): $(OBJECTS)
-	gcc $(OBJECTS) -pg -o $@ -lm -lgsl -lgslcblas -g -lpthread
+	gcc $(OBJECTS) -o $@ -lm -lgsl -lgslcblas -g -lpthread
 
 clean:
 	clear

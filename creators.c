@@ -22,7 +22,8 @@ auxiliary_genotype_data *create_genotype_hash(population *new_population){
 
     genotype_data = (auxiliary_genotype_data*)calloc(1, sizeof(auxiliary_genotype_data));
 
-    hash_key[0]=0;
+    hash_key[0]='\0';
+    str[0]='\0';
     
     temp=new_population->groups_list;
 
@@ -57,7 +58,8 @@ auxiliary_genotype_data *create_genotype_hash(population *new_population){
                 hash_position++;
             }
 
-            hash_key[0]=0;
+            str[0]='\0';
+            hash_key[0]='\0';
             found_flag=0;
 
         }
@@ -66,7 +68,7 @@ auxiliary_genotype_data *create_genotype_hash(population *new_population){
         }
     }
 
-    for(k=0;k<10000;k++){
+    for(k=0;k<hash_position;k++){
         genotype_data->array_genotype_occ[k]=array_genotype_occ[k];
         genotype_data->genotype_fitness[k]=genotype_fitness[k];
     }

@@ -15,12 +15,12 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int nu
 R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num_of_gen,FILE *f,FILE *d);
 
 
-person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,double mutation_rate,gsl_rng *r,FILE *f,FILE *d);
+person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,double mutation_rate,gsl_rng *r,int recomb_rate,FILE *f,FILE *d);
 
-group *gen_create_group_fit(int starting_id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,double mutation_rate,gsl_rng *r,FILE *f,FILE *d);
+group *gen_create_group_fit(int starting_id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,double mutation_rate,gsl_rng *r,int recomb_rate,FILE *f,FILE *d);
 
 
-population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,double mutation_rate,gsl_rng *r,FILE *f,FILE *d);
+population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,double mutation_rate,gsl_rng *r,int recomb_rate,FILE *f,FILE *d);
 
 void mutate_population(population *pop, double mu, gsl_rng *r);
 
