@@ -4,19 +4,34 @@ make all
 #n fores pou 8a tre3ei
 #r generations_Wanted
 #N pli8ismos
-n=1
-r=5000
+#n=1
+r=50
 N=1000
-curDir=`pwd`
+#curDir=`pwd`
 #for i in `seq 1 $n`;do
 #    mkdir run$i
 #    cd run$i
-#   $curDir/evonet -selection 1 -s2 5 -N $N -ploidy 2 -swapping 0 -freq 10 -min_R1R2 11 -max_R1R2 11 -min_count 10 -max_count 10 -generations $r -n 10 -mutrate 0.1
+#   $curDir/evonet -selection 0 -s2 5 -N $N -ploidy 2 -swapping 0 -freq 1 -min_R1R2 11 -max_R1R2 11 -min_count 10 -max_count 10 -generations $r -n 10 -mutrate 0.1
 #    cd $curDir
 #done 2>out.txt
 
-./evonet -selection 1 -s2 5  -N $N -ploidy 2 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -recomb_rate 5
-Rscript test.R
+
+#./evonet -selection 0 -s2 5 -N $N -ploidy 1 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10
+#./evonet -selection 0 -s2 5 -N $N -ploidy 2 -swapping 0 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10
+#./evonet -selection 0 -s2 5 -N $N -ploidy 2 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10
+
+./evonet -selection 1 -s2 5 -N $N -ploidy 1 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -tarfit 0.40 -optimal 10101
+
+./evonet -selection 1 -s2 5 -N $N -ploidy 1 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -tarfit 0.80
+./evonet -selection 1 -s2 5 -N $N -ploidy 2 -swapping 0 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -tarfit 0.90
+./evonet -selection 1 -s2 5 -N $N -ploidy 2 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -tarfit 0.99
+
+#mv diff_geno.png diff_geno_neut.png
+
+#./evonet -selection 1 -s2 5  -N $N -ploidy 2 -swapping 1 -freq 50 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -recomb_rate 0.05
+#Rscript test.R
+#mv diff_geno.png diff_geno_fit.png
+
 #prwtos N |generation num |freq 10 |n 10 |fitness file |matrix file |discrete file |robustness file |
 #Rscript mine.R fitness.png $N 11 10 10 fitness.txt discrete.txt robustness.txt matrix.txt robust_percent.txt
 

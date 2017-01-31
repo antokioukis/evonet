@@ -17,25 +17,26 @@ int **sensitivity_array;
 
 
 void check_events(int generation_change[1000][2],int i,float lamda,int num_of_parents,int fitness,int row_swapping,
-    int min_count, int max_count,double mutation_rate,gsl_rng *r,int recomb_rate ,FILE *f,FILE *d){
+    int min_count, int max_count,double mutation_rate,gsl_rng *r,float recomb_rate ,int optimal,FILE *f,FILE *d){
 
     if(i==generation_change[event_index][0]){
         if(curr_num_of_groups*persons_per_group>generation_change[event_index][1]){
             delete_groups(curr_num_of_groups-(generation_change[event_index][1]/persons_per_group),i%2);            }
         else{
             insert_groups((generation_change[event_index][1]/persons_per_group)-curr_num_of_groups,lamda,i%2,num_of_parents,fitness,row_swapping,
-                min_count,max_count,mutation_rate,r,recomb_rate,f,d);
+                min_count,max_count,mutation_rate,r,recomb_rate,optimal,f,d);
         }
         event_index++;
     }
 }
 
 void create_generations(int fitness,int model_change,float lamda,int num_of_parents,int number_of_groups_wanted,int row_swapping,
-                        int min_gene_R1R2,int max_gene_R1R2,int freq,
+                        int min_gene_R1R2,int max_gene_R1R2,int freq, int newfreq,
                         int min_count,int max_count,int generations_wanted,
                         int generation_change[1000][2],double mutation_rate,
                         int robustness, int robust_changes,int robust_last_bit,
-                        gsl_rng *r,int recomb_rate,
+                        gsl_rng *r,float recomb_rate,float target_fitness,int optimal,
+                        FILE *start_in,
                         FILE *r1Output, FILE *r2Output,FILE *matrixOutput, FILE *countsOutput,FILE *fitnessOutput,
                         FILE *discreteOutput,FILE *robustOutput,FILE *genotypeOutput,FILE *fatherOutput, FILE *mutationOutput){
   
@@ -50,15 +51,17 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
     char neutral_output_filename[1024];
     thread_auxialiary *temp_auxialiary;
     FILE *file_neutral_gene=NULL;
-  
+    int neut_flag=0;
+    float generation_fitness=0;
+
     for( i = 0; i < max_genes_per_person; ++i){
       for( j = 0; j < neutRegionLength; ++j){
 	       mutatedSites[i][j] = 0;
       }
     }
     
-
-    for(i=0;i<generations_wanted;i++){
+    /*kane opwsdipote ta generation wanted kai meta tsekare eisai se selection? kai den exeis ftasei to apaitoumeno fitness tote kane kai alla runs*/
+    for(i=0;i<generations_wanted||((generation_fitness<=target_fitness)&&fitness);i++){
         for(o=0;o<genes_per_person;o++){
             for(j=0;j<2;j++){
                 sensitivity_array[o][j]=0;
@@ -72,11 +75,19 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
         }
       
         if(i==0){
-            generation_array[i%2]=create_population(number_of_groups_wanted,min_gene_R1R2,max_gene_R1R2,min_count,max_count,1);
+            generation_array[i%2]=create_population(number_of_groups_wanted,min_gene_R1R2,max_gene_R1R2,min_count,max_count,1,start_in);
         }
         else{
 	        if (i%2==0) temp=2; else temp=1;
-            if (model_change==i){if (fitness) fitness=0; else fitness=1;}
+            if (model_change==i){
+	      
+	           if (fitness)
+		          fitness=0;
+	           else
+		          fitness=1;
+	      
+	      freq = newfreq;
+	    }
             if(fitness){
 	           generation_array[i%2]=create_gen_population_fit(temp,num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,
                                                                 recomb_rate,fatherOutput,mutationOutput);
@@ -105,7 +116,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
 
         /* ROBUSTNESS */
         if(i%freq==0 && robustness) {
-            robust_population = create_population(curr_num_of_groups,min_gene_R1R2,max_gene_R1R2,min_count,max_count,0);
+            robust_population = create_population(curr_num_of_groups,min_gene_R1R2,max_gene_R1R2,min_count,max_count,0,NULL);
             temp_robust_group=robust_population->groups_list;
             temp_normal_group=generation_array[i%2]->groups_list;
 
@@ -146,7 +157,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
         /*FREEING MEMORY*/
         if(i!=0){
             check_events(generation_change,i,lamda,num_of_parents,fitness,row_swapping,
-                min_count,max_count,mutation_rate,r,recomb_rate,fatherOutput,mutationOutput);
+                min_count,max_count,mutation_rate,r,recomb_rate,optimal,fatherOutput,mutationOutput);
             if (i%2==0) temp_for_free=1; else temp_for_free = 0;
             while(generation_array[temp_for_free]->groups_list->next!=NULL){
                 for(f=0;f<persons_per_group;f++){
@@ -164,7 +175,8 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
         }
     
         mature_generation(generation_array[i%2],1);
-        calculate_fitness(i%2,lamda);
+        generation_fitness=calculate_fitness(i%2,lamda,optimal)/(curr_num_of_groups*persons_per_group);
+        printf("%f\n",generation_fitness);
         genotype_data=create_genotype_hash(generation_array[i%2]);
         if(i%freq==0){
             printf("Generation %d Simulated. \n",i);
@@ -176,7 +188,8 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
             extract_genotype_occ(genotypeOutput,genotype_data);
 	    
             /*THREADED EXTRACT*/
-            for( geneID = 0; geneID < genes_per_person; ++geneID){
+            /*neut_flag=0;*/
+            for( geneID = 0; geneID < genes_per_person && neut_flag; ++geneID){
                 sprintf(neutral_output_filename, "neutralOutput%03d.txt", geneID);
                 file_neutral_gene = fopen(neutral_output_filename, "a");
                 temp_auxialiary=calloc(1,sizeof(thread_auxialiary));
@@ -220,11 +233,15 @@ void print_help(void){
     printf("-rob X:                     Check for robustness (Binary) \n");
     printf("-num_of_rob_mutation X:     Number of mutations per robustness check (Integer) \n");
     printf("-rob_last                   On robust mutations change last bit of R1 R2 interactions (Binary)\n");
+
+    printf("\n");
     printf("-sense X:                   Number of sensitivity in R1 and R2 (Default:30)\n");
     printf("-mod_change X:              Number of generation after which the evolutionary model changes (Default:-1)\n");
-    printf("-recomb_rate X:             Recombination Rate representing percentage(Integer)(Default: 0)\n");
-
-
+    printf("-recomb_rate X:             Recombination Rate representing percentage(Float)(Default: 0)\n");
+    printf("-seed X:                    Set the seed for the random distributions, (Default is taken from current time)\n");
+    printf("-tarfit X:                  Set the target average generation fitness of population, if reached program will quit\n");
+    printf("-optimal X:                 Set the target optimal which the population tries to reach\n");
+    printf("-st_geno X:                 File where the starting genotypes can be read\n");
 
     printf("\n");
     printf("-N X:           Number of persons to be simulated (Integer)\n");
@@ -264,27 +281,33 @@ int main(int argc, char** argv){
     int R1R2_swapping=0;
     int min_gene_R1R2;
     int max_gene_R1R2;
-    int freq;
+    int freq, newfreq = 2;
     int generation_change[1000][2]={{-1}};
     double mutation_rate=0.001;
     int robustness=0;
     int robust_changes=0;
     int robust_last_bit=0;
-    int recomb_rate=0;
-
+    float recomb_rate=0;
+    long int seed;
     clock_t end,begin;
+    float target_fitness=-1;
+    int optimal=0000000000;
 
     const gsl_rng_type * T;
     gsl_rng * r;
 
+    
+
 
     FILE *r1Output,*r2Output, *matrixOutput, *countsOutput, *fitnessOutput, *discreteOutput, *robustOutput, *genotypeOutput , *fatherOutput, *mutationOutput;
+    FILE *infofile,*start_in;
 
     sensitivity=30;
     curr_num_of_groups=0;
     model_change=-1;
     m=0;
 
+    start_in=NULL;
     r2Output=NULL;
     r1Output=NULL;
     matrixOutput=NULL;
@@ -296,7 +319,10 @@ int main(int argc, char** argv){
     fatherOutput = NULL;
     mutationOutput = NULL;
 
-    srand (time(NULL));
+    seed = time(NULL);
+    
+    
+    
     begin = clock();
     /* create a generator chosen by the
     environment variable GSL_RNG_TYPE */
@@ -449,8 +475,13 @@ int main(int argc, char** argv){
             continue;
         }
 
+        if( strcmp(argv[i], "-tarfit" ) == 0 ){
+            target_fitness=atof(argv[++i]);
+            continue;
+        }
+
         if( strcmp(argv[i], "-recomb_rate" ) == 0 ){
-            recomb_rate=atoi(argv[++i]);
+            recomb_rate=atof(argv[++i]);
             continue;
         }
 
@@ -469,9 +500,20 @@ int main(int argc, char** argv){
             continue;
         }
 
-        if( strcmp(argv[i], "-mod_change" ) == 0 ){
-            model_change=atoi(argv[++i]);
+        if( strcmp(argv[i], "-st_geno" ) == 0 ){
+            start_in=fopen(argv[++i],"r");
             continue;
+        }
+
+        if( strcmp(argv[i], "-optimal" ) == 0 ){
+            optimal=atoi(argv[++i]);
+            continue;
+        }
+
+        if( strcmp(argv[i], "-mod_change" ) == 0 ){
+	  model_change=atoi(argv[++i]);
+	  newfreq = atoi(argv[++i]);
+	  continue;
         }
 
         if( strcmp(argv[i], "-rob_last" ) == 0 ){
@@ -483,10 +525,25 @@ int main(int argc, char** argv){
             continue;
         }
 
-        fprintf(stderr, "Argument %s is invalid\n\n\n", argv[i]);
-        print_help();
+	if(strcmp(argv[i], "-seed") == 0){
+	  seed = atol(argv[++i]);
+	  continue;
+	}
 
+        fprintf(stderr, "Argument %s is invalid\n\n\n", argv[i]);
+/*        print_help();
+*/
     }
+
+    infofile = fopen("infofile.txt", "w");
+
+    for(i= 0; i < argc; ++i)
+      fprintf(infofile, "%s ", argv[i]);
+    fprintf(infofile, "\n");
+    fclose(infofile);
+
+    srand (seed);
+    gsl_rng_set(r, seed);
 
     if(r1Output==NULL)          r1Output = fopen("R1.txt", "w");
     if(r2Output==NULL)          r2Output = fopen("R2.txt", "w");
@@ -506,9 +563,10 @@ int main(int argc, char** argv){
     }
 
     create_generations(fitness,model_change,lamda,num_of_parents,
-        groups_wanted,R1R2_swapping,min_gene_R1R2,max_gene_R1R2,freq,min_count,max_count,
-        generations,generation_change,mutation_rate,robustness,robust_changes,robust_last_bit,r,recomb_rate,
-        r1Output, r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput,robustOutput,genotypeOutput,fatherOutput, mutationOutput);
+		       groups_wanted,R1R2_swapping,min_gene_R1R2,max_gene_R1R2,freq, newfreq, 
+		       min_count,max_count,
+		       generations,generation_change,mutation_rate,robustness,robust_changes,robust_last_bit,r,recomb_rate,target_fitness,optimal,start_in,
+		       r1Output, r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput,robustOutput,genotypeOutput,fatherOutput, mutationOutput);
 
     for(i=0;i<max_genes_per_person;i++){
         free(sensitivity_array[i]);
@@ -525,6 +583,8 @@ int main(int argc, char** argv){
     fclose(genotypeOutput);
     fclose(fatherOutput);
     fclose(mutationOutput);
+    if (start_in!=NULL) fclose(start_in);
+    
 
     end = clock();
     time_spent= (double)(end - begin) / CLOCKS_PER_SEC;

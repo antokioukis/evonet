@@ -40,7 +40,7 @@ auxiliary_genotype_data *create_genotype_hash(population *new_population){
             }
             /*printf("hash_key:%s\n",hash_key);*/
 
-            /*got the key, seacrch if genotype already encountered*/
+            /*got the key, search if genotype already encountered*/
             /*printf("hash_position %d\n",hash_position);*/
             for(t=0;t<hash_position;t++){
                 if(strcmp(hash_key,genotype_hash[t])==0){
@@ -114,7 +114,7 @@ person *deep_copy_person(person *destination,person *arrival){
 }
 
 
-person *create_mutations(person *foreigner,double mu,gsl_rng *r){
+person *create_mutations(person *foreigner,double mu, gsl_rng *r){
 
   /*create mutations*/
     int result=0;
@@ -133,7 +133,9 @@ person *create_mutations(person *foreigner,double mu,gsl_rng *r){
 
     num_of_mutations = gsl_ran_poisson (r, mu);
     
-    num_of_neutral_mutations = gsl_ran_poisson(r, 0.1); /*mu * neutRegionLength / sensitivity);*/
+    num_of_neutral_mutations = gsl_ran_poisson(r, 0.005); /*mu * neutRegionLength / sensitivity);*/
+
+    /*fprintf(stderr, "mutations: %d, mu: %f\n", num_of_mutations, mu);*/
 
     
     
@@ -177,14 +179,19 @@ person *create_mutations(person *foreigner,double mu,gsl_rng *r){
     
 
     for(j=0;j<num_of_mutations;j++){
-      which_R1R2=rand()%2;
+      /*girnaei apo 0- (n-1) edw to n einai 2*/
+      which_R1R2=gsl_rng_uniform_int(r,2);
+      /*printf("%d\n",which_R1R2);*/
+
       /* todo genes_per_person instead of max_genes_per_person */
-      num_of_gene_to_mutate=rand() % genes_per_person;
+      num_of_gene_to_mutate=gsl_rng_uniform_int(r,genes_per_person+1);
+      /*printf("%d\n",num_of_gene_to_mutate);*/
+
       /* the mutation probability for the last bit is 100 less */
       bit_mutation=gsl_rng_uniform_pos(r);
 
       /*special case, changing the last bit changes the interaction */
-      if(bit_mutation<=0.1){
+      if(bit_mutation<=0.2){
        /* printf("bit:mutation %f\n",bit_mutation); */
         if(which_R1R2){
             /*no fuss an einai monos ari8mos,to ipoloipo bgainei 1, afairwntas 1, ton kaneis zigo kai den peirazeis to ipoloipo binary represantation*/
@@ -342,10 +349,18 @@ group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2,int min_c
     return new_group;
 }
 
+/*ean iparxei to start in 
+molis exei teleiwsei h dimiourgia tou pli8ismou pigaine se ka8e ena atomo kai gemise to me auta pou sou leei to arxeio, genotype einai R1 [Is]
+kai R2[Is]
+while((ch = getc(fp)) != EOF)
+    {
+    }
 
+    if ch is \n proxwra sto epomeno atomo
+*/
 
 /*return pointer to new population. New population is array of pointers to groups.*/
-population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count,int robust_or_not){
+population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count,int robust_or_not,FILE *start_in){
     int i;
     /*int k,j;*/
     group *temp;

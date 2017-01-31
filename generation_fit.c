@@ -2,7 +2,7 @@
 
 extern int curr_num_of_groups;
 
-void calculate_fitness(int num_of_gen,float lamda){
+float calculate_fitness(int num_of_gen,float lamda,int optimal){
     int i,j,k,c,t;
     /*int w,n;*/
     person* atomo;
@@ -12,8 +12,22 @@ void calculate_fitness(int num_of_gen,float lamda){
     float distance;
     float non_descrete_res[max_genes_per_person];
     int sum=0;
-    int optimal[max_genes_per_person]={1,1,1,1,1,1,1,1,1,1};
+    int optimal_array[max_genes_per_person];
+    int optimal_dummy;
     group* temp;
+    /*se periptwsi pou o xristis dwsei ligotera apo 10 gonidia oi ipoloipes 8eseis kalibontai apo 0*/
+    int thesi_max_array=0;
+
+    /*printf("%d\n",optimal);*/
+    optimal_dummy=optimal;
+    for(i=0;i<genes_per_person;i++){
+        optimal_array[i]=optimal_dummy%max_genes_per_person;
+        optimal_dummy=optimal_dummy/max_genes_per_person;
+        thesi_max_array++;
+    }
+    for(i=thesi_max_array;i<max_genes_per_person;i++){
+        optimal_array[i]=0;
+    }
 
     /*printf("num_of_gen:%d \n",num_of_gen);*/
     temp=generation_array[num_of_gen]->groups_list;
@@ -60,7 +74,7 @@ void calculate_fitness(int num_of_gen,float lamda){
     		        }
 
 
-                    sum_of_personal_fitness_cycles+=eucledian_distance(atomo->vector_of_signs,optimal);
+                    sum_of_personal_fitness_cycles+=eucledian_distance(atomo->vector_of_signs,optimal_array);
                     /*printf("Sum of personal fitness cycles %f\n",sum_of_personal_fitness_cycles); */
                 }
 		/* average fitness for all steps needed to achieve equilibrium */
@@ -72,7 +86,7 @@ void calculate_fitness(int num_of_gen,float lamda){
                 temp->person_in_group[j]->fitness=personal_fitness;
             }
             else{
-                distance=eucledian_distance(temp->person_in_group[j]->vector_of_signs,optimal);
+                distance=eucledian_distance(temp->person_in_group[j]->vector_of_signs,optimal_array);
                 personal_fitness=exp(-lamda*distance);
                 temp->person_in_group[j]->fitness=personal_fitness;
                 /*printf("Personal Fitness %f\n",temp->person_in_group[j]->fitness);*/
@@ -87,10 +101,11 @@ void calculate_fitness(int num_of_gen,float lamda){
             temp=temp->next;
        }
     }
+    return(generation_array[num_of_gen]->sum_of_fitness);
 }
 
 
-R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_gen, int id, FILE *f,FILE *d){
+R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_gen, int id,gsl_rng *r, FILE *f,FILE *d){
     float fitness_array[(num_of_groups*persons_per_group)];
 /*  int theseis_pinaka=num_of_groups*persons_per_group; */
     int counter=0;
@@ -129,8 +144,9 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
 /*    printf("Fitness of generation = %f  \n",generation_array[num_of_gen-1]->sum_of_fitness);*/
 
     /*na brw to fitness pou zitaei kai apo ekei mesa na brw ton patera*/
-    fitness_asked1=((double)rand() / RAND_MAX)*generation_array[num_of_gen-1]->sum_of_fitness;
-    /*printf("fitness_asked: %f \n",fitness_asked);*/
+    fitness_asked1=gsl_ran_flat (r,0, generation_array[num_of_gen-1]->sum_of_fitness);
+    /*fitness_asked1=((double)rand() / RAND_MAX)*generation_array[num_of_gen-1]->sum_of_fitness;*/
+    /*printf("fitness_asked: %f \n",fitness_asked1);*/
 
     counter1=0;
     while(fitness_asked1>fitness_array[counter1]){
@@ -171,7 +187,7 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
     return new_auxiliary;
 }
 
-R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int num_of_gen,FILE *f,FILE *d){
+R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int num_of_gen,gsl_rng *r,FILE *f,FILE *d){
     float fitness_array[(num_of_groups*persons_per_group)];
 /*  int theseis_pinaka=num_of_groups*persons_per_group; */
     int counter=0;
@@ -220,10 +236,10 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int nu
 /*    printf("Fitness of generation = %f  \n",generation_array[num_of_gen-1]->sum_of_fitness);*/
 
     /*na brw to fitness pou zitaei kai apo ekei mesa na brw ton patera*/
-    fitness_asked1=((double)rand() / RAND_MAX)*generation_array[num_of_gen-1]->sum_of_fitness;
+    fitness_asked1=gsl_ran_flat (r,0, generation_array[num_of_gen-1]->sum_of_fitness);
   /*  printf("fitness1_asked: %f \n",fitness_asked1); */
 
-    fitness_asked2=((double)rand() / RAND_MAX)*generation_array[num_of_gen-1]->sum_of_fitness;
+    fitness_asked2=gsl_ran_flat (r,0, generation_array[num_of_gen-1]->sum_of_fitness);
    /* printf("fitness2_asked: %f \n",fitness_asked2); */
 
     counter1=0;
@@ -263,7 +279,7 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int nu
 
    /* printf("ID patera %d ID patera %d \n",generation_array[num_of_gen-1]->group_in_population[group_counter1]->person_in_group[person_counter1]->id,generation_array[num_of_gen-1]->group_in_population[group_counter2]->person_in_group[person_counter2]->id);
 */
-    genes_from_first_parent=rand()%genes_per_person;
+    genes_from_first_parent=gsl_rng_uniform_int(r,genes_per_person);
 
     for(i=0;i<genes_per_person;i++){
         if(i<genes_from_first_parent){
@@ -304,7 +320,7 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int nu
     return new_auxiliary;
 }
 
-R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num_of_gen,FILE *f,FILE *d){
+R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num_of_gen,gsl_rng *r,FILE *f,FILE *d){
     float fitness_array[(num_of_groups*persons_per_group)];
 /*  int theseis_pinaka=num_of_groups*persons_per_group; */
     int counter=0;
@@ -348,10 +364,10 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
 /*    printf("Fitness of generation = %f  \n",generation_array[num_of_gen-1]->sum_of_fitness);*/
 
     /*na brw to fitness pou zitaei kai apo ekei mesa na brw ton patera*/
-    fitness_asked1=((double)rand() / RAND_MAX)*generation_array[num_of_gen-1]->sum_of_fitness;
+    fitness_asked1=gsl_ran_flat (r,0, generation_array[num_of_gen-1]->sum_of_fitness);
     /*printf("fitness_asked: %f \n",fitness_asked);*/
 
-    fitness_asked2=((double)rand() / RAND_MAX)*generation_array[num_of_gen-1]->sum_of_fitness;
+    fitness_asked2=gsl_ran_flat (r,0, generation_array[num_of_gen-1]->sum_of_fitness);
 
     counter1=0;
     while(fitness_asked1>fitness_array[counter1]){
@@ -388,7 +404,7 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
     extract_mutation_array(d,temp1->person_in_group[person_counter1],temp2->person_in_group[person_counter2]);
 
     for(i=0;i<genes_per_person;i++){
-        which_parent=rand()%2;
+        which_parent=gsl_rng_uniform_int(r,2);
         /*row_swapping*/
         if(which_parent==0){
             /*printf("Apo prwto theseis+euros:%d thesi_neutral:%d euros:%d\n",thesi_neutral+euros,thesi_neutral,euros);*/
@@ -415,7 +431,7 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
     }
 
     for(i=0;i<genes_per_person;i++){
-        which_parent=rand()%2;
+        which_parent=gsl_rng_uniform_int(r,2);
         /*row_swapping*/
         if(which_parent==0){
             for(j=0;j<genes_per_person;j++){
@@ -437,9 +453,9 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
 
 
 person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,
-    double mutation_rate,gsl_rng *r,int recomb_rate,FILE *f,FILE *d){
+    double mutation_rate,gsl_rng *r,float recomb_rate,FILE *f,FILE *d){
     int i,j;
-    int recomb_chance;
+    float recomb_chance;
     /*int j;*/
     R1_R2_auxiliary *auxiliary;
     person *new_person;
@@ -462,21 +478,21 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
         new_person->vector_of_signs[i]=1;  /* first generation so gene_counts always positive on the vector -> 1 */
     }
     
-    recomb_chance=rand()%100;
+    recomb_chance=gsl_ran_flat(r,0,1);
 
 /*    printf("Creating Inheritance\n");*/
     if(num_of_parents && recomb_chance<=recomb_rate){
        /* printf("diplos\n"); */
         if(row_swapping){
-            auxiliary=choose_fitted_father_dependencies_combined_row_swapping(num_of_gen,f,d);
+            auxiliary=choose_fitted_father_dependencies_combined_row_swapping(num_of_gen,r,f,d);
         }
         else{
-	       auxiliary=choose_fitted_father_dependencies_combined_R1R2_swapping(num_of_gen,f,d);
+	       auxiliary=choose_fitted_father_dependencies_combined_R1R2_swapping(num_of_gen,r,f,d);
         }
        /* printf("Atomo %d\n",id); */
     }
     else{
-      auxiliary=choose_fitted_father_dependencies_no_combinations(num_of_gen, id,f,d);
+      auxiliary=choose_fitted_father_dependencies_no_combinations(num_of_gen, id,r,f,d);
     }
 
     /*printf("Created Person\n");*/
@@ -540,7 +556,7 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
 }
 
 group *gen_create_group_fit(int starting_id,int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,
-    double mutation_rate,gsl_rng *r,int recomb_rate,FILE *f,FILE *d){
+    double mutation_rate,gsl_rng *r,float recomb_rate,FILE *f,FILE *d){
     int i;
 
     group *new_group;
@@ -556,7 +572,7 @@ group *gen_create_group_fit(int starting_id,int num_of_gen, int num_of_parents,i
 
 
 population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row_swapping,int min_count,int max_count,
-                                        double mutation_rate,gsl_rng *r,int recomb_rate,FILE *f,FILE *d){
+                                        double mutation_rate,gsl_rng *r,float recomb_rate,FILE *f,FILE *d){
     int i;
     group *temp;
 

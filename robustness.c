@@ -53,9 +53,9 @@ person *create_specific_mutations(person *individual,int num_of_mutations,int la
          parameter mu */
 
     for(j=0;j<num_of_mutations;j++){
-      which_R1R2=rand()%2;
+      which_R1R2=gsl_rng_uniform_int(r,2);
       /* todo genes_per_person instead of max_genes_per_person */
-      num_of_gene_to_mutate=rand() % genes_per_person;
+      num_of_gene_to_mutate=gsl_rng_uniform_int(r,genes_per_person+1);
       /* the mutation probability for the last bit is 100 less */
        bit_mutation=gsl_rng_uniform_pos(r);
 
