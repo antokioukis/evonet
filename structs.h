@@ -33,6 +33,8 @@ typedef struct R1_R2_auxiliary{
   int R1[max_genes_per_person];
   int R2[max_genes_per_person];
   bool neutRegion1[max_genes_per_person][neutRegionLength];
+  float father_fitness;
+
 }R1_R2_auxiliary;
 
 typedef struct person{
@@ -41,6 +43,9 @@ typedef struct person{
     int id;         /*personal UNIQUE id */
     bool mature;
     float fitness;
+
+    float father_fitness;
+    int mutated_from_last_gen;
 
     int gene_counts[max_genes_per_person];
     float gene_interactions[max_genes_per_person][max_genes_per_person];

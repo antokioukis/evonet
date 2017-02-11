@@ -1,5 +1,6 @@
 #include "generation_fit.h"
 
+extern int mutated_person;
 extern int curr_num_of_groups;
 
 float calculate_fitness(int num_of_gen,float lamda,int optimal){
@@ -117,7 +118,6 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
     group *temp=generation_array[num_of_gen-1]->groups_list;
     group *temp1=generation_array[num_of_gen-1]->groups_list;
     R1_R2_auxiliary *new_auxiliary;
-    
 
    /* printf("Fitted fathers row_swapping\n");*/
 
@@ -168,6 +168,8 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
             temp1=temp1->next;
        }
     }
+
+    new_auxiliary->father_fitness=temp1->person_in_group[person_counter1]->fitness;
 
     extract_mutation_array(d,temp1->person_in_group[person_counter1],NULL);
 
@@ -538,17 +540,21 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
         if(new_person->gene_R2[i]>100) printf("neo R2[%d]=%d\n",i,new_person->gene_R2[i]); 
     }
     */
-    for(i=0;i<genes_per_person;i++){
-        for(j=0;j<genes_per_person;j++){
+   /* for(i=0;i<genes_per_person;i++){
+        for(j=0;j<genes_per_person;j++){ */
             /*new_person->gene_interactions[i][j]=random_normal_distrubution(0,sqrt(10));*/
-            new_person->gene_interactions[i][j]=create_gene_interactions(new_person->gene_R1[i],new_person->gene_R2[j]);
+       /*     new_person->gene_interactions[i][j]=create_gene_interactions(new_person->gene_R1[i],new_person->gene_R2[j]); */
           /*  printf("%f ",create_gene_interactions(new_auxiliary->R1[i],new_auxiliary->R2[j]));
             extract_person(R1[i],R2[j]);*/
             /*if (new_person->gene_interactions[i][j]<0) printf("Arnitiko gene interaction %f\n",new_person->gene_interactions[i][j]);
             */
-        }
-   /*     printf("\n"); */
-    }
+   /*     }
+        printf("\n"); 
+    } */
+
+    new_person->mutated_from_last_gen=0;
+    new_person->father_fitness=auxiliary->father_fitness;
+
 
     free(auxiliary);
 
@@ -622,17 +628,35 @@ population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row
     return new_population;
 }
 
-void mutate_population(population *pop, double mu, gsl_rng *r){
+void mutate_population(population *pop, double mu, gsl_rng *r, int generation_number){
     int i = 0, j = 0;
+    int k=0;
+    int l=0;
     group *group = pop -> groups_list;
-  
+
     for( i = 0; i < curr_num_of_groups; ++i){
         assert(group != NULL); 
         for( j = 0; j < persons_per_group; ++j ){
             group -> person_in_group[j] = create_mutations(group->person_in_group[j], mu,  r);
+
+            for(l=0;l<genes_per_person;l++){
+                for(k=0;k<genes_per_person;k++){
+                    group -> person_in_group[j]->gene_interactions[l][k]=create_gene_interactions(group -> person_in_group[j]->gene_R1[l],group -> person_in_group[j]->gene_R2[k]);
+                }
+            }
+
+
+            if (mutated_person==1){
+                group -> person_in_group[j]->mutated_from_last_gen=1;
+                /*printf("eimai metallagmenos se sxesi me ton patera mou\n");*/
+            }
+            else{ 
+                mutated_person=0;
+                group -> person_in_group[j]->mutated_from_last_gen=0;
+            }
         }
         group = group->next;
-    }     
+    } 
 }
 
 

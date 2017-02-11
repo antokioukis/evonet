@@ -5,7 +5,7 @@ make all
 #r generations_Wanted
 #N pli8ismos
 #n=1
-r=50
+r=1
 N=1000
 #curDir=`pwd`
 #for i in `seq 1 $n`;do
@@ -20,16 +20,17 @@ N=1000
 #./evonet -selection 0 -s2 5 -N $N -ploidy 2 -swapping 0 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10
 #./evonet -selection 0 -s2 5 -N $N -ploidy 2 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10
 
-./evonet -selection 1 -s2 5 -N $N -ploidy 1 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -tarfit 0.40 -optimal 10101
+#./evonet -selection 1 -s2 5 -N $N -ploidy 1 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -tarfit 0.40 -optimal 10101
 
-./evonet -selection 1 -s2 5 -N $N -ploidy 1 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -tarfit 0.80
-./evonet -selection 1 -s2 5 -N $N -ploidy 2 -swapping 0 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -tarfit 0.90
-./evonet -selection 1 -s2 5 -N $N -ploidy 2 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -tarfit 0.99
+#./evonet -selection 1 -s2 5 -N $N -ploidy 1 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -tarfit 0.80
+Rscript write_file.R
+./evonet -selection 1 -s2 5 -N $N -ploidy 1 -swapping 0 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 10 -max_count 11 -mutrate 0.1 -generations $r -n 10 -tarfit 0.80 -optimal 1010101010
+#./evonet -selection 1 -s2 5 -N $N -ploidy 2 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -tarfit 0.99
 
 #mv diff_geno.png diff_geno_neut.png
 
 #./evonet -selection 1 -s2 5  -N $N -ploidy 2 -swapping 1 -freq 50 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -recomb_rate 0.05
-#Rscript test.R
+#Rscript variance.R
 #mv diff_geno.png diff_geno_fit.png
 
 #prwtos N |generation num |freq 10 |n 10 |fitness file |matrix file |discrete file |robustness file |

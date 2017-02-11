@@ -12,13 +12,15 @@ void extract_gene_dependancies_matrix_generation(FILE* f, int num_of_gen);
 
 void extract_gene_counts_generation(FILE *f, int num_of_gen);
 
-void extract_fitness_generation(FILE *f, int num_of_gen);
+void extract_fitness_generation(FILE *f, int num_of_gen, float mutation_rate);
 
 void extract_robustness(FILE *f,population *new_population);
 
 void* extract_neutRegion1_generation(void *auxialiary);
 
 void extract_father(FILE *f,int father_number1, int father_number2);
+
+void extract_father_fitness(int num_of_gen,int actual_num);
 
 void extract_genotype_occ(FILE *f,auxiliary_genotype_data *genotype_data);
 

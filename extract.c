@@ -46,6 +46,46 @@ void extract_father_id(FILE *f,int father_number1, int father_number2){
     }
 }
 
+void extract_father_fitness(int num_of_gen,int actual_num){
+    int k,l;
+    FILE *f;
+    float father_fitness;
+    float son_fitness;
+    int mutated_from_last;
+    group *temp;
+
+    /* f = fopen("R1R2.txt", "a"); */
+    temp=generation_array[num_of_gen]->groups_list;
+
+    f=fopen("father_fitness.txt","a");
+
+    for(k=0;k<curr_num_of_groups;k++){
+        for(l=0;l<persons_per_group;l++){
+
+            father_fitness=temp->person_in_group[l]->father_fitness;
+            son_fitness=temp->person_in_group[l]->fitness;
+            mutated_from_last=temp->person_in_group[l]->mutated_from_last_gen;
+
+
+            if (actual_num==0){
+                /*fprintf(f, "%d %f %f\n",actual_num,temp->person_in_group[l]->father_fitness,temp->person_in_group[l]->fitness);*/
+            } 
+
+            else if(mutated_from_last && father_fitness!=son_fitness){
+                fprintf(f, "%d %f %f\n",actual_num,temp->person_in_group[l]->father_fitness,temp->person_in_group[l]->fitness);
+            }
+        }
+    
+        if(temp->next!=NULL){
+                temp=temp->next;
+        }
+
+    }
+    fclose(f);
+    return;
+}
+
+
 void* extract_neutRegion1_generation(void *auxialiary){
     int i = 0, j = 0, k = 0, l = 0;
     thread_auxialiary *temp_auxialiary=auxialiary;
@@ -202,7 +242,7 @@ void extract_gene_counts_generation(FILE *f, int num_of_gen){
     return;
 }
 
-void extract_fitness_generation(FILE *f, int num_of_gen){
+void extract_fitness_generation(FILE *f, int num_of_gen, float mutation_rate){
 
     if (f == NULL)
     {
@@ -210,7 +250,7 @@ void extract_fitness_generation(FILE *f, int num_of_gen){
         exit(1);
     }
 
-    fprintf(f, "%d %d %d %f\n", num_of_gen,curr_num_of_groups*persons_per_group,genes_per_person,generation_array[num_of_gen]->sum_of_fitness/(curr_num_of_groups*persons_per_group));
+    fprintf(f, "%d %d %d %f %f\n", num_of_gen,curr_num_of_groups*persons_per_group,genes_per_person,generation_array[num_of_gen]->sum_of_fitness/(curr_num_of_groups*persons_per_group),mutation_rate);
 }
 
 

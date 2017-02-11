@@ -10,8 +10,10 @@ person *create_mutations(person *individual,double mu,gsl_rng *r);
 
 float create_gene_interactions(int R1,int R2);
 
+person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count,int R1R2_matrix[max_genes_per_person][1]);
+
 /*return pointer to new group. New group is array of pointers to persons.*/
-group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count);
+group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count,int R1R2_matrix[persons_per_group*max_genes_per_person][1]);
 
 /*return pointer to new population. New population is array of pointers to groups.*/
 population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count,int robust_or_not,FILE *start_in);

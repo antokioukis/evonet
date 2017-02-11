@@ -59,7 +59,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
 	       mutatedSites[i][j] = 0;
       }
     }
-    
+    /*printf("%f\n",target_fitness);*/
     /*kane opwsdipote ta generation wanted kai meta tsekare eisai se selection? kai den exeis ftasei to apaitoumeno fitness tote kane kai alla runs*/
     for(i=0;i<generations_wanted||((generation_fitness<=target_fitness)&&fitness);i++){
         for(o=0;o<genes_per_person;o++){
@@ -111,8 +111,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
             printf("\n\n");
             */    
         }
-        genotype_data=create_genotype_hash(generation_array[i%2]);
-        mutate_population(generation_array[i%2],mutation_rate,r);
+        mutate_population(generation_array[i%2],mutation_rate,r,i);
 
         /* ROBUSTNESS */
         if(i%freq==0 && robustness) {
@@ -176,19 +175,21 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
     
         mature_generation(generation_array[i%2],1);
         generation_fitness=calculate_fitness(i%2,lamda,optimal)/(curr_num_of_groups*persons_per_group);
-        printf("%f\n",generation_fitness);
+        if (i%freq==0) printf("%f\n",generation_fitness);
         genotype_data=create_genotype_hash(generation_array[i%2]);
+
         if(i%freq==0){
             printf("Generation %d Simulated. \n",i);
             extract_R1R2_generation(r1Output, r2Output,i%2);
             extract_gene_dependancies_matrix_generation(matrixOutput, i%2);
             extract_gene_counts_generation(countsOutput, i%2);
             extract_discrete_generation(discreteOutput,i%2);
-            extract_fitness_generation(fitnessOutput,i%2);
+            extract_fitness_generation(fitnessOutput,i%2,mutation_rate);
             extract_genotype_occ(genotypeOutput,genotype_data);
+            extract_father_fitness(i%2,i);
 	    
             /*THREADED EXTRACT*/
-            /*neut_flag=0;*/
+            neut_flag=0;
             for( geneID = 0; geneID < genes_per_person && neut_flag; ++geneID){
                 sprintf(neutral_output_filename, "neutralOutput%03d.txt", geneID);
                 file_neutral_gene = fopen(neutral_output_filename, "a");
@@ -291,7 +292,7 @@ int main(int argc, char** argv){
     long int seed;
     clock_t end,begin;
     float target_fitness=-1;
-    int optimal=0000000000;
+    int optimal=1101010101;
 
     const gsl_rng_type * T;
     gsl_rng * r;
@@ -337,7 +338,7 @@ int main(int argc, char** argv){
     for( i = 1; i < argc; ++i){
         /* neutral or selection */
         if( strcmp(argv[i], "-selection" ) == 0 ){
-            fitness = atoi(argv[++i]);
+            fitness = atof(argv[++i]);
             continue;
         }
 
@@ -502,6 +503,7 @@ int main(int argc, char** argv){
 
         if( strcmp(argv[i], "-st_geno" ) == 0 ){
             start_in=fopen(argv[++i],"r");
+
             continue;
         }
 
@@ -511,9 +513,9 @@ int main(int argc, char** argv){
         }
 
         if( strcmp(argv[i], "-mod_change" ) == 0 ){
-	  model_change=atoi(argv[++i]);
-	  newfreq = atoi(argv[++i]);
-	  continue;
+	       model_change=atoi(argv[++i]);
+	       newfreq = atoi(argv[++i]);
+	       continue;
         }
 
         if( strcmp(argv[i], "-rob_last" ) == 0 ){
@@ -555,6 +557,9 @@ int main(int argc, char** argv){
     if(genotypeOutput == NULL)   genotypeOutput = fopen("genotype.txt", "w");
     if(fatherOutput==NULL)      fatherOutput = fopen("father.txt", "w");
     if(mutationOutput==NULL)     mutationOutput = fopen("mutations.txt", "w");
+    if(start_in==NULL)     start_in = fopen("R1R2_input.txt", "r");
+
+
 
 
     sensitivity_array = (int **)calloc(max_genes_per_person,sizeof(int *));

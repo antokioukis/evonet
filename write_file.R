@@ -1,0 +1,13 @@
+#used for writing genotypes on a file
+
+matrix1=matrix(nrow=1000,ncol=20,byrow=TRUE)
+
+for (i in 1:1000){
+	if (i %% 3 == 0) matrix1[i,]<-rep(10,10,20)
+	if (i %% 3 == 1) matrix1[i,]<-rep(11,11,20)
+	if (i %% 3 == 2) matrix1[i,]<-rep(12,12,20)
+
+}
+
+write.table(matrix1, file = "R1R2_input.txt", sep = " ",
+            qmethod = "double",col.names = FALSE, row.names=FALSE)
