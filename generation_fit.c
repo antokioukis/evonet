@@ -89,6 +89,14 @@ float calculate_fitness(int num_of_gen,float lamda,int optimal){
             else{
                 distance=eucledian_distance(temp->person_in_group[j]->vector_of_signs,optimal_array);
                 personal_fitness=exp(-lamda*distance);
+		
+                /* /\*creation of relative fitness*\/ */
+                /* if(personal_fitness>max_fitness_encountered){ */
+		/*   max_fitness_encountered=personal_fitness; */
+                /* } */
+                /* if(personal_fitness<min_fitness_encountered){ */
+                /*     min_fitness_encountered=personal_fitness; */
+                /* } */
                 temp->person_in_group[j]->fitness=personal_fitness;
                 /*printf("Personal Fitness %f\n",temp->person_in_group[j]->fitness);*/
             }
@@ -101,7 +109,20 @@ float calculate_fitness(int num_of_gen,float lamda,int optimal){
         if(temp->next!=NULL){
             temp=temp->next;
        }
+       /*printf("num_of_gen:%d \n",num_of_gen);*/
     }
+
+    /* temp=generation_array[num_of_gen]->groups_list; */
+    /* for(i=0;i<curr_num_of_groups;i++){ */
+    /*     for(j=0;j<persons_per_group;j++){ */
+    /*         atomo=temp->person_in_group[j]; */
+    /*         atomo->fitness=atomo->fitness/max_fitness_encountered; */
+    /*     } */
+    /*     if(temp->next!=NULL){ */
+    /*         temp=temp->next; */
+    /*    } */
+    /* } */
+
     return(generation_array[num_of_gen]->sum_of_fitness);
 }
 
@@ -171,6 +192,8 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
 
     new_auxiliary->father_fitness=temp1->person_in_group[person_counter1]->fitness;
 
+    new_auxiliary->father_genotype=create_genotype(temp1->person_in_group[person_counter1]->gene_R1,temp1->person_in_group[person_counter1]->gene_R2);
+
     extract_mutation_array(d,temp1->person_in_group[person_counter1],NULL);
 
     for(i=0;i<genes_per_person;i++){
@@ -184,7 +207,6 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
     for(i=0; i<genes_per_person; ++i)
         for(j = 0; j < neutRegionLength; ++j)
 	       new_auxiliary->neutRegion1[i][j] = temp1->person_in_group[person_counter1]->neutRegion1[i][j];
-    
     
     return new_auxiliary;
 }
@@ -504,6 +526,10 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
 
     }
 
+    /*printf("my genotype: %s\n",new_person->genotype);*/
+    /*printf("my FATHER's genotype: %s\n",new_person->father_genotype);*/
+    
+
     for(i=0; i<genes_per_person; ++i){
         for(j = 0; j < neutRegionLength; ++j){
 	       new_person-> neutRegion1[i][j] = auxiliary-> neutRegion1[i][j];
@@ -554,7 +580,8 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
 
     new_person->mutated_from_last_gen=0;
     new_person->father_fitness=auxiliary->father_fitness;
-
+    new_person->father_genotype=auxiliary->father_genotype;
+    /*printf("father genotype %s\n",new_person->father_genotype);*/
 
     free(auxiliary);
 
@@ -641,8 +668,7 @@ void mutate_population(population *pop, double mu, gsl_rng *r, int generation_nu
 
             for(l=0;l<genes_per_person;l++){
                 for(k=0;k<genes_per_person;k++){
-                    group -> person_in_group[j]->gene_interactions[l][k]=create_gene_interactions(group -> person_in_group[j]->gene_R1[l],group -> person_in_group[j]->gene_R2[k]);
-                }
+                    group -> person_in_group[j]->gene_interactions[l][k]=create_gene_interactions(group -> person_in_group[j]->gene_R1[l],group -> person_in_group[j]->gene_R2[k]);                }
             }
 
 

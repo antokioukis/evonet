@@ -48,11 +48,13 @@ void extract_father_id(FILE *f,int father_number1, int father_number2){
 
 void extract_father_fitness(int num_of_gen,int actual_num){
     int k,l;
+    int num_of_mutations_carried;
     FILE *f;
     float father_fitness;
     float son_fitness;
     int mutated_from_last;
     group *temp;
+    char *father_genotype;
 
     /* f = fopen("R1R2.txt", "a"); */
     temp=generation_array[num_of_gen]->groups_list;
@@ -65,14 +67,16 @@ void extract_father_fitness(int num_of_gen,int actual_num){
             father_fitness=temp->person_in_group[l]->father_fitness;
             son_fitness=temp->person_in_group[l]->fitness;
             mutated_from_last=temp->person_in_group[l]->mutated_from_last_gen;
-
+            num_of_mutations_carried=temp->person_in_group[l]->num_of_mutations_carried;
+            father_genotype=temp->person_in_group[l]->father_genotype;
+            /*printf("father genotype %s\n",father_genotype); */
 
             if (actual_num==0){
                 /*fprintf(f, "%d %f %f\n",actual_num,temp->person_in_group[l]->father_fitness,temp->person_in_group[l]->fitness);*/
             } 
 
             else if(mutated_from_last && father_fitness!=son_fitness){
-                fprintf(f, "%d %f %f\n",actual_num,temp->person_in_group[l]->father_fitness,temp->person_in_group[l]->fitness);
+                fprintf(f, "%d %f %f %d %s\n",actual_num,father_fitness,son_fitness,num_of_mutations_carried,father_genotype);
             }
         }
     

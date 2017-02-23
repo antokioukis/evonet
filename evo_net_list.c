@@ -177,16 +177,15 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
         generation_fitness=calculate_fitness(i%2,lamda,optimal)/(curr_num_of_groups*persons_per_group);
         if (i%freq==0) printf("%f\n",generation_fitness);
         genotype_data=create_genotype_hash(generation_array[i%2]);
-
         if(i%freq==0){
             printf("Generation %d Simulated. \n",i);
-            extract_R1R2_generation(r1Output, r2Output,i%2);
+            /*extract_R1R2_generation(r1Output, r2Output,i%2);
             extract_gene_dependancies_matrix_generation(matrixOutput, i%2);
             extract_gene_counts_generation(countsOutput, i%2);
             extract_discrete_generation(discreteOutput,i%2);
-            extract_fitness_generation(fitnessOutput,i%2,mutation_rate);
             extract_genotype_occ(genotypeOutput,genotype_data);
-            extract_father_fitness(i%2,i);
+            extract_father_fitness(i%2,i); */
+            extract_fitness_generation(fitnessOutput,i%2,mutation_rate);
 	    
             /*THREADED EXTRACT*/
             neut_flag=0;
@@ -257,7 +256,7 @@ void print_help(void){
     printf("-r2out X:       Write R2_output at specified file (File) (Default R2.txt)\n");
     printf("-matout X:      Write gene_interaction_matrix_output at specified file (Default matrix.txt) \n");
     printf("-gencout X:     Write gene_counts_output at specified file (Default counts.txt)\n");
-    printf("-fitout X:      Write fitness_output at specified file (Default fitness.txt)\n");
+    printf("-fitout X:      Write fitness_output at specified file (Default fitnesss.txt)\n");
     printf("-disout X:      Write discrete_output at specified file (Default discrete.txt)\n");
     printf("-robout X:      Write robust_output at specified file (Default robustness.txt)\n");
     printf("-gentpout X:    Write genotype_occurence_output at specified file (Default genotype.txt)\n");
@@ -293,6 +292,15 @@ int main(int argc, char** argv){
     clock_t end,begin;
     float target_fitness=-1;
     int optimal=1101010101;
+    int optimal_div;
+    int optimal_array[max_genes_per_person];
+    int optimal_mod;
+    float min_distance;
+    float max_distance;
+    int xeiroteros[max_genes_per_person];
+    int kaliteros[max_genes_per_person];
+    float max_distance_exp;
+    float min_distance_exp;
 
     const gsl_rng_type * T;
     gsl_rng * r;
@@ -329,9 +337,7 @@ int main(int argc, char** argv){
     environment variable GSL_RNG_TYPE */
 
     gsl_rng_env_setup();
-
     T = gsl_rng_default;
-    
     r = gsl_rng_alloc (T);
 
 
@@ -551,15 +557,37 @@ int main(int argc, char** argv){
     if(r2Output==NULL)          r2Output = fopen("R2.txt", "w");
     if(matrixOutput==NULL)      matrixOutput = fopen("matrix.txt", "w");
     if(countsOutput==NULL)      countsOutput = fopen("counts.txt", "w");
-    if(fitnessOutput==NULL)     fitnessOutput = fopen("fitness.txt", "w");
+    if(fitnessOutput==NULL)     fitnessOutput = fopen("fitnesss.txt", "w");
     if(discreteOutput==NULL)    discreteOutput = fopen("discrete.txt", "w");
     if(robustOutput==NULL)      robustOutput = fopen("robustness.txt", "w");
-    if(genotypeOutput == NULL)   genotypeOutput = fopen("genotype.txt", "w");
+    if(genotypeOutput == NULL)  genotypeOutput = fopen("genotype.txt", "w");
     if(fatherOutput==NULL)      fatherOutput = fopen("father.txt", "w");
-    if(mutationOutput==NULL)     mutationOutput = fopen("mutations.txt", "w");
-    if(start_in==NULL)     start_in = fopen("R1R2_input.txt", "r");
+    if(mutationOutput==NULL)    mutationOutput = fopen("mutations.txt", "w");
+    if(start_in==NULL)          start_in = fopen("R1R2_input.txt", "r");
 
-
+    
+    if (target_fitness==-1){
+        optimal_div=optimal;
+        for(i=0;i<max_genes_per_person;i++){
+            optimal_mod=optimal_div%10;
+            optimal_array[i]=optimal_mod;
+            optimal_div=optimal_div/10;
+            if (optimal_mod==0){
+                xeiroteros[i]=1;
+                kaliteros[i]=0;
+            }
+            else{
+                xeiroteros[i]=0;
+                kaliteros[i]=1;
+            }
+        }
+        max_distance=eucledian_distance(xeiroteros,optimal_array);
+        min_distance=eucledian_distance(kaliteros,optimal_array);
+        max_distance_exp=exp(-lamda*max_distance);
+        min_distance_exp=exp(-lamda*min_distance);
+        target_fitness=0.95*(min_distance_exp-max_distance_exp)+max_distance_exp;
+        printf("target_fitness %f max_distance %f, min_distance %f\n",target_fitness,max_distance_exp,min_distance_exp);
+    }
 
 
     sensitivity_array = (int **)calloc(max_genes_per_person,sizeof(int *));

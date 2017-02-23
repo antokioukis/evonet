@@ -4,6 +4,8 @@
 
 #include "mathss.h"
 
+char *create_genotype(int R1[max_genes_per_person],int R2[max_genes_per_person]);
+
 person *deep_copy_person(person *destination,person *arrival);
 
 person *create_mutations(person *individual,double mu,gsl_rng *r);

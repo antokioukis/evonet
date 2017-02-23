@@ -17,3 +17,4 @@ clean:
 	rm  $(TARGET)
 	rm  $(OBJECTS)
 	rm -f *.txt
+	rm -r selection.run.*

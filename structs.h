@@ -34,6 +34,7 @@ typedef struct R1_R2_auxiliary{
   int R2[max_genes_per_person];
   bool neutRegion1[max_genes_per_person][neutRegionLength];
   float father_fitness;
+  char *father_genotype;
 
 }R1_R2_auxiliary;
 
@@ -46,6 +47,8 @@ typedef struct person{
 
     float father_fitness;
     int mutated_from_last_gen;
+    int num_of_mutations_carried;
+    char *father_genotype;
 
     int gene_counts[max_genes_per_person];
     float gene_interactions[max_genes_per_person][max_genes_per_person];

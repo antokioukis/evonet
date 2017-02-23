@@ -24,7 +24,12 @@ N=1000
 
 #./evonet -selection 1 -s2 5 -N $N -ploidy 1 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -tarfit 0.80
 Rscript write_file.R
-./evonet -selection 1 -s2 5 -N $N -ploidy 1 -swapping 0 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 10 -max_count 11 -mutrate 0.1 -generations $r -n 10 -tarfit 0.80 -optimal 1010101010
+#./evonet -selection 1 -s2 5 -N $N -ploidy 1 -swapping 0 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 10 -max_count 11 -mutrate 0.1 -generations $r -n 10 -optimal 1101100011
+./evonet -selection 1  -s2 2 -N 1000 -ploidy 1  -swapping 0 -freq 10 -min_R1R2 10 -max_R1R2 11 -min_count 10 -max_count 11 -generations 1001 -n 10 -recomb_rate 0.005 -mutrate 0.005 -seed 5079724 -optimal 1101010101
+#Rscript mutation_cat.R
+#gcc fitnessSimple.c -lm -lgsl -lgslcblas -o fitnessSimple
+#./fitnessSimple -mu 0.1 -l 10 -popsize 1000 -fm 1 -s 5 -p 2
+
 #./evonet -selection 1 -s2 5 -N $N -ploidy 2 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -tarfit 0.99
 
 #mv diff_geno.png diff_geno_neut.png
