@@ -5,6 +5,10 @@ extern int curr_num_of_groups;
 extern int sensitivity;
 extern int **sensitivity_array;
 
+int thesi_buffer_father=0;
+int buffer_father[BUFSIZ]={0};
+
+
 void extract_mutation_array(FILE *f,person *father1,person *father2){
     int i;
     if(father2!=NULL){
@@ -33,16 +37,25 @@ void extract_mutation_array(FILE *f,person *father1,person *father2){
 }
 
 void extract_father_id(FILE *f,int father_number1, int father_number2){
+
     if (f == NULL){
         printf("Error opening file father_output!\n");
         exit(1);
     }
 
+    else if (thesi_buffer_father==BUFSIZ-2){
+        fwrite(buffer_father, sizeof(int), sizeof(buffer_father), f);
+        thesi_buffer_father=0;
+    }
+
     if(father_number2==-1){
-        fprintf(f, "%d ",father_number1);
+        buffer_father[thesi_buffer_father]=father_number1;
+        thesi_buffer_father++;
     }
     else{
-        fprintf(f, "%d %d ",father_number1,father_number2);
+        buffer_father[thesi_buffer_father]=father_number1;
+        buffer_father[thesi_buffer_father+1]=father_number2;
+        thesi_buffer_father=thesi_buffer_father+2;
     }
 }
 

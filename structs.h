@@ -17,6 +17,8 @@
 #define size_of_maturity_array 1024
 #define neutRegionLength 1000
 #define number_of_threads 10
+#define neut_flag 0
+#define extr_fat_id 0
 
 typedef struct auxiliary_genotype_data{
     int array_genotype_occ[10000];

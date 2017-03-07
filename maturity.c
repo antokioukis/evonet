@@ -18,11 +18,11 @@ void create_maturity_step(person *individual,int step,FILE *steps,FILE *period, 
 		else temp_vector[i]=0;
 	}
 
-	/*printf("new_vector\n");*/
-	/*for(i=0;i<genes_per_person;i++){
+	/*printf("new_vector\n");
+	for(i=0;i<genes_per_person;i++){
 		printf("%d",temp_vector[i]);
 	}
-	printf("\n");*/
+	printf("\n"); */
 
 	position=vector_to_decimal(temp_vector);
 	/*printf("position %d\n",position);*/
@@ -33,13 +33,14 @@ void create_maturity_step(person *individual,int step,FILE *steps,FILE *period, 
     }
     else{
     	individual->periodos=step-individual->maturity_array[position];
-        if (robust_or_not) fprintf(period, "%d",individual->periodos);
+        if (robust_or_not) {fprintf(period, "%d",individual->periodos);}
        	individual->mature=true;
     }
 
 	if(!individual->mature){
 		for(i=0;i<genes_per_person;i++){
 			individual->vector_of_signs[i]=temp_vector[i];
+            /*printf("%d\n",individual->vector_of_signs[i]);*/
 		}
 	}
 }
@@ -69,11 +70,11 @@ void mature_generation(population *new_population,int robust_or_not){
     int step=1;
     int k,l,i=0;
 
-    FILE *steps_Output,*period_Output;
+/*    FILE *steps_Output,*period_Output;
 
     steps_Output = fopen("steps.txt", "a");
     period_Output= fopen("period.txt","a");
-
+*/
     while(!check_population_mature(new_population)){
        /* printf("Pli8ismos Oxi wrimos. Xreiazomai kai alla maturity steps\n");*/
         for(k=0;k<curr_num_of_groups;k++){
@@ -81,7 +82,9 @@ void mature_generation(population *new_population,int robust_or_not){
                 if(!temp->person_in_group[l]->mature){
      /*               ID=temp->person_in_group[l]->id;
                       	printf("group:%d Atomo me ID %d xreiazetai maturity step\n",k,ID);
-*/       		create_maturity_step(temp->person_in_group[l],step,steps_Output,period_Output,robust_or_not);
+*/       		create_maturity_step(temp->person_in_group[l],step,NULL,NULL,0);
+                    /*ta 2 null apo panw itan arxeia gia na psarepsw me terminal to period alla twra an skasoun equilibria 8a ta dw giati
+                    8a ftiaxoun ta equilibrium steps kai periods opote den xreiazomai olo auto to argo output*/
                 }
                 i++;
             }
@@ -92,12 +95,13 @@ void mature_generation(population *new_population,int robust_or_not){
         step++;
         temp=new_population->groups_list;
     }
-
+/*
     if(robust_or_not){
         fprintf(steps_Output, "\n");
         fprintf(period_Output, "\n");
     }
-        /* printf("STEPS NEEDED:%d\n",step); */
+
         fclose(steps_Output);
         fclose(period_Output);
+*/
 }

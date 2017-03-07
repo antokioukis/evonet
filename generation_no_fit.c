@@ -21,7 +21,10 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_R1R2_swapping(int nu
     id_patera1=gsl_rng_uniform_int(r,(curr_num_of_groups*persons_per_group));
     id_patera2=gsl_rng_uniform_int(r,(curr_num_of_groups*persons_per_group));
 
-    extract_father_id(f,id_patera1,id_patera2);
+    if (extr_fat_id){
+        extract_father_id(f,id_patera1,id_patera2);
+    /* printf("Counter2= %d\n",counter1); */
+    }
 
     group_counter1=id_patera1/persons_per_group;
     person_counter1=id_patera1%persons_per_group;
@@ -123,7 +126,11 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_row_swapping(int num
     id_patera1=gsl_rng_uniform_int(r,(curr_num_of_groups*persons_per_group));
     id_patera2=gsl_rng_uniform_int(r,(curr_num_of_groups*persons_per_group));
 
-    extract_father_id(f,id_patera1,id_patera2);
+    
+    if (extr_fat_id){
+        extract_father_id(f,id_patera1,id_patera2);
+    /* printf("Counter2= %d\n",counter1); */
+    }
 
     group_counter1=id_patera1/persons_per_group;
     person_counter1=id_patera1%persons_per_group;
@@ -193,7 +200,6 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_row_swapping(int num
 R1_R2_auxiliary *choose_random_father_dependencies_no_combinations(int num_of_gen,gsl_rng *r,FILE *f,FILE *d){
     int group_counter=0;
     int person_counter=0;
-    int counter2=-1;
     int id_patera,i, j;
     R1_R2_auxiliary *new_auxiliary;
 
@@ -204,8 +210,10 @@ R1_R2_auxiliary *choose_random_father_dependencies_no_combinations(int num_of_ge
     id_patera=gsl_rng_uniform_int(r,(curr_num_of_groups*persons_per_group));
     /*printf("ID_patera:%d \n",id_patera); */
 
-   /* printf("Random father no combinations\n"); */
-    extract_father_id(f,id_patera,counter2);
+    if (extr_fat_id){
+        extract_father_id(f,id_patera,-1);
+    /* printf("Counter2= %d\n",counter1); */
+    }
 
     group_counter=id_patera/persons_per_group;
     person_counter=id_patera%persons_per_group;
