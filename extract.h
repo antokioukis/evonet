@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include "structs.h"
 
+int calculate_open_non_net(int vector[max_genes_per_person],int key_genes);
+
+void extract_open_non_network(population *new_population,int key_genes);
+
 void extract_R1R2_generation(FILE *f1,FILE *f2, int num_of_gen);
 
 void extract_discrete_generation(FILE *f, int num_of_gen);

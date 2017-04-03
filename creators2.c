@@ -1,5 +1,11 @@
 #include "creators.h"
 #include "extract.h"
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#define LAST_BIT 0.2
+
 extern int curr_num_of_groups;
 extern int sensitivity;
 
@@ -99,7 +105,7 @@ auxiliary_genotype_data *create_genotype_hash(population *new_population){
 
     return genotype_data;
 }
-/*
+
 person *deep_copy_person(person *destination,person *arrival){
 
   int j,m, i;
@@ -111,11 +117,9 @@ person *deep_copy_person(person *destination,person *arrival){
     destination->father_fitness=arrival->father_fitness;
     destination->father_genotype=arrival->father_genotype;
 
-    for( i = 0; i < max_genes_per_person; ++i){
-        for( j = 0; j < neutRegionLength; ++j){
-            destination -> neutRegion1[i][j] = arrival -> neutRegion1[i][j];
-        }
-    }
+    for( i = 0; i < max_genes_per_person; ++i)
+      for( j = 0; j < neutRegionLength; ++j)
+	destination -> neutRegion1[i][j] = arrival -> neutRegion1[i][j];
     
     
     for(j=0;j<max_genes_per_person;j++){
@@ -140,7 +144,7 @@ person *deep_copy_person(person *destination,person *arrival){
 
     return destination;
 }
-*/
+
 
 person *create_mutations(person *foreigner,double mu, gsl_rng *r){
 
@@ -155,7 +159,7 @@ person *create_mutations(person *foreigner,double mu, gsl_rng *r){
     int agene;
     int last_bit_change=1;
     unsigned int num_of_mutations = 0, num_of_neutral_mutations = 0;
-    /*person *individual = NULL; */
+    person *individual = NULL; 
     
     /* print n random variates chosen from
     the poisson distribution with mean
@@ -176,20 +180,13 @@ person *create_mutations(person *foreigner,double mu, gsl_rng *r){
    / euros_kouba=99/sensitivity;
 */
     /*deep copy foreigner se temp*/
-    /*individual = (person*)calloc(1, sizeof(person)); */
-    /*individual=deep_copy_person(individual,foreigner); */
+    individual = (person*)calloc(1, sizeof(person));
+    individual=deep_copy_person(individual,foreigner);
     /*printf("father genotype %s\n",individual->father_genotype);*/
-    /*free(foreigner); */
+    free(foreigner);
 
-    if (num_of_mutations>0){
-        mutated_person=1;
-    } 
-    else {
-        mutated_person=0;
-        return foreigner;
-    }
-    
-    foreigner->num_of_mutations_carried=num_of_mutations;
+    if (num_of_mutations>0) mutated_person=1; else mutated_person=0;
+        individual->num_of_mutations_carried=num_of_mutations;
 
     for( j = 0; j < num_of_neutral_mutations; ++j){
 	/* choose a gene to mutate */
@@ -208,7 +205,7 @@ person *create_mutations(person *foreigner,double mu, gsl_rng *r){
 	   }
 	   else{
 	    total_mutations++;
-	    foreigner -> neutRegion1[agene][apos] = 1;
+	    individual -> neutRegion1[agene][apos] = 1;
 	    mutatedSites[agene][apos] = 1;
 	    ++apos;
 	   }
@@ -227,71 +224,56 @@ person *create_mutations(person *foreigner,double mu, gsl_rng *r){
 
       /* the mutation probability for the last bit is 100 less */
       bit_mutation=gsl_rng_uniform_pos(r);
-      last_bit_change=1;
+      
       /*special case, changing the last bit changes the interaction */
-      if(bit_mutation<=LAST_BIT_PERCENTAGE && last_bit_change){/*itan palia 0.2 prpeei na einai 0.01 gia na einai swsto*/
-       /* printf("bit:mutation %f\n",bit_mutation); */
-        if(which_R1R2){
+      if(bit_mutation<=LAST_BIT && last_bit_change){/*itan palia 0.2 prpeei na einai 0.01 gia na einai swsto*/
+	if(which_R1R2){
             /*no fuss an einai monos ari8mos,to ipoloipo bgainei 1, afairwntas 1, ton kaneis zigo kai den peirazeis to ipoloipo binary represantation*/
-            if(foreigner->gene_R1[num_of_gene_to_mutate]%2){
-                foreigner->gene_R1[num_of_gene_to_mutate]=foreigner->gene_R1[num_of_gene_to_mutate]^1; /* itan -1 */
+            if(individual->gene_R1[num_of_gene_to_mutate]%2){
+                individual->gene_R1[num_of_gene_to_mutate]=individual->gene_R1[num_of_gene_to_mutate]^1; /* itan -1 */
             }
             /*no fuss an einai monos ari8mos,to ipoloipo bgainei 1, afairwntas 1, ton kaneis zigo kai den peirazeis to ipoloipo binary represantation*/
-           // else{
-           //      individual->gene_R1[num_of_gene_to_mutate]=individual->gene_R1[num_of_gene_to_mutate]+1; /* itan +1 */
-           //  } 
+            else{
+                individual->gene_R1[num_of_gene_to_mutate]=individual->gene_R1[num_of_gene_to_mutate]^1; /* itan +1 */
+            }
         }
         else{
-            if(foreigner->gene_R2[num_of_gene_to_mutate]%2){
-                /*akiouk 2/4/17 half of R2 cant change their last bit*/
-                if(foreigner->half_R2_flag==1){
-                   /* printf("mporw na ri8misw mono ta misa R2\n"); */
-                    if (num_of_gene_to_mutate%2==1){
-                        foreigner->gene_R2[num_of_gene_to_mutate]=foreigner->gene_R2[num_of_gene_to_mutate]^1; /* itan -1*/
-                        printf("kai ekatse mutation se SWSTO R2\n"); 
-
-                    }
-                    else{
-                         printf("kai ekatse mutation se LA8OS R2\n");
-                    }
-                }
-                else{
-                    /*printf("mporw na ri8misw OLA R2\n");*/
-                    foreigner->gene_R2[num_of_gene_to_mutate]=foreigner->gene_R2[num_of_gene_to_mutate]^1; /* itan -1*/
-                }
+            if(individual->gene_R2[num_of_gene_to_mutate]%2){
+                individual->gene_R2[num_of_gene_to_mutate]=individual->gene_R2[num_of_gene_to_mutate]^1; /* itan -1*/
+		
             }
             /*no fuss an einai monos ari8mos,to ipoloipo bgainei 1, afairwntas 1, ton kaneis zigo kai den peirazeis to ipoloipo binary represantation*/
-            // else{
-            //     individual->gene_R2[num_of_gene_to_mutate]=individual->gene_R2[num_of_gene_to_mutate]+1; /* itan +1 */
-            // }
+            else{
+                individual->gene_R2[num_of_gene_to_mutate]=individual->gene_R2[num_of_gene_to_mutate]^1; /* itan +1 */
+            }
+	    fprintf(stderr, "R2: %d\n", individual->gene_R2[num_of_gene_to_mutate]);
         }
       }
       else{
         /*bres poios koubas einai */
-        /*koubas=gsl_rng_uniform_int(r,sensitivity-1) + 1;*/ /*PP 20170317*/
         koubas=gsl_rng_uniform_int(r,sensitivity);
 
         if(which_R1R2){
-          to_be_mutated=foreigner->gene_R1[num_of_gene_to_mutate];
+          to_be_mutated=individual->gene_R1[num_of_gene_to_mutate];
           magic_number = 1 << koubas;
           result = to_be_mutated ^ magic_number;
           /*printf("palio: %d, koubas: %d, kainourio: %d\n", to_be_mutated, koubas, result);  */
-          foreigner->gene_R1[num_of_gene_to_mutate]=result;
+          individual->gene_R1[num_of_gene_to_mutate]=result;
          /* printf("kainourio: %d\n", individual->gene_R1[num_of_gene_to_mutate]); */
         }
         else{
-          to_be_mutated=foreigner->gene_R2[num_of_gene_to_mutate];
+          to_be_mutated=individual->gene_R2[num_of_gene_to_mutate];
           magic_number = 1 << koubas;
           result = to_be_mutated ^ magic_number;
           /*printf("palio: %d, koubas: %d, kainourio: %d\n", to_be_mutated, koubas, result); */
-          foreigner->gene_R2[num_of_gene_to_mutate]=result;
+          individual->gene_R2[num_of_gene_to_mutate]=result;
           /*printf("kainourio: %d\n", individual->gene_R2[num_of_gene_to_mutate]); */
         }
 
       }
     }
 
-    return foreigner;
+    return individual;
 }
 
 
@@ -311,30 +293,27 @@ float create_gene_interactions(int R1,int R2){
 /*
     printf("Mpika me R1 = %d , R2 = %d  \n",R1,R2);
 
-    printf("R1 se binary=%010d \n",R1);
+    printf("R1 se binary=%010d \n",R1_binary);
 
-    printf("R2 se binary=%010d \n",R2);
+    printf("R2 se binary=%010d \n",R2_binary);
 
     printf("lastbitR1=%d \n",lastbitR1);
     printf("lastbitR2=%d \n",lastbitR2);
 */
-    if(lastbitR1){ /*ri8misi*/
-	   power_of_interaction=NumberOfSetBits(R1 & R2);
+    if( lastbitR1 ){ /* rithmisi */
+    /* if(lastbitR2==lastbitR1){ /\*ri8misi*\/ */
+      power_of_interaction=NumberOfSetBits(R1 & R2);
         /*printf("Interaction:%f \n",power_of_interaction);*/
-        power_of_interaction = power_of_interaction / max_genes_per_person; /*kanonikopoihsh*/
+      power_of_interaction = power_of_interaction / max_genes_per_person; /*kanonikopoihsh*/
 
-        if(lastbitR2){
-            interaction=power_of_interaction;
-           /* printf("Positive Interaction:%f \n",interaction);*/
-        }
-        else {
-            interaction=-power_of_interaction;
-            if(power_of_interaction==0) interaction=0;
-            /*else {printf("Negative Interaction:%f \n",interaction); }*/
-        }
-    }
-    else{
-        interaction=0;
+      if(lastbitR2){
+	interaction=power_of_interaction;
+	/*           printf("Positive Interaction:%f \n",interaction); */
+      }
+      else {
+	interaction=-power_of_interaction;
+ /*           printf("Negative Interaction:%f \n",interaction); */
+      }
     }
     /*printf("%f ",interaction);*/
     return interaction;
@@ -342,7 +321,7 @@ float create_gene_interactions(int R1,int R2){
 
 
 /*Create personal records, return pointer to person */
-person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count,int R1R2_matrix[max_genes_per_person*2][1]){
+person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count,int R1R2_matrix[max_genes_per_person][1]){
     int i,j;
 
     person *new_person;
@@ -355,50 +334,37 @@ person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2,int min_count,
     /* I create a new neutral region linked with the person. 
        If there is recombination, probably this is not correct 
     */
-    for( i = 0; i < genes_per_person; ++i){
-        for( j = 0; j < neutRegionLength; ++j){
-	       new_person -> neutRegion1[i][j] = 0;
-        }
-    }
-
-/*
-        for(j=0;j<genes_per_person*2;j++){
-            printf("%d\n",R1R2_matrix[j][0]);
-        }
-        printf("\n");
-*/
-
+    for( i = 0; i < genes_per_person; ++i)
+      for( j = 0; j < neutRegionLength; ++j)
+	new_person -> neutRegion1[i][j] = 0;
+    
     for (i=0;i<genes_per_person;i++){
-        if(R1R2_matrix == NULL){
+      
+        if(R1R2_matrix ==0){
             new_person->gene_R1[i]=rand_interval(min_gene_R1R2,max_gene_R1R2);
             new_person->gene_R2[i]=rand_interval(min_gene_R1R2,max_gene_R1R2);
         }
+        
         else{
             new_person->gene_R1[i]=R1R2_matrix[i][0];
             new_person->gene_R2[i]=R1R2_matrix[i+genes_per_person][0];
-            /*printf("%d %d ",new_person->gene_R1[i],R1R2_matrix[i][0]);
-            printf("%d %d\n",new_person->gene_R2[i],R1R2_matrix[i+genes_per_person][0]); */
+            printf("R1 %d ",new_person->gene_R1[i]);
+            printf("R2 %d \n",new_person->gene_R2[i]); 
         }
-        /*printf("\n");*/
+        
+        
         new_person->gene_counts[i]=rand_interval(min_count,max_count);
+        
     }
-    new_person->half_R2_flag=0;
-
-    for (i=0;i<genes_per_person;i++){
-        if (new_person->gene_R2[i]==10){
-            /*printf("akiouk\n");*/ 
-            new_person->half_R2_flag=1;
-            break;
-        }
-    }
-
+    
+    printf("\n------\n");
     for(i=0;i<genes_per_person;i++){
-        /*if (new_person->gene_counts[i]>0){ */
+        if (new_person->gene_counts[i]>0){
             new_person->vector_of_signs[i]=1;  /* first generation so gene_counts always positive on the vector -> 1 */
-        /*}
-        else{ */
+        }
+        else{
             new_person->vector_of_signs[i]=0;
-/*        }*/
+        }
     }
 
     for(i=0;i<genes_per_person;i++){
@@ -419,9 +385,8 @@ person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2,int min_count,
 }
 
 /*return pointer to new group. New group is array of pointers to persons.*/
-group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count,int R1R2_matrix[persons_per_group*max_genes_per_person*2][1]){
+group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2,int min_count,int max_count,int R1R2_matrix[persons_per_group*max_genes_per_person][1]){
     int i,j;
-    int thesi=0;
     int matrix_person[max_genes_per_person*2][1];
     group *new_group;
 
@@ -429,11 +394,11 @@ group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2,int min_c
     new_group->group_number=group_num;
 
     for(i=0;i<persons_per_group;i++){
-        for(j=0;j<genes_per_person*2;j++){
 
+        for(j=0;j<genes_per_person*2;j++){
             if(R1R2_matrix[0][0]!=0){
-                matrix_person[j][0]=R1R2_matrix[thesi+j][0];
-                /*printf("%d\n",matrix_person[j][0]); */
+                matrix_person[j][0]=R1R2_matrix[(i*genes_per_person*2)+j][0];
+                /*printf("%d\n",matrix_person[j][0]);*/
             }
             else{
                  matrix_person[j][0]=0;
@@ -441,14 +406,7 @@ group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2,int min_c
             /*printf("\n"); */
         }
 
-        thesi=thesi+genes_per_person*2;
 
-/*
-         for(j=0;j<genes_per_person*2;j++){
-            printf("%d\n",matrix_person[j][0]);
-        }
-        printf("\n");
-*/
         new_group->person_in_group[i]=create_person(i,min_gene_R1R2,max_gene_R1R2,min_count,max_count,matrix_person); /*create pointer to person, save on the groups array , argument is the personal id */
 
         /*for (j=0;j<genes_per_person;j++){
@@ -456,7 +414,6 @@ group *create_group(int group_num,int min_gene_R1R2, int max_gene_R1R2,int min_c
         }*/
 
     }
-
     return new_group;
 }
 
@@ -476,8 +433,9 @@ population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene
     char *line=NULL;
     size_t len = 0;
     size_t read;
-    const char tokenizer[2]=" ";
-    char *token;
+    /* const char tokenizer[2]=" "; */
+    char tokenizer[]="\t\r\n\v\f ";
+    char *token = NULL;
     int thesi_r1r2_input=0;
 
     /*int k,j;*/
@@ -496,13 +454,14 @@ population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene
     if(start_in!=NULL){
         while ((read = getline(&line, &len, start_in)) != -1) {
             token = strtok(line, tokenizer);
-            /*R1R2_matrix_total[thesi_r1r2_input][0]=atoi(token);
-            thesi_r1r2_input++; */
-            while( token != NULL ) {
-               /* if (token=="\n"){printf ("NEWLINE"); continue;} */        
-             /* printf( "%s\n", token ); */ 
+            /* fprintf(stderr, "line: %s\n", line); */
+            R1R2_matrix_total[thesi_r1r2_input][0]=atoi(token);
+            
+            /*PP ti malakies....  thesi_r1r2_input++; */
+            
+            while( token != NULL ) {        
               R1R2_matrix_total[thesi_r1r2_input][0]=atoi(token);
-              /*printf("%d\n",R1R2_matrix_total[thesi_r1r2_input][0]);*/
+              /* printf("%d %d\n",thesi_r1r2_input, R1R2_matrix_total[thesi_r1r2_input][0]); */
               token = strtok(NULL, tokenizer);
               thesi_r1r2_input++;
             }
@@ -515,36 +474,38 @@ population *create_population(int groups_wanted, int min_gene_R1R2, int max_gene
             k++;
         }
     }
+    
+    j = 0;
+    for(i=0;i<groups_wanted;i++){
+      for(k=0;k<persons_per_group*max_genes_per_person*2;k++){
+        R1R2_matrix_group[k][0]=R1R2_matrix_total[j][0];
+	j+=1;
+      }
+      /* PP: ti malakies einai autes?
+         j=j+(persons_per_group*max_genes_per_person*2);
+      */
+      /*printf("%d\n",j);*/
 
-        j=0;
-        for(i=0;i<groups_wanted;i++){
-            for(k=0;k<persons_per_group*max_genes_per_person*2;k++){
-                R1R2_matrix_group[k][0]=R1R2_matrix_total[j][0];
-                j=j+1;
-                /*printf("%d\n",R1R2_matrix_group[k][0]);*/
-            }
-           /* printf("%d\n",j); */
-
-        if(i==0){
-           /* printf("Head on the group_list of the generation 0\n"); */
-            new_population->groups_list=create_group(i,min_gene_R1R2,max_gene_R1R2,min_count,max_count,R1R2_matrix_group); /*create pointer to group_list, save on the population array*/
-            new_population->groups_list->next=NULL;
-            new_population->groups_list->prev=NULL;
+      if(i==0){
+        /* printf("Head on the group_list of the generation 0\n"); */
+        new_population->groups_list=create_group(i,min_gene_R1R2,max_gene_R1R2,min_count,max_count,R1R2_matrix_group); /*create pointer to group_list, save on the population array*/
+        new_population->groups_list->next=NULL;
+        new_population->groups_list->prev=NULL;
+      }
+      else{
+        temp=new_population->groups_list;
+        while(temp->next!=NULL){
+          temp=temp->next;
         }
-        else{
-            temp=new_population->groups_list;
-            while(temp->next!=NULL){
-                temp=temp->next;
-            }
-            temp->next=create_group(i,min_gene_R1R2,max_gene_R1R2,min_count,max_count,R1R2_matrix_group);
+        temp->next=create_group(i,min_gene_R1R2,max_gene_R1R2,min_count,max_count,R1R2_matrix_group);
             temp->next->next=NULL;
             temp->next->prev=temp;
-
-        }
+            
+      }
        /* printf("Created Group: %d\n",curr_num_of_groups); */
-        if(robust_or_not)curr_num_of_groups++;
+      if(robust_or_not)curr_num_of_groups++;
     }
-/*
+    /*
     temp=new_population->groups_list;
     for(i=0;i<groups_wanted;i++){
         printf("Group Num:%d\n",i);

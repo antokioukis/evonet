@@ -283,10 +283,9 @@ int main(int argc, char** argv)
 
   int generations = 0;
 
-  int generations_passed=0;
 
   /* iterate until a fitness level has been reached */
-  while( fitness < maxFitness && generations_passed <(1000000*mutRate))
+  while( fitness < maxFitness)
     {
       int b = numberOfBestGenotypes(pop, optimum, popsize, genes, lut, &curOpt, &curDif);
       fprintf(curOptFile, "%d\t%d\t%d\t%d\t%.40f\n", generations, b, numOfMutations, curDif, curOpt);
@@ -294,7 +293,6 @@ int main(int argc, char** argv)
       /*fprintf(stderr, "fitness: %f, maxFit: %f\n", fitness, maxFitness);*/
       numOfMutations = mutatePop(popsize, genes, pop, mutRate, r);
       ++generations;
-      ++generations_passed;
     }
 
   fclose(curOptFile);

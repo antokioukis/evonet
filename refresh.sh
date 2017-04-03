@@ -25,7 +25,9 @@ N=1000
 #./evonet -selection 1 -s2 5 -N $N -ploidy 1 -swapping 1 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 3 -max_count 152 -generations $r -n 10 -tarfit 0.80
 Rscript write_file.R
 #./evonet -selection 1 -s2 5 -N $N -ploidy 1 -swapping 0 -freq 1 -min_R1R2 10 -max_R1R2 11 -min_count 10 -max_count 11 -mutrate 0.1 -generations $r -n 10 -optimal 1101100011
-./evonet -selection 1  -s2 2 -N 1000 -ploidy 1  -swapping 0 -freq 10 -min_R1R2 10 -max_R1R2 11 -min_count 10 -max_count 11 -generations 1001 -n 10 -recomb_rate 0.005 -mutrate 0.005 -seed 5079724 -optimal 1101010101
+#./evonet -selection 1  -s2 5 -key_genes 9 -st_geno R1R2_input.txt -N 1000 -ploidy 1 -swapping 0 -freq 10 -min_count 10 -max_count 11 -generations 1 -tarfit 0.80 -n 10 -recomb_rate 0.05 -mutrate 0.05 -seed 5079724 -optimal_num 
+./evonet -selection 1 -key_genes 5 -st_geno R1R2_input.txt -s2 10 -N 1000  -tarfit 0.95 -generations 1 -ploidy 1 -swapping 0 -freq 1 -generations 1 -n 10 -recomb_rate 0.05 -mutrate 0.05 -seed 1525 -optimal_num 10
+
 #Rscript mutation_cat.R
 #gcc fitnessSimple.c -lm -lgsl -lgslcblas -o fitnessSimple
 #./fitnessSimple -mu 0.1 -l 10 -popsize 1000 -fm 1 -s 5 -p 2

@@ -8,6 +8,42 @@ extern int **sensitivity_array;
 int thesi_buffer_father=0;
 int buffer_father[BUFSIZ]={0};
 
+int calculate_open_non_net(int vector[max_genes_per_person],int key_genes){
+    int i;
+    int open_genes_non_network=0;
+    /*for (i=0;i<max_genes_per_person;i++){
+        printf("%d ",vector[i]);
+    } 
+    printf("\n"); 
+    */
+    for (i=key_genes;i<max_genes_per_person;i++){
+        if (vector[i]==1){
+            open_genes_non_network++;
+        }
+    }
+    /*printf("%d ", open_genes_non_network);*/
+    return open_genes_non_network;
+}
+
+void extract_open_non_network(population *new_population,int key_genes){
+    FILE *open_genes;
+    int open_genes_sum;
+    int i,j;
+    group *temp=new_population->groups_list;
+    open_genes=fopen("open_genes.txt","a");
+    
+    for(i=0;i<curr_num_of_groups;i++){
+        for(j=0;j<persons_per_group;j++){
+            open_genes_sum=calculate_open_non_net(temp->person_in_group[j]->vector_of_signs,key_genes);
+            fprintf(open_genes, "%d ",open_genes_sum);
+        }
+        if(temp->next!=NULL){
+            temp=temp->next;
+        }
+    }
+    fprintf(open_genes, "\n");
+    fclose(open_genes);
+}
 
 void extract_mutation_array(FILE *f,person *father1,person *father2){
     int i;
