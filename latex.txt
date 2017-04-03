@@ -1,0 +1,391 @@
+\documentclass[twocolumn,showpacs,%
+  nofootinbib,aps,superscriptaddress,%
+  eqsecnum,prd,notitlepage,showkeys,10pt]{revtex4-1}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{dcolumn}
+\usepackage{hyperref}
+\usepackage[export]{adjustbox}
+
+\begin{document}
+
+\title{Algorithm for the simulation of Gene Regulatory Networks}
+%% TODO: I think the title should reflect some biological outcome
+\author{Antonios Kioukis}
+\author{Pavlos Pavlidis}
+\affiliation{University of Crete, Computer Science Department}
+%TODO: add ICS affiliation as well
+
+\begin{abstract}
+Your abstract. BOH8EIA EDW
+\end{abstract}
+
+\maketitle
+
+\section{Background}
+\subsection{Preface}
+This program implements and extends the algorithm presented on the paper titled:
+“Does evolutionary plasticity evolve?” by Dr. Andreas Wagner. The program was written in C
+language, due to the large volume of data needed to be processed a higher level language
+would have had an immense overhead. Furthermore,it encompasses some new features not
+included in the aforementioned publication. Instead of creating random gene interactions inside the Gene
+Regulatory Network (GRN), we have implemented the regulating regions of each gene (R1,
+R2) , and through those 2 regions, we create the gene interactions inside the GRN. In
+addition, individuals who reach maturity periodically, are not discarded like the base paper,
+but handled as special cases called: cyclic equilibrium. Finally, in addition to the 2 models of
+recombination which are implemented, there are options for neutral or not selection.
+The implementation’s code and the R script used for creating the plots are available on
+github: https://github.com/antokioukis/evonet.git
+
+\subsection{Theory}
+A GRN is a collection of regulators that interact with each other and other parts of the
+cell. Through this interaction different expression levels of mRNA and proteins are created.
+These expression levels play a role in the creation of body structures which in turn are vital in
+evolutionary developmental biology.
+In a GRN, the genes can be viewed as nodes in a network. The input is transcription
+factors and outputs being the level of gene expression. So, each GRN can be viewed as a
+programming library which is part of a much larger whole. As a result each node has double
+effect.
+Firstly, as a global feature these networks create a hierarchical scale free network. A
+scale free network means that there are a few highly connected nodes and many poorly
+connected nodes. Another important characteristic of a GRN lays in the network motifs. Inside
+each GRN is an abundance of repetitive topological patters. In order to see those patterns we
+have to look at the GRN after dividing it into small blocks.
+Studying GRNs is important because through those we can draw conclusions about
+the phenotypic plasticity. Phenotypic plasticity is the ability of an organism to change its
+phenotype in response to changes in the environment. Generally phenotypic plasticity is more
+important for immobile organisms than mobile organisms because mobile organism can
+migrate in order to find more favorable conditions.
+Working against the effects of phenotypic plasticity is canalisation. Canalisation
+measures the ability of a population to produce the same phenotype regardless of variability
+of its environment or genotype. A canalisation - phenotypic plasticity metaphor says that:
+phenotypes are very robust to small perturbations,for which development does not exit the
+canal, and rapidly returns down. With little effect on the final outcome. Perturbations whose
+magnitude exceeds a certain threshold will break the canal and follow an uncharted path.
+As a result hose two forces cannot be quantified easily, and any result is not easily
+attributed to one, and we simulate GRNs to get a view of at least the phenotypic plasticity in
+order to comprehend those forces of nature.
+
+\subsection{Previous Research}
+
+	In 1996, Dr. Andreas Wagner publishes his paper: Does evolutionary plasticity evolve?
+From the early stages of development in each organism, a large number of interactions take
+place. Those interactions occur at the lowest levels as mutations. Those changes do not
+affect the organism immediately but instead are buffered. This phenomenon is call “epigenetic
+stability”. Variation in epigenetic stability can occur though. The research continues by
+modeling the transcriptional regulators that mutually regulate each others expression. Due to
+constraints in computer resources, the researcher was forced to experiment with a low
+number of vertexes in the network and find solutions to modeling problems. Through the
+advances of technology, we were capable of remodeling that research and adding new
+features.
+\clearpage
+
+\section{Algorithm Presentation}
+
+\subsection{Initialization of Population}
+
+	Each generation has N number of individuals. For acceleration
+purposes, those N individuals are then grouped into groups of 10. The groups are part of a doubly-linked list to
+accommodate changes in population sizes from one generation to the next, in case of an event. Each individual holds different kind of records. Finally, each generation is stored into an array of pointers, called Generation\_Array, each entry points to the population of a generation.
+	Using the above schema we are capable of finding the information for
+any individual with 2 hops, 1 from the generation to the group and from the group to our goal. For clarity purposes,refer to figure 1.1
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.65\textwidth]{population.png}
+    \caption{Structure of population}
+\end{figure}
+
+\subsection{Initialization of each Individual}
+	Each member of the population, is represented with a structure holding different elements. ID is the personal number of that member inside his group. The mature field is a boolean variable, indicating whether of not the member has reached maturity or not. Fitness is a float number in the range of 0 and 1. The closer fitness is to 1  the more chances the individual has to leave progeny.  Gene counts is an array of integers, with each cell representing the expression of the corresponding gene. Its values are randomly selected from the range of specified by the user at the beginning of each run. The Maturity array has room
+for 1024 integers and  at this stage it is empty. It is used in the maturation process of the individual and in calculating the personal period of maturity.  Genes' R1 and Genes' R2 are 2 arrays of 10 integers each which are filled with random positive integers from the range given by the user or by reading them from run-time specified file.
+	There is also a neutral region on each gene, simulated by a boolean vector, representing a region outside of each gene, which is co-inherited with the R1.
+	Lastly, is the creation of the Gene Interactions Array. Each cell of this square matrix, stores the result of the following operation: From every integer M in R1, take the last bit. Do the same for every integer L in R2. Compare those 2 bits. If the produced pair is 11 then we have a positive interaction. If the pair is 00 we have a negative interaction. The other 2 pairs (01.10) indicate no regulation. The strength of those interactions are calculated by the number of set bits in the respective R1,R2. Store those interactions at the Gene Interactions Array at the M,L cell. We continue the same operation until the array is full.
+
+\subsection{Maturation}
+
+	After creating the population, we proceed to the stage of maturation of the population. We create maturity steps for the whole population,by multiplying the gene\_interactions matrix and the vector\_of\_signs (initialized to 1). The result is then made discrete, if its positive it gets 1, if its zero or negative it gets 0. We use those bits to create the new vector of signs and through concatenation of  those bits we create an integer. This integer is used to indicate the position in the maturity array, in which we place the number of the maturity step. 
+	If the position is empty, it indicates that this particular version of the vector of signs is for the first time encountered and we need more maturity steps. Before creating another maturity step, the current maturity step number is saved in the maturity array. If the position in the maturity array is not empty that means that the individual is now mature and its maturity period is the number of the current step – the number of the step present at the cell. Since personal maturity has been achieved, the individual is  excluded from further maturity steps. This process continues until all the population is mature.
+
+\begin{figure}[h!]
+	\includegraphics[width=0.5\textwidth,height=5cm]{maturity.png}
+\end{figure}
+    For the majority of the population, the maturity period is 1, but for a small fraction of the population this is not the case. In those cases, a cyclic equilibrium is encountered. It doesn’t affect the maturation process but it affects the fitness calculation process following.
+
+\subsection{Fitness Calculation}
+
+	Each mature person now has a discrete vector consisting of 0s and 1s. For the individuals with a personal maturation period of 1, we proceed by calculating the euclidean distance between the personal signs vector  and the optimal vector. The optimal vector is either given by the user or the default value is used.For those who present a cyclic maturity equilibrium a different approach is used. If a person has an M maturation period, we create M maturation steps. Those steps create M  vectors of signs. For every vector, we calculate the euclidean distance. The personal distance of the person is the mean of those distances.  The personal fitness is then calculated with this formula:
+fitness=e(-l*distance).
+	The lambda is indirectly given by the user since l=1/s2  and s2  is user-defined. The smaller the s2  the bigger the increase in fitness from one generation to the next. This happens because a small  s2  makes any differences between the optimal vector and the personal vector of signs matter more. As a result, an individual with 1 difference dominates an individual with 2 differences. A big s2  makes the simulation run without large leaps in fitness, because it is more tolerable to differences between the vectors.
+	After calculating the fitness of the whole population, the program divides the sum of the individual fitness with the number of individual to get a normalized percentage. The closer to 1 it gets the more adapted to its environment the population is.
+	The following graphs display the leaps of fitness while demonstrating the effects of different s2  values.
+
+\begin{frame}{}
+    \begin{figure}[ht]
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{fitness001.png}
+        \end{minipage}
+        \hspace{0.5cm}
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{fitness01.png}
+        \end{minipage}
+        \hspace{0.5cm}
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{fitness1.png}
+        \end{minipage}
+        \hspace{0.5cm}
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{fitness5.png}
+        \end{minipage}
+    \end{figure}
+\end{frame}
+
+\subsection{Implementation of Forwarding}
+	Once a population is mature, it starts to create the next generation. There are 3 factors guiding this phase. The number of parents, the fitness of the parents, and which model dictates how the recombination of the genes of the parents work.
+    It's worth noting that, at the start of the forwarding progress if selection is active there is a bias of the genotypes even when reading from a file. To overcome this obstacle the user can specify a certain generation number. Before this generation there will be neutral selection, thus combating the bias and then the model of selection will change to fitness-based selection.
+	If the number of parents is 1, there are no combinations and the gene interaction matrix passes from parent to child. If a pair is needed to create a new individual then there are combinations of the parents which follow 2 models: 
+	If the model of Dr. Wagner is followed then a random number C is selected from 0 to number of genes. The child inherits from the first parent C columns and from the second parent the remainder columns.
+If our model is followed , 2 random numbers R, C are selected from 0 to number of genes. The top-left part of the gene interactions matrix is inherited from the first parent and the bottom-right part of the matrix is inherited by the second parent. The top-right part is filled with the interactions emerging from R1 of the first parent and R2 of the second parent, while the bottom left part is emerging from the R2 of the first parent in conjunction with the R1 of the second parent.  Detailed explanation of these interactions at 1.2.1 paragraph.
+	A big factor for the creation of the next generation is if the fitness of the potential parent plays a role in his selection. If it doesn’t, the population’s fitness remains almost unchanged no matter how many generations we simulate. If the fitness of the parent plays a role, then a more fitted father has a much stronger possibility of passing his genes to the next generation. So as the simulation progresses we see that the fitness of the population is nearly 1. It can never reach it, due to unfavorable mutations and the combinations but it hovers close enough.The following diagram displays a typical run of the simulation:
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth,height=5cm]{generation.png}
+\end{figure}
+
+\clearpage
+
+\subsection{Creation of Mutations}
+
+	After the creation the new generation and before its maturity some mutations appear. Those mutations affect the inherited R1,R2 arrays of random members of the population. The number of mutations per person is a Poisson distribution using as variable the mutation rate given by the user. Each mutation affects an cell in the R1 array or the R2 array. The selected for mutation cell contains an integer which is then made binary. A random selection is subsequently made for the bit that will be mutated. The mutation is represented by changing the bit to 1 if it was originally 0 and 1 if it was 0. The last bit of the binary integer represents the interaction of this gene with the GRN. Due to that fact, the chance for the last bit to change is 1\%. The remaining 99\% is distributed equal to the the other bits. The resulting mutated integer is then placed back at its original place. 
+
+\subsection{Gene Flow and Genetic Drift}
+	In order to simulate the phenomena of genetic drift and gene flow we have implemented 2 types of events:An increase of population represents the gene flow and a decrease in population corresponds to genetic drift. 
+	The decrease of population is implemented by removing the groups needed in the end of the doubly-linked list. Due to the randomness of the individual in each group, the general fitness of the population, if calculated, does not change. The deletions do not take into account the personal fitness of the individual.
+	The increase of the population is handled by creating new groups of individuals, using the last generation for the necessary hereditary traits, and adding those groups at the tail of the list. The next step is to mature those groups. Finally, if natural selection is active, the fitness of the population improves because the "fitted" individuals leave more progeny as a result, we need to recalculate the generation fitness when all the new individuals have been created.
+
+\subsection{User's Guide}
+
+	The program at the end of the run outputs data to text files. Each text file contains different kind of data from the simulation and for readability and consistency purposes follows a simple prototype. At the beginning of each new generation’s data, the number of the generation, the number of individuals and the number of genes are reported. After that, follows the personal data of each member of the population. It’s worth noting that, when the fitness of an individual doesn’t affect the possibility of leaving offspring, the fitness text file is empty. Also, take in account that both R1R2 and counts text files do not differentiate between different individuals of the same generation, but since the number of genes is known we can easily find out the data belonging to each one.	
+    The algorithm needs to reach one of two conditions in order to terminate. Firstly, if the run was executed for a predetermined number of generations, when the number in question is reached the algorithm terminate. Additionally, if the finalized number of generations  is not determined a priori, then the program terminates when it has reached a average target fitness which is either issued by the user or is calculated as 
+ 
+	$t = 0.95 \times \big(max\_distance-min\_distance\big) + max\_distance $,\\
+where max\_distance is the reverse of the optimal given by the user and min\_distance=0.
+    Due to the major effect that probabilities have in this project, we used the more reliable gsl library instead of more traditional but less effective ways of simulating pseudo-random numbers such as the function rand().The seed for those functions, was randomly selected from a uniform distribution, and not based on the current clock time of the system, because if multiple runs of the algorithm were started at the same time (parallel running), the output would always be the same.
+    
+
+\subsection{Limitations}
+
+	There is a hard limit to the number (10) of genes each person can have. This was selected because for more genes, the personal maturity array had to have a size of 2\^N of genes. As a consequence of the memory requirements, a limit had to chosen. That limit is 10 genes per person. Otherwise there are no limitations as to how big a sample we want to simulate. The use of the double-hop system ensures an acceptable time complexity.
+	The simulation while running uses a 2-position matrix to store the required data. This scheme was chosen to have the best memory utilization. It does not result in memory leaks. The program was checked with the specialized software to ensure that no memory leaks were possible. The logic behind this matrix is: when you are creating the Generation X you only need the data of the Generation X-1.The previous generations of X-1 are of no consequence to the current task and their occupied memory should be freed.It is important to note that the bulk of the used memory is held up in the personal records and  so a simulation of 100K individuals although supported but not advised.
+    
+\clearpage
+    
+\section{Results/Findings}
+
+\subsection{Comparisons between Neutral Evolution and Natural Selection Simulations}
+
+	First and foremost, on natural selection models the population reaches a level of fitness of 0.90 and then it plateaus. The model cannot simulate a generation fitness of 1, due to the existence of random mutations.  As expected, simulations run on neutral evolution do not have this trait, instead the general fitness of the population hovers on a level set by the initial random start. The next graphs depict this effect more clearly.
+
+\begin{frame}{}
+    \begin{figure}[ht]
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{neutral.png}
+            \caption{Neutral Evolution}
+        \end{minipage}
+        \hspace{0.5cm}
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{basedfit.png}
+            \caption{Natural Selection}
+        \end{minipage}
+    \end{figure}
+\end{frame}
+
+	Secondly, the size of the population plays a vital role. Due to the random initialization process followed in all simulations, when the sample from where to draw potential parents decreases, the upwards leaps in generation fitness also decrease. As an example a sample of 1000 individuals reaches 0.9 generation fitness in 1 generation where as a sample of 100 individuals reaches that same percentage after 5 forward generations (with s\^2=0.01).Also a difference in the number of genotypes was observed with the 2 different models of forwarding. On the natural selection model, even though the phenotype of the individuals was the same, differences in genotype were prevalent. After some generations,there is a fixation in the number of viable genotypes, because if a genotype produces a low fitness individual through deleterious mutations the chance of leaving progeny is practically zero. On the neutral evolution model the number of genotypes varies randomly.
+    
+\begin{frame}[h]{}
+    \begin{figure}[h]
+        \begin{minipage}[b]{0.35\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{diff_geno.png}
+            \caption{Neutral Evolution}
+        \end{minipage}
+        \hspace{0.5cm}
+        \begin{minipage}[b]{0.35\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{diff_geno_fit.png}
+            \caption{Natural Selection}
+        \end{minipage}
+    \end{figure}
+\end{frame}
+    
+    
+    
+\subsection{Comparison between sexual and asexual reproduction simulations}
+
+In accordance to Dr. Wagner’s research, our simulations also show that asexual reproduction wield the same results when there is neutral evolution. In the simulation the asexual reproductions are represented by having no recombination when creating the next generation. The graphs were generated with a sample size of 1000 individuals, a mutation rate of 1 and following neutral evolution. The graphs show that despite the difference in the reproduction model the general fitness of the generation continues to stay at the same level despite fluctuating “wildly” between the generations.
+
+\begin{frame}[h]{}
+    \begin{figure}[h]
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{neutralnore.png}
+            \caption{Neutral Evolution}
+        \end{minipage}
+        \hspace{0.5cm}
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{neutralre.png}
+            \caption{Natural Selection}
+        \end{minipage}
+    \end{figure}
+\end{frame}
+
+	In contrast, when the fitness of the individual plays the dominant role in the selection process, whether there is sexual reproduction or not differentiates the results. This happens because when 2 fitted individuals are needed for reproduction, a shortcoming in one factor from the first parent can be covered from the second parent. If there is only 1 needed parent then those shortcomings may endure, and appear further in the forwarding simulations. The following figures where created with a sample size of 1000, mutation rate 5 and created 5000 forward generations.
+
+\begin{frame}{}
+    \begin{figure}[h]
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{fitnore.png}
+            \caption{Neutral Evolution}
+        \end{minipage}
+        \hspace{0.5cm}
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{fitre.png}
+            \caption{Natural Selection}
+        \end{minipage}
+    \end{figure}
+\end{frame}
+
+	A result with some importance are the minor differences in the R1,R2 regions when the different methods of reproduction are used. When a pair is not required, there are sudden dips in the mean values of the regions. This happens in case the most fitted individual  generates a detrimental mutation. Until a new more fitted individual is found, the now mutated fitted parent leaves the most offspring. When there is a more “fitted” individual there is an increase. Furthermore there is a correlation between how small the s2  is, and how steep are those dips. 
+    
+\begin{frame}[h]{}
+    \begin{figure}[h]
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{r1r2nore.png}
+            \caption{Neutral Evolution}
+        \end{minipage}
+        \hspace{0.5cm}
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{r1r2re.png}
+            \caption{Natural Selection}
+        \end{minipage}
+    \end{figure}
+\end{frame}
+
+Finally, the two models of reproduction differ, as they should, in the maximum number of children a parent can have. This is represented from the next set of figures. The fluctuations in neutral evolution are expected but the peaks when there is evolutionary pressure correspond to a beneficial mutation, which is rapidly fixed within the population, that is why the average number of children returns to its original position.
+
+\begin{frame}[h]{}
+    \begin{figure}[h]
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{neutfather.png}
+            \caption{Neutral Evolution}
+        \end{minipage}
+        \hspace{0.5cm}
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{fittedfather.png}
+            \caption{Natural Selection}
+        \end{minipage}
+    \end{figure}
+\end{frame}
+
+
+
+\subsection{Comparison between different evolutionary pressures}
+	The implementation also allowed us to extract different results which correlate with differences in the optimal signs vector. When the evolutionary pressure is directed towards either end, the population reaches the maximum fitness much faster than the bi-directed pressure. Except the aforementioned tendency, it is clear from the following diagram that there is no bound in what the optimal vector is, the simulated population will reach the maximum fitness eventually.
+    
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth,height=5cm]{fitness_generations.png}
+\end{figure}
+
+
+\subsection{Robustness of population}
+	Another important finding is the existence of biological robustness or canalisation in the simulations especially when evolutionary pressure is applied. We observed that in populations with 10 genes, we can branch out a generation and force it to leave 2 different populations as progeny. The first one represents the main or core generation with a default mutation rate and the "branch" represents a generation with higher mutation rate. In simulations where the "branch" had a mutation rate of 5, there was a high correlation between the "branch" and the core. This indicates high canalisation. As is expected when the mutation rate of the "branch" is increasing the robustness of the generation decreases. Below is a table representing this correlation between mutation rate and robustness. 
+
+\begin{center}
+ \begin{tabular}{||c c||} 
+ \hline
+ Mutations & Robustness \\ [0.5ex] 
+ \hline\hline
+ 1 & 99\% \\ 
+ \hline
+ 10 & 97\% \\
+ \hline
+ 25 & 91\% \\
+ \hline
+ 50 & 84\% \\ [1ex] 
+ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Neutral Region of Genes}
+Using Site Frequency Analysis we were able to see
+BOH8EIA EDW
+
+\subsection {Ladder of Fitness}
+On our simulations a pattern emerged. The population scales the landscape fitness in precise and discrete steps. This phenomenon lends itself to the idea of a landscape ladder where if you want to move upwards you can only do it one step at the time.That means that there is no concept of quantification of beneficial effects on mutations. If a mutations occurs then it is: beneficial,deleterious or neutral. No mutation can be more beneficial than another beneficial mutation.The same holds true for deleterious mutations. The number of the steps in the ladder is equal to the number of genes.
+
+\subsection{Open Genes}
+We simulated smaller GRNs where only a fraction of the genes in each individual is under evolutionary pressure. The rest of the genes are free to be mutated at random. This was used to draw some conclusions if the free genes play some underlying role in the evolution of the GRN. We concluded that these free genes when are "open" help in increasing the average fitness of population up to a level. After that level of generation fitness is reached they are disadvantageous, and so they are discarded and those genes stop interacting with the genes that are under pressure. Following are plots of these effects with different size of GRN and free genes.
+
+\begin{frame}[h]{}
+    \begin{figure}[h]
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{open_3_s_5.png}
+            \caption{Neutral Evolution}
+        \end{minipage}
+        \hspace{0.5cm}
+        \begin{minipage}[b]{0.45\linewidth}
+            \centering
+            \includegraphics[width=\textwidth]{open_5_s_5.png}
+            \caption{Natural Selection}
+        \end{minipage}
+    \end{figure}
+\end{frame}
+
+\subsection{Competition Between Different Length GRNs}
+	Following the idea above, we have compared 2 different length GRNs to determine if the size of the network plays an important role. This was achieved by creating a population where half of the speciments couldn't change the regulation the last bit of the R2 regions of their free genes. The other half could regulate every R2 region. When those groups were under the same evolutionary pressure, the speciments with the full regulation where more fit than their competitors. This dominance was complete and it was interesting because it seems contradicting with the above section. This is not the case however. The speciments who couldn't regulate the whole of their R2 regions never reached the peak, where after they would start shedding their remaining open genes, due to the competition with the full regulated R2 speciments.
+\section{Discussion}
+The effect of GRN is prominent. To further cement this claim, we have also created a second approach of the algorithm which emits the GRN entirely. The main effect of the GRN is that it provides robustness against mutations.To test this we have run both Evonet and the GRN-less variation with increasing mutation rates and a we were able to differentiate a pattern. On the small mutation rates the robustness and buffering of the mutations happening in Evonet acts as a obstacle to the time to reach optimum fitness.This doesn't happen with the GRN-less approach. When the mutation rate increases, the Evonet displays a much better respornse in the time to rach optimum. This is due to the robustness provided by the GRN. In the following graph, the green line represents Evonet and the red represents the GRN-less approach. The red line continues increasing exponentially outside the dimensions of the plot. 
+
+	    
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth,height=5cm]{fitness_mut_zoom.png}
+\end{figure}
+
+\section{Future Work}
+An extension of the current algorithm would be to lift the hard limit on the number of genes per individual. But, this limit is enough to draw our conclusions and we believe that those results are indicating the behavior for GRNs with more nodes.
+	Through the schema of the program its very easy to substitute the fitness function with another. Currently the fitness of an individual is calculated by the euclidean distance. This was chosen because of the easy implementation in C and more importantly, the results where intuitive without the use of complex statistics. Both Chebyshev and Manhattan distance are valid candidates.
+
+\section{Acknowledgments}
+BOH8EIA EDW
+We thank MPLA MPLA MPLA
+
+\section{Literature Cited}
+\begin{thebibliography}{9}
+\bibitem{latexcompanion} 
+Michel Goossens, Frank Mittelbach, and Alexander Samarin. 
+\textit{The \LaTeX\ Companion}. 
+Addison-Wesley, Reading, Massachusetts, 1993.
+
+\end{thebibliography}
+
+\end{document}
