@@ -12,7 +12,7 @@ void create_maturity_step(person *individual,int step,FILE *steps,FILE *period, 
 		/*if(step==1) res_of_mult=matrix_multiplication(individual->gene_interactions,individual->gene_counts,i);
 		else res_of_mult=matrix_multiplication(individual->gene_interactions,individual->vector_of_signs,i);*/
 		res_of_mult=matrix_multiplication(individual->gene_interactions,individual->vector_of_signs,i);
-		/*printf("mult:%f\n",res_of_mult); */
+		/*	printf("mult:%f\n",res_of_mult);*/
 
 		if (res_of_mult>0) temp_vector[i]=1;
 		else temp_vector[i]=0;
@@ -43,6 +43,7 @@ void create_maturity_step(person *individual,int step,FILE *steps,FILE *period, 
             /*printf("%d\n",individual->vector_of_signs[i]);*/
 		}
 	}
+	/*exit(0);*/
 }
 
 bool check_population_mature(population *new_population){
@@ -83,6 +84,7 @@ void mature_generation(population *new_population,int robust_or_not){
      /*               ID=temp->person_in_group[l]->id;
                       	printf("group:%d Atomo me ID %d xreiazetai maturity step\n",k,ID);
 */       		create_maturity_step(temp->person_in_group[l],step,NULL,NULL,0);
+		  /* fprintf(stderr, "%d", temp->person_in_group[l]->vector_of_signs[0]); */
                     /*ta 2 null apo panw itan arxeia gia na psarepsw me terminal to period alla twra an skasoun equilibria 8a ta dw giati
                     8a ftiaxoun ta equilibrium steps kai periods opote den xreiazomai olo auto to argo output*/
                 }

@@ -1,309 +1,85 @@
 rm(list=ls())
 library(foreach)
 library(doMC)
-registerDoMC(10)
+registerDoMC(8)
 
-system("make clean")
-system("make all")
-system("gcc fitnessSimple.c -lm -lgsl -lgslcblas -o fitnessSimple")
-n <- 1
-r <- 1
-N <- 1000
+execname = "evonet"
+if(Sys.info()["nodename"] == "Maya"){
+    execname = "evonetmaya"
+}
+
+#system("make clean")
+#system("make all")
+##system("gcc fitnessSimple.c -O3 -lm -lgsl -lgslcblas -o fitnessSimple") ## the -O3 flag will add some optimizations
+
+rootFolderName = "neutral"
+n <- 8
+r <- 30000
+N <- 500
 rr <- 0.005
-mr <- 0.5
-s<- 10
+mr<- 5/N
+s<-5
 sel <- 1
-ploidy <- 1
-freq<-1
 
-modechange <- 1
+ploidy <- 1
+freq<-30
+
+modechange <- 0
 newfreq <- 1
 modechangePhrase <- ""
+
+
+if( modechange != 0){
+   if(sel == 1){
+       sel <- 0
+   }else{
+       sel <- 1
+   }
+   modechangePhrase <- paste(" -mod_change ", modechange, " ", newfreq, " ", sep="")
+}else{
+    modechangePhrase<-""
+}
+
 
 if( sel == 0){
     name <- "neutral"
 }else{
     name <- "selection"
+    rootFolderName = name
 }
-
-#if( modechange != 0){
-#    if(sel == 1){
-#        sel <- 0
-#    }else{
-#        sel <- 1
-#    }
-#    modechangePhrase <- paste(" -mod_change ", modechange, " ", newfreq, " ", sep="")
-#}else{
- #   modechangePhrase<-""
-#}
 
 curDir <- getwd()
-
 randInt <- floor(runif(n, 0, 10000000))
 
-write.table(randInt, file="seeds.txt", quote=F, row.names=F, col.names=F)
-j=1
-step=0.001
-################################################################################################################################################
-mr<-0.05
-################################################################################################################################################
-name<-"free1mr005perc001"
-foreach(i = 1:n) %dopar% {
+dir.create(file.path(curDir, rootFolderName), showWarnings=F)
+setwd(file.path(curDir, rootFolderName))
+print(getwd())
+
+write.table(randInt, file="seeds", quote=F, row.names=F, col.names=F)
+
+outDirs = array("", n)
+
+outDirs = foreach(i = 1:n) %dopar% {
+    setwd(file.path(curDir, rootFolderName))
     seed <- randInt[i]
-    #print(seed)
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-	#na exei na diavasei to evonet
+    dirName <- paste("run", i, sep="")
+    working_dir<-file.path(paste(curDir, "/", rootFolderName, sep=""), dirName)
+    dir.create(working_dir, showWarnings=FALSE)
+    setwd(working_dir)
     system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    #print (paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    #mr=mr+step*(i-1)
-    #print(mr)
-	#tre3imo evonet
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 9 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    #print (cmd)
+    cmd <- paste(curDir, "/", execname, " ", modechangePhrase, " -selection ", sel," -s2 ", s, " -N ", N, " -tarfit 1.0 -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 0 -max_count 10 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_vec 1111111111", sep="")
     system(cmd)
-	#tre3imo fitnessSimple
-    #cmd <- paste(curDir, "/fitnessSimple -mu " ,mr, " -l 10 -popsize ", N ," -fm 1 -s ", s, " -p 2 -seed ", seed, sep="")
-    #system(cmd)
-	#print(cmd)
+    getwd()
 }
 
-j=1
-name<-"free3mr005perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    #print(seed)
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 7 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    system(cmd)
-}
+setwd(file.path(curDir))
 
-j=1
-name<-"free5mr005perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 5 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    system(cmd)
-}
+outDirs = unlist(outDirs)
 
-j=1
-name<-"free7mr005perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 3 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    system(cmd)
-}
+write.table(outDirs, file=paste(curDir, "/", rootFolderName, "/dirs.txt", sep=""), quote = F, col.names = F, row.names = F)
 
-################################################################################################################################################
-mr<-0.1
-################################################################################################################################################
-name<-"free1mr01perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    #print(seed)
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    #na exei na diavasei to evonet
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    #print (paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    #mr=mr+step*(i-1)
-    #print(mr)
-    #tre3imo evonet
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 9 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    #print (cmd)
-    system(cmd)
-    #tre3imo fitnessSimple
-    #cmd <- paste(curDir, "/fitnessSimple -mu " ,mr, " -l 10 -popsize ", N ," -fm 1 -s ", s, " -p 2 -seed ", seed, sep="")
-    #system(cmd)
-    #print(cmd)
-}
+cmd1 = paste("Rscript ", curDir, "/run.R ", rootFolderName, "/dirs.txt", sep="")
+system(cmd1)
 
-j=1
-name<-"free3mr01perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    #print(seed)
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 7 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    system(cmd)
-}
-
-j=1
-name<-"free5mr01perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 5 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    system(cmd)
-}
-
-j=1
-name<-"free7mr01perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 3 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    system(cmd)
-}
-
-################################################################################################################################################
-mr<-0.15
-################################################################################################################################################
-name<-"free1mr015perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    #print(seed)
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    #na exei na diavasei to evonet
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    #print (paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    #mr=mr+step*(i-1)
-    #print(mr)
-    #tre3imo evonet
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 9 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    #print (cmd)
-    system(cmd)
-    #tre3imo fitnessSimple
-    #cmd <- paste(curDir, "/fitnessSimple -mu " ,mr, " -l 10 -popsize ", N ," -fm 1 -s ", s, " -p 2 -seed ", seed, sep="")
-    #system(cmd)
-    #print(cmd)
-}
-
-j=1
-name<-"free3mr015perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    #print(seed)
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 7 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    system(cmd)
-}
-
-j=1
-name<-"free5mr015perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 5 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    system(cmd)
-}
-
-j=1
-name<-"free7mr015perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 3 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    system(cmd)
-}
-
-################################################################################################################################################
-mr<-0.2
-################################################################################################################################################
-name<-"free1mr02perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    #print(seed)
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    #na exei na diavasei to evonet
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    #print (paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    #mr=mr+step*(i-1)
-    #print(mr)
-    #tre3imo evonet
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 9 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    #print (cmd)
-    system(cmd)
-    #tre3imo fitnessSimple
-    #cmd <- paste(curDir, "/fitnessSimple -mu " ,mr, " -l 10 -popsize ", N ," -fm 1 -s ", s, " -p 2 -seed ", seed, sep="")
-    #system(cmd)
-    #print(cmd)
-}
-
-j=1
-name<-"free3mr02perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    #print(seed)
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 7 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    system(cmd)
-}
-
-j=1
-name<-"free5mr02perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 5 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    system(cmd)
-}
-
-j=1
-name<-"free7mr02perc001"
-foreach(i = 1:n) %dopar% {
-    seed <- randInt[i]
-    dirName <- paste(name, ".run.", i, sep="")
-    dir.create(file.path(curDir, dirName), showWarnings=FALSE)
-    working_dir<-file.path(curDir, dirName)
-    setwd(file.path(curDir, dirName))
-    system(paste("Rscript ",curDir, "/write_file.R > ", working_dir,"/R1R2_input.txt",sep=""))
-    cmd <- paste(curDir, "/evonet -selection ", sel," -key_genes 3 -st_geno R1R2_input.txt ", "-s2 ", s, " -N ", N, " -tarfit 0.95 -generations 1 "," -ploidy ", ploidy, "  -swapping 0 -freq ", freq, " -min_count 10 -max_count 11 -generations ",r ," -n 10 -recomb_rate ",rr ," -mutrate ",mr, " -seed ", seed, " -optimal_num 10", sep="")
-    system(cmd)
-}
+cmd2 <- paste("Rscript ", curDir, "/plotNetwork.R ", "neutral run1", sep="")
+system(cmd2)

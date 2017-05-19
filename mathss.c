@@ -17,7 +17,7 @@ float matrix_multiplication(float matrix[max_genes_per_person][max_genes_per_per
  */
 	for (c = 0; c < genes_per_person; c++) {
 		result = old_result + matrix[row][c]*vector[c];
-		/*printf("%f=%f+%f*%d\n",result,old_result,matrix[row][c],vector[c]);*/
+		/* printf("%f=%f+%f*%d\n",result,old_result,matrix[row][c],vector[c]); */
 		old_result=result;
 	}
 	return result;

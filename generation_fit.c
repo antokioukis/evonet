@@ -37,12 +37,15 @@ float calculate_fitness(int num_of_gen,float lamda,int optimal,float array_of_di
 
 
     /*printf("%d\n",optimal);*/
+    /*PP 20170415 lathos. Nomizw prepei na diaireis me to 10 kai oxi to max_genes_per_person*/
     optimal_dummy=optimal;
     for(i=0;i<genes_per_person;i++){
-        optimal_array[i]=optimal_dummy%max_genes_per_person;
-        optimal_dummy=optimal_dummy/max_genes_per_person;
-        thesi_max_array++;
+      optimal_array[i]=optimal_dummy % 10;
+      assert(optimal_array[i] == 0 || optimal_array[i] == 1);
+      optimal_dummy=optimal_dummy/10;
+      thesi_max_array++;
     }
+    
     for(i=thesi_max_array;i<max_genes_per_person;i++){
         optimal_array[i]=0;
     }
@@ -74,7 +77,9 @@ float calculate_fitness(int num_of_gen,float lamda,int optimal,float array_of_di
 
                     create_maturity_step(atomo,k,equilibrium_steps,equilibrium_period,1);
                     num_of_diff=num_of_diff_vector(temp->person_in_group[j]->vector_of_signs,optimal_array,key_genes);
+
                     equilibrium_temp_fitness=array_of_differences[num_of_diff];
+		    
                     if (equilibrium_temp_fitness<equilibrium_fitness_min){
                         equilibrium_fitness_min=equilibrium_temp_fitness;
                     }
@@ -95,6 +100,7 @@ float calculate_fitness(int num_of_gen,float lamda,int optimal,float array_of_di
                 /*distance=eucledian_distance(temp->person_in_group[j]->vector_of_signs,optimal_array);
                 personal_fitness=exp(-lamda*distance); */
                 num_of_diff=num_of_diff_vector(temp->person_in_group[j]->vector_of_signs,optimal_array,key_genes);
+		/*fprintf(stderr, "diff: %d\n", num_of_diff);*/
                 /* /\*creation of relative fitness*\/ */
                 /* if(personal_fitness>max_fitness_encountered){ */
 		/*   max_fitness_encountered=personal_fitness; */
@@ -195,8 +201,6 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_ge
         for(j = 0; j < neutRegionLength; ++j)
 	       new_auxiliary->neutRegion1[i][j] = temp1->person_in_group[person_counter1]->neutRegion1[i][j];
     
-    new_auxiliary->flag_half_R2=temp1->person_in_group[person_counter1]->half_R2_flag;
-
     return new_auxiliary;
 }
 
@@ -292,8 +296,6 @@ R1_R2_auxiliary *choose_fitted_father_dependencies_combined_R1R2_swapping(int nu
         }
 
     }
-
-    new_auxiliary->flag_half_R2=0;
 
     /* for(i=0;i<genes_per_person;i++){ */
     /*   if(i<genes_from_first_parent){ */
@@ -419,9 +421,6 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
         }
     }
 
-    new_auxiliary->flag_half_R2=0;
-
-
     return new_auxiliary;
 
    /* printf("ID patera %d ID patera %d \n",generation_array[num_of_gen-1]->group_in_population[group_counter1]->person_in_group[person_counter1]->id,generation_array[num_of_gen-1]->group_in_population[group_counter2]->person_in_group[person_counter2]->id);
@@ -488,8 +487,6 @@ person *gen_create_person_fit(int id,int num_of_gen, int num_of_parents,int row_
 	       new_person-> neutRegion1[i][j] = auxiliary-> neutRegion1[i][j];
         }
     }
-
-    new_person->half_R2_flag=auxiliary->flag_half_R2;
 
     
     for(i=0; i<genes_per_person; ++i){

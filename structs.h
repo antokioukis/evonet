@@ -19,7 +19,7 @@
 #define number_of_threads 10
 #define neut_flag 0
 #define extr_fat_id 0
-#define LAST_BIT_PERCENTAGE 0.01
+#define LAST_BIT_PERCENTAGE 0.05
 
 
 typedef struct auxiliary_genotype_data{
@@ -39,7 +39,6 @@ typedef struct R1_R2_auxiliary{
   bool neutRegion1[max_genes_per_person][neutRegionLength];
   float father_fitness;
   char *father_genotype;
-  int flag_half_R2;
 
 }R1_R2_auxiliary;
 
@@ -65,8 +64,6 @@ typedef struct person{
     int gene_R2[max_genes_per_person];
 
     bool neutRegion1[max_genes_per_person][neutRegionLength]; /* for each gene create a neutral region of length neutRegionLength */
-
-    int half_R2_flag;
 
 }person;
 

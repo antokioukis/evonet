@@ -255,9 +255,9 @@ void extract_gene_dependancies_matrix_generation(FILE* f, int num_of_gen){
         for(l=0;l<persons_per_group;l++){
             for(i=0;i<genes_per_person;i++){
                 for(j=0;j<genes_per_person;j++){
-                    fprintf(f, "%f ",temp->person_in_group[l]->gene_interactions[i][j]);
+                    fprintf(f, "%8.5f ",temp->person_in_group[l]->gene_interactions[i][j]);
                 }
-                fprintf(f, "\n");
+                /*fprintf(f, "\n");*/
             }
             fprintf(f, "\n");
 

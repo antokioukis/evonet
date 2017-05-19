@@ -17,3 +17,15 @@ png(filename="variance.png")
  par(new=TRUE)
  plot(generation_fitness[,4],type="l",col="red")
 dev.off()
+
+
+
+
+
+
+
+for(i in 1:1000){
+variance<-unlist(genotype_fit[i,])
+variance <- variance[!is.na(variance)]
+vector_variance[i]<-var(variance)
+}

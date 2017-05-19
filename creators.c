@@ -237,33 +237,18 @@ person *create_mutations(person *foreigner,double mu, gsl_rng *r){
                 foreigner->gene_R1[num_of_gene_to_mutate]=foreigner->gene_R1[num_of_gene_to_mutate]^1; /* itan -1 */
             }
             /*no fuss an einai monos ari8mos,to ipoloipo bgainei 1, afairwntas 1, ton kaneis zigo kai den peirazeis to ipoloipo binary represantation*/
-           // else{
-           //      individual->gene_R1[num_of_gene_to_mutate]=individual->gene_R1[num_of_gene_to_mutate]+1; /* itan +1 */
-           //  } 
+	     /* else{ */
+             /*     individual->gene_R1[num_of_gene_to_mutate]=individual->gene_R1[num_of_gene_to_mutate]+1; /\* itan +1 *\/ */
+             /* }  */
         }
         else{
             if(foreigner->gene_R2[num_of_gene_to_mutate]%2){
-                /*akiouk 2/4/17 half of R2 cant change their last bit*/
-                if(foreigner->half_R2_flag==1){
-                   /* printf("mporw na ri8misw mono ta misa R2\n"); */
-                    if (num_of_gene_to_mutate%2==1){
-                        foreigner->gene_R2[num_of_gene_to_mutate]=foreigner->gene_R2[num_of_gene_to_mutate]^1; /* itan -1*/
-                        printf("kai ekatse mutation se SWSTO R2\n"); 
-
-                    }
-                    else{
-                         printf("kai ekatse mutation se LA8OS R2\n");
-                    }
-                }
-                else{
-                    /*printf("mporw na ri8misw OLA R2\n");*/
-                    foreigner->gene_R2[num_of_gene_to_mutate]=foreigner->gene_R2[num_of_gene_to_mutate]^1; /* itan -1*/
-                }
+                foreigner->gene_R2[num_of_gene_to_mutate]=foreigner->gene_R2[num_of_gene_to_mutate]^1; /* itan -1*/
             }
             /*no fuss an einai monos ari8mos,to ipoloipo bgainei 1, afairwntas 1, ton kaneis zigo kai den peirazeis to ipoloipo binary represantation*/
-            // else{
-            //     individual->gene_R2[num_of_gene_to_mutate]=individual->gene_R2[num_of_gene_to_mutate]+1; /* itan +1 */
-            // }
+             /* else{ */
+             /*     individual->gene_R2[num_of_gene_to_mutate]=individual->gene_R2[num_of_gene_to_mutate]+1; /\* itan +1 *\/ */
+             /* } */
         }
       }
       else{
@@ -319,7 +304,7 @@ float create_gene_interactions(int R1,int R2){
     printf("lastbitR2=%d \n",lastbitR2);
 */
     if(lastbitR1){ /*ri8misi*/
-	   power_of_interaction=NumberOfSetBits(R1 & R2);
+      power_of_interaction=NumberOfSetBits( (R1 >> 1) & (R2 >> 1));
         /*printf("Interaction:%f \n",power_of_interaction);*/
         power_of_interaction = power_of_interaction / max_genes_per_person; /*kanonikopoihsh*/
 
@@ -376,29 +361,21 @@ person *create_person(int id,int min_gene_R1R2, int max_gene_R1R2,int min_count,
         else{
             new_person->gene_R1[i]=R1R2_matrix[i][0];
             new_person->gene_R2[i]=R1R2_matrix[i+genes_per_person][0];
-            /*printf("%d %d ",new_person->gene_R1[i],R1R2_matrix[i][0]);
-            printf("%d %d\n",new_person->gene_R2[i],R1R2_matrix[i+genes_per_person][0]); */
+
+            /*printf("%d ",R1R2_matrix[i][0]);
+            printf("%d \n",R1R2_matrix[i+genes_per_person][0]);*/
         }
         /*printf("\n");*/
         new_person->gene_counts[i]=rand_interval(min_count,max_count);
     }
-    new_person->half_R2_flag=0;
-
-    for (i=0;i<genes_per_person;i++){
-        if (new_person->gene_R2[i]==10){
-            /*printf("akiouk\n");*/ 
-            new_person->half_R2_flag=1;
-            break;
-        }
-    }
 
     for(i=0;i<genes_per_person;i++){
-        /*if (new_person->gene_counts[i]>0){ */
+      if (new_person->gene_counts[i]>0){
             new_person->vector_of_signs[i]=1;  /* first generation so gene_counts always positive on the vector -> 1 */
-        /*}
-        else{ */
-            new_person->vector_of_signs[i]=0;
-/*        }*/
+      }
+      else{ 
+	new_person->vector_of_signs[i]=0;
+      }
     }
 
     for(i=0;i<genes_per_person;i++){

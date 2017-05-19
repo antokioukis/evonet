@@ -119,7 +119,11 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
    
     /*printf("%f\n",target_fitness);*/
     /*kane opwsdipote ta generation wanted kai meta tsekare eisai se selection? kai den exeis ftasei to apaitoumeno fitness tote kane kai alla runs*/
-    for(i=0;i<generations_wanted||((generation_fitness<=target_fitness)&&fitness);i++){
+    for(i=0; i<generations_wanted; i++){
+
+      if( generation_fitness > target_fitness && fitness )
+	break;
+	
         for(o=0;o<genes_per_person;o++){
             for(j=0;j<2;j++){
                 sensitivity_array[o][j]=0;
@@ -237,13 +241,12 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
         genotype_data=create_genotype_hash(generation_array[i%2]);
         if(i%freq==0){
             printf("Generation %d Simulated. \n",i);
-          /*  extract_R1R2_generation(r1Output, r2Output,i%2);
+	    extract_R1R2_generation(r1Output, r2Output,i%2);
             extract_gene_dependancies_matrix_generation(matrixOutput, i%2);
             extract_gene_counts_generation(countsOutput, i%2);
-            extract_father_fitness(i%2,i); 
             extract_discrete_generation(discreteOutput,i%2);
             extract_genotype_occ(genotypeOutput,genotype_data);
-        */
+            extract_father_fitness(i%2,i); 
             extract_fitness_generation(fitnessOutput,i%2,mutation_rate);
             extract_open_non_network(generation_array[i%2],key_genes);
 
@@ -483,7 +486,7 @@ int main(int argc, char** argv){
         }
 
         if( strcmp(argv[i], "-generations" ) == 0 ){
-            generations = atoi(argv[++i]);
+	  generations = (int)(atof(argv[++i]));
             continue;
         }
 
@@ -543,7 +546,7 @@ int main(int argc, char** argv){
             continue;
         }
 
-        if( strcmp(argv[i], "-help" ) == 0 ){
+        if( strcmp(argv[i], "--help" ) == 0 || !strcmp(argv[i], "-h") ){
             print_help();
         }
 
@@ -659,6 +662,7 @@ int main(int argc, char** argv){
                 kaliteros[i]=1;
             }
         }
+    
         max_distance=eucledian_distance(xeiroteros,optimal_array);
         min_distance=eucledian_distance(kaliteros,optimal_array);
         max_distance_exp=exp(-lamda*max_distance);
@@ -667,6 +671,7 @@ int main(int argc, char** argv){
         printf("target_fitness %f max_distance %f, min_distance %f\n",target_fitness,max_distance_exp,min_distance_exp);
     }
 
+    /* PP 20170415 lathos. Optimum should be any vector with optimal_num of 1s */
     if (optimal_num!=-1){
         optimal=1;
         for(i=1;i<max_genes_per_person;i++){
@@ -690,6 +695,7 @@ int main(int argc, char** argv){
 		       min_count,max_count,
 		       generations,generation_change,mutation_rate,robustness,robust_changes,robust_last_bit,r,recomb_rate,target_fitness,optimal,key_genes,start_in,
 		       r1Output, r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput,robustOutput,genotypeOutput,fatherOutput, mutationOutput);
+    
 
     for(i=0;i<max_genes_per_person;i++){
         free(sensitivity_array[i]);
