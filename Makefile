@@ -18,3 +18,4 @@ clean:
 	rm  $(OBJECTS)
 	rm -f *.txt
 	rm -r selection.run.*
+	rm -r neutral.run.*

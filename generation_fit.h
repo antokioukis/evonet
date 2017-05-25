@@ -9,7 +9,7 @@
 
 int num_of_diff_vector(int vector[max_genes_per_person], int optimal[max_genes_per_person], int key_genes);
 
-float calculate_fitness(int num_of_gen,float lamda, int optimal,float array_of_differences[max_genes_per_person], int key_genes);
+float calculate_fitness(int num_of_gen,float lamda, int optimal,float array_of_differences[max_genes_per_person], int key_genes, int actual_gen);
 
 R1_R2_auxiliary *choose_fitted_father_dependencies_no_combinations(int num_of_gen, int id,gsl_rng *r,FILE *f,FILE *d,float fitness_array[(num_of_groups*persons_per_group)]);
 

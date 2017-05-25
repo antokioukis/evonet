@@ -106,7 +106,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
     char neutral_output_filename[1024];
     thread_auxialiary *temp_auxialiary;
     FILE *file_neutral_gene=NULL;
-
+    float temp_fit=0;
     float generation_fitness=0;
 
     for( i = 0; i < max_genes_per_person; ++i){
@@ -121,8 +121,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
     /*kane opwsdipote ta generation wanted kai meta tsekare eisai se selection? kai den exeis ftasei to apaitoumeno fitness tote kane kai alla runs*/
     for(i=0; i<generations_wanted; i++){
 
-      if( generation_fitness > target_fitness && fitness )
-	break;
+      if( generation_fitness > target_fitness && fitness ) break;
 	
         for(o=0;o<genes_per_person;o++){
             for(j=0;j<2;j++){
@@ -236,20 +235,21 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
         }
     
         mature_generation(generation_array[i%2],1);
-        generation_fitness=calculate_fitness(i%2,lamda,optimal,array_of_differences,key_genes)/(curr_num_of_groups*persons_per_group);
+        temp_fit=calculate_fitness(i%2,lamda,optimal,array_of_differences,key_genes,i);
+        generation_fitness=temp_fit/(curr_num_of_groups*persons_per_group);
         if (i%freq==0) printf("%f\n",generation_fitness);
         genotype_data=create_genotype_hash(generation_array[i%2]);
         if(i%freq==0){
             printf("Generation %d Simulated. \n",i);
+            extract_fitness_generation(fitnessOutput,i%2,mutation_rate);
+            /*extract_gene_dependancies_matrix_generation(matrixOutput, i%2);
 	    extract_R1R2_generation(r1Output, r2Output,i%2);
-            extract_gene_dependancies_matrix_generation(matrixOutput, i%2);
             extract_gene_counts_generation(countsOutput, i%2);
             extract_discrete_generation(discreteOutput,i%2);
             extract_genotype_occ(genotypeOutput,genotype_data);
             extract_father_fitness(i%2,i); 
-            extract_fitness_generation(fitnessOutput,i%2,mutation_rate);
             extract_open_non_network(generation_array[i%2],key_genes);
-
+            */
             /*THREADED EXTRACT*/
             for( geneID = 0; geneID < genes_per_person && neut_flag; ++geneID){
                 sprintf(neutral_output_filename, "neutralOutput%03d.txt", geneID);

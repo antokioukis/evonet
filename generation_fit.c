@@ -14,7 +14,7 @@ int num_of_diff_vector(int vector[max_genes_per_person], int optimal[max_genes_p
     return num;
 }
 
-float calculate_fitness(int num_of_gen,float lamda,int optimal,float array_of_differences[max_genes_per_person],int key_genes){
+float calculate_fitness(int num_of_gen,float lamda,int optimal,float array_of_differences[max_genes_per_person],int key_genes,int actual_gen){
     int i,j,k,m;
     int num_of_diff;
     /*int w,n,c,t;*/
@@ -61,11 +61,13 @@ float calculate_fitness(int num_of_gen,float lamda,int optimal,float array_of_di
 
             /*parousiazei kikliko equilibrium*/
             if(atomo->periodos>1){
-                /*printf("DING DING\n");*/
-                equilibrium_period=fopen("equilibrium_period.txt", "w");
-                equilibrium_steps=fopen("equilibrium_steps.txt", "w");
+                /*printf("DING DING\n"); */
+                equilibrium_period=fopen("equilibrium_period.txt", "a");
+                equilibrium_steps=fopen("equilibrium_steps.txt", "a");
                 
-                num_of_steps=atomo->periodos;
+                fprintf(equilibrium_period, "%d\n",actual_gen);
+
+                num_of_steps=atomo->periodos;             
 
                 for (m=0;m<size_of_maturity_array;m++){
                     atomo->maturity_array[m]=0;

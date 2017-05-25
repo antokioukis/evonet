@@ -85,5 +85,5 @@ void insert_groups(int groups_to_insert,float lamda,int num_of_generation,int nu
 	}
 
 	mature_generation(generation_array[num_of_generation],1);
-	calculate_fitness(num_of_generation,lamda,optimal,array_of_differences,key_genes);
+	calculate_fitness(num_of_generation,lamda,optimal,array_of_differences,key_genes,num_of_generation);
 }

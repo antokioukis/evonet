@@ -1,6 +1,3 @@
-
-
-
 name="neutral"
 
 getcommon = function(name1, name2){

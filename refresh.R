@@ -72,14 +72,14 @@ outDirs = foreach(i = 1:n) %dopar% {
     getwd()
 }
 
-setwd(file.path(curDir))
+#setwd(file.path(curDir))
 
-outDirs = unlist(outDirs)
+#outDirs = unlist(outDirs)
 
-write.table(outDirs, file=paste(curDir, "/", rootFolderName, "/dirs.txt", sep=""), quote = F, col.names = F, row.names = F)
+#write.table(outDirs, file=paste(curDir, "/", rootFolderName, "/dirs.txt", sep=""), quote = F, col.names = F, row.names = F)
 
-cmd1 = paste("Rscript ", curDir, "/run.R ", rootFolderName, "/dirs.txt", sep="")
-system(cmd1)
+#cmd1 = paste("Rscript ", curDir, "/run.R ", rootFolderName, "/dirs.txt", sep="")
+#system(cmd1)
 
-cmd2 <- paste("Rscript ", curDir, "/plotNetwork.R ", "neutral run1", sep="")
-system(cmd2)
+#cmd2 <- paste("Rscript ", curDir, "/plotNetwork.R ", "neutral run1", sep="")
+#system(cmd2)

@@ -7,7 +7,7 @@ void create_maturity_step(person *individual,int step,FILE *steps,FILE *period, 
 	int temp_vector[max_genes_per_person];
 	int position;
 
-    if(robust_or_not)fprintf(steps, "%d ",step);
+    /*if(robust_or_not)fprintf(steps, "%d ",step); */
 	for(i=0;i<genes_per_person;i++){
 		/*if(step==1) res_of_mult=matrix_multiplication(individual->gene_interactions,individual->gene_counts,i);
 		else res_of_mult=matrix_multiplication(individual->gene_interactions,individual->vector_of_signs,i);*/
@@ -33,7 +33,7 @@ void create_maturity_step(person *individual,int step,FILE *steps,FILE *period, 
     }
     else{
     	individual->periodos=step-individual->maturity_array[position];
-        if (robust_or_not) {fprintf(period, "%d",individual->periodos);}
+        /*if (robust_or_not) {fprintf(period, "%d",individual->periodos);} */
        	individual->mature=true;
     }
 
