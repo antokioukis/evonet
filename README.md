@@ -183,4 +183,13 @@ With the following command-line we specify that for every 10th generation we wan
 
 e3eli3i algoritmou ousisastika tin create)Generations function
 
-sximata tou maturation kai tou genikou algoritumou kai tou population schema
+<h2> Evonet main steps graphs</h2>
+
+The following graph show the population organization schema:
+![populationschema](https://user-images.githubusercontent.com/17062093/28207992-4a373356-6894-11e7-8dcb-fde6b33146a3.jpg)
+
+Here is the maturation process as a graph:
+![maturation](https://user-images.githubusercontent.com/17062093/28207989-4a34a974-6894-11e7-9d8c-277d8d348300.jpg)
+
+Finally, this graph shows the process of forwarding:
+![forwarding](https://user-images.githubusercontent.com/17062093/28207991-4a36a71a-6894-11e7-9948-d63dc81c13c0.jpg)
