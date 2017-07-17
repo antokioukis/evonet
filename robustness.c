@@ -104,7 +104,7 @@ person *create_specific_mutations(person *individual,int num_of_mutations,int la
 
 
 
-void check_robustness(FILE *robustOutput, population *new_population, int num_of_mutations, int last_bit, int other_bits,gsl_rng *r){
+void check_robustness(FILE *robustOutput, population *new_population, int num_of_mutations, int last_bit, int other_bits,gsl_rng *r,FILE *rob_discrete_Output){
 	person *temp_person;
 	group *temp_group;
 	int k,l,i,j;
@@ -163,6 +163,6 @@ void check_robustness(FILE *robustOutput, population *new_population, int num_of
 */
 
     /*peta ta discrete apotelesmata se robustness.txt*/
-    extract_robustness(robustOutput,new_population);
+    extract_robustness(robustOutput,new_population,rob_discrete_Output);
     /*sigkrine ta discrete*/
 }

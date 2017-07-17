@@ -31,29 +31,24 @@ foreach(i = 1:n) %dopar% {
 	#topo_matrix<-mydata
 	#print(head(topo_matrix))
 	#print(nrow(topo_matrix))
-
-	#oi dio autes entoles exoun to idio apotelesma
 	num_of_gens<-nrow(topo_matrix)/500
-	num_of_gens<-length(topo_matrix)/500
-
+	
 	generation<-matrix(nrow=500,ncol=1)
 	survival_mat<-matrix(nrow=num_of_gens,ncol=500)
 	#gia ka8e genia
-	for (l in 1:num_of_gens){
+	for (l in 1:num_of_gens-1){
 		katw_orio1<-((l-1)*500)+1
 		panw_orio1<-l*500
-	
-
+		#print(katw_orio)
+		#print(panw_orio)
 		generation<-topo_matrix[katw_orio1:panw_orio1]
-
-		generation<-topo_matrix[((l-1)*500+1):(l*500)]
 		#print(head(generation))
 		#gia ka8e gonotupo autis tis genias
-		for (k in 1:500){
+		for (k in 1:499){
 			counter<-0
 			topology<-generation[k]
 			#gia oles tis ipoloipes genies
-			for (m in l:num_of_gens){
+			for (m in l:num_of_gens-1){
 				katw_orio2<-((m-1)*500)+1
 				panw_orio2<-m*500
 				next_generation<-topo_matrix[katw_orio2:panw_orio2]

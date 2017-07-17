@@ -85,7 +85,8 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
                         gsl_rng *r,float recomb_rate,float target_fitness,int optimal,int key_genes,
                         FILE *start_in,
                         FILE *r1Output, FILE *r2Output,FILE *matrixOutput, FILE *countsOutput,FILE *fitnessOutput,
-                        FILE *discreteOutput,FILE *robustOutput,FILE *genotypeOutput,FILE *fatherOutput, FILE *mutationOutput){
+                        FILE *discreteOutput,FILE *robustOutput,FILE *genotypeOutput,FILE *fatherOutput, 
+                        FILE *mutationOutput,FILE *rob_discrete_Output){
   
     int i,k,l,f,j,ii,/*m,*/o,p;
     int temp_for_free, geneID;
@@ -197,7 +198,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
             }
 
             robust_population->groups_list=temp_robust_group;
-            check_robustness(robustOutput,robust_population,robust_changes,robust_last_bit,1,r);
+            check_robustness(robustOutput,robust_population,robust_changes,robust_last_bit,1,r,rob_discrete_Output);
             
             /*freeing memory from robustness*/
             for(k=0;k<curr_num_of_groups;k++){
@@ -242,14 +243,14 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
         if(i%freq==0){
             printf("Generation %d Simulated. \n",i);
             extract_fitness_generation(fitnessOutput,i%2,mutation_rate);
-            /*extract_gene_dependancies_matrix_generation(matrixOutput, i%2);
-	    extract_R1R2_generation(r1Output, r2Output,i%2);
-            extract_gene_counts_generation(countsOutput, i%2);
+            extract_gene_dependancies_matrix_generation(matrixOutput, i%2);
             extract_discrete_generation(discreteOutput,i%2);
+	        extract_R1R2_generation(r1Output, r2Output,i%2);
+            extract_gene_counts_generation(countsOutput, i%2);
             extract_genotype_occ(genotypeOutput,genotype_data);
             extract_father_fitness(i%2,i); 
             extract_open_non_network(generation_array[i%2],key_genes);
-            */
+            
             /*THREADED EXTRACT*/
             for( geneID = 0; geneID < genes_per_person && neut_flag; ++geneID){
                 sprintf(neutral_output_filename, "neutralOutput%03d.txt", geneID);
@@ -375,7 +376,8 @@ int main(int argc, char** argv){
     
 
 
-    FILE *r1Output,*r2Output, *matrixOutput, *countsOutput, *fitnessOutput, *discreteOutput, *robustOutput, *genotypeOutput , *fatherOutput, *mutationOutput;
+    FILE *r1Output,*r2Output, *matrixOutput, *countsOutput, *fitnessOutput, *discreteOutput;
+    FILE *robustOutput, *genotypeOutput , *fatherOutput, *mutationOutput, *rob_discrete_Output;
     FILE *infofile,*start_in;
 
     sensitivity=30;
@@ -395,7 +397,7 @@ int main(int argc, char** argv){
     genotypeOutput = NULL;
     fatherOutput = NULL;
     mutationOutput = NULL;
-
+    rob_discrete_Output=NULL;
     seed = time(NULL);
     
     
@@ -644,7 +646,8 @@ int main(int argc, char** argv){
     if(fatherOutput==NULL)      fatherOutput = fopen("father.txt", "w");
     if(mutationOutput==NULL)    mutationOutput = fopen("mutations.txt", "w");
     if(start_in==NULL)          start_in = fopen("R1R2_input.txt", "r");
-
+    
+    /*antwnis 17/6/2 */rob_discrete_Output = fopen("rob_discrete.txt","w");
     if(key_genes==-1) key_genes=10;
 
     if (target_fitness==-1){
@@ -694,7 +697,8 @@ int main(int argc, char** argv){
 		       groups_wanted,R1R2_swapping,min_gene_R1R2,max_gene_R1R2,freq, newfreq, 
 		       min_count,max_count,
 		       generations,generation_change,mutation_rate,robustness,robust_changes,robust_last_bit,r,recomb_rate,target_fitness,optimal,key_genes,start_in,
-		       r1Output, r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput,robustOutput,genotypeOutput,fatherOutput, mutationOutput);
+		       r1Output, r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput,robustOutput,genotypeOutput,fatherOutput, 
+               mutationOutput,rob_discrete_Output);
     
 
     for(i=0;i<max_genes_per_person;i++){
@@ -712,6 +716,7 @@ int main(int argc, char** argv){
     fclose(genotypeOutput);
     fclose(fatherOutput);
     fclose(mutationOutput);
+    fclose(rob_discrete_Output);
     if (start_in!=NULL) fclose(start_in);
     
 

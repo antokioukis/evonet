@@ -307,13 +307,19 @@ void extract_fitness_generation(FILE *f, int num_of_gen, float mutation_rate){
 }
 
 
-void extract_robustness(FILE *f,population *new_population){
+void extract_robustness(FILE *f,population *new_population,FILE *d){
     group* temp;
-    int k,l,i;
+    int k,l,i,j;
 
     temp=new_population->groups_list;
 
     if (f == NULL)
+    {
+        printf("Error opening file robust\n");
+        exit(1);
+    }
+
+    if (d == NULL)
     {
         printf("Error opening file discrete\n");
         exit(1);
@@ -323,8 +329,13 @@ void extract_robustness(FILE *f,population *new_population){
         for(l=0;l<persons_per_group;l++){
             for(i=0;i<genes_per_person;i++){
         /*      printf("current sign %d stin thesi %d\n",individual->vector_of_signs[i],i); */
-                fprintf(f,"%d",temp->person_in_group[l]->vector_of_signs[i]);
+                /*fprintf(f,"%d",temp->person_in_group[l]->vector_of_signs[i]); */ /*antwnis 1/7/17*/
+                for(j=0;j<genes_per_person;j++){
+                    fprintf(f, "%8.5f ",temp->person_in_group[l]->gene_interactions[i][j]);
+                }
+                fprintf(d,"%d",temp->person_in_group[l]->vector_of_signs[i]);
             }
+            fprintf(d, "\n");
             fprintf(f, "\n");
         }
 

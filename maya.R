@@ -51,7 +51,7 @@ for (i in 1:n){
 }
 #print(getwd())
 system("convert 00*.png selection_equilibria.pdf")
-system("rm 00*.png")
+#system("rm 00*.png")
 
 curDir <- ("~/Dropbox/sxoli/ptixiaki/evo3")
 
@@ -88,7 +88,7 @@ for (i in 1:n){
 #    mid <- x/2 
     
     setwd("~/Dropbox/sxoli/ptixiaki/evo3")
-    png(file=paste(sprintf("%04d", i),".png",sep=""))
+    png(file=paste("neutral",sprintf("%04d", i),".png",sep=""))
     m<-barplot(x, main = "barplot",xlab="Generations",ylab="Frequency of Equilibria")
 
     xlims <- par('usr')[1:2] # <-- get xlims
@@ -102,5 +102,5 @@ for (i in 1:n){
 }  
 
 #print(getwd())
-system("convert 00*.png neutral_equilibria.pdf")
-system("rm 00*.png")
+system("convert neutral*.png neutral_equilibria.pdf")
+#system("rm 00*.png")
