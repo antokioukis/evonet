@@ -94,7 +94,7 @@ dev.off()
 make.mov <- function(){
     name <- paste(mod, "_run", run, "_", "plot.gif", sep="")
     unlink(name)
-    system(paste("convert -fuzz 30% -layers Optimize -delay 5 ", dir, "/plot*.png ", name, sep=""))
+    #system(paste("convert -fuzz 30% -layers Optimize -delay 5 ", dir, "/plot*.png ", name, sep=""))
 }
 
 make.mov()

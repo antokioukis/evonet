@@ -8,10 +8,6 @@ if(Sys.info()["nodename"] == "Maya"){
     execname = "evonetmaya"
 }
 
-#system("make clean")
-#system("make all")
-##system("gcc fitnessSimple.c -O3 -lm -lgsl -lgslcblas -o fitnessSimple") ## the -O3 flag will add some optimizations
-
 rootFolderName = "neutral"
 n <- 8
 r <- 30000

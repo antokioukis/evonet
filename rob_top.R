@@ -12,6 +12,7 @@ image_creation <- function(fdirName,outputName) {
 
 		#dirName <- fdirName
 	    dirName <- paste(curDir,"/",fdirName,".run.", i, sep="")
+	    
 		setwd(dirName)
 
 	    normal_topo<-read.table("matrix.txt")
@@ -65,7 +66,7 @@ image_creation <- function(fdirName,outputName) {
         pdf(paste(outputName, i, ".pdf", sep=""))
         plot(similarity, type="l",main = "Topology Robustness",xlab="Generations",ylab="Level of similarity", ylim=c(0,1))
         lines(dis_similarity,type="l",col="red")
-    	lines(meanDiscreteGen, type='l', col='blue')
+    	#lines(meanDiscreteGen, type='l', col='blue')
         legend("bottomright",c("Topology","Discrete"),lty=c(1,1),lwd=c(2.5,2.5),col=c("black","red"))
         dev.off()
 	}
@@ -87,7 +88,7 @@ curDir <- ("~/Dropbox/sxoli/ptixiaki/evo3")
 n<-25
 
 popsize<-1000
-pdf_creation("1kneutral2")
-pdf_creation("1kneutral5")
-pdf_creation("1kselection2")
-pdf_creation("1kselection5")
+#pdf_creation("1kneutral2")
+#pdf_creation("1kneutral5")
+pdf_creation("1000selection1rr0.05")
+#pdf_creation("1kselection5")

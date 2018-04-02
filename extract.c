@@ -13,8 +13,8 @@ int calculate_open_non_net(int vector[max_genes_per_person],int key_genes){
     int open_genes_non_network=0;
     /*for (i=0;i<max_genes_per_person;i++){
         printf("%d ",vector[i]);
-    } 
-    printf("\n"); 
+    }
+    printf("\n");
     */
     for (i=key_genes;i<max_genes_per_person;i++){
         if (vector[i]==1){
@@ -31,7 +31,7 @@ void extract_open_non_network(population *new_population,int key_genes){
     int i,j;
     group *temp=new_population->groups_list;
     open_genes=fopen("open_genes.txt","a");
-    
+
     for(i=0;i<curr_num_of_groups;i++){
         for(j=0;j<persons_per_group;j++){
             open_genes_sum=calculate_open_non_net(temp->person_in_group[j]->vector_of_signs,key_genes);
@@ -63,7 +63,7 @@ void extract_mutation_array(FILE *f,person *father1,person *father2){
     for(i=0;i<genes_per_person;i++){
         if(father1->vector_of_signs[i]){
             /*printf("assos1\n"); */
-            sensitivity_array[i][1]++; 
+            sensitivity_array[i][1]++;
         }
         else{
             /*printf("miden1\n");*/
@@ -122,13 +122,13 @@ void extract_father_fitness(int num_of_gen,int actual_num){
 
             if (actual_num==0){
                 /*fprintf(f, "%d %f %f\n",actual_num,temp->person_in_group[l]->father_fitness,temp->person_in_group[l]->fitness);*/
-            } 
+            }
 
             else if(mutated_from_last && father_fitness!=son_fitness){
                 fprintf(f, "%d %f %f %d %s\n",actual_num,father_fitness,son_fitness,num_of_mutations_carried,father_genotype);
             }
         }
-    
+
         if(temp->next!=NULL){
                 temp=temp->next;
         }
@@ -143,14 +143,14 @@ void* extract_neutRegion1_generation(void *auxialiary){
     int i = 0, j = 0, k = 0, l = 0;
     thread_auxialiary *temp_auxialiary=auxialiary;
     group *temp = generation_array[temp_auxialiary->num_of_gen] -> groups_list;
-  
+
    /* printf("num_of_gen %d,index %d\n",temp_auxialiary->num_of_gen,temp_auxialiary->index_of_gene); */
 
     if(temp_auxialiary->f == NULL){
         fprintf(stderr, "Error opening a file for outputing neutral regions\n");
         assert(temp_auxialiary->f != NULL);
     }
-  
+
     for(k=0;k<curr_num_of_groups;k++){
         for(l=0;l<persons_per_group;l++){
 	        i = temp_auxialiary->index_of_gene;
@@ -159,13 +159,13 @@ void* extract_neutRegion1_generation(void *auxialiary){
 	            fprintf(temp_auxialiary->f, "%d",temp->person_in_group[l]->neutRegion1[i][j]);
 	        }
             fprintf(temp_auxialiary->f, "\n");
-        } 
-      
+        }
+
         if(temp->next!=NULL){
 	       temp=temp->next;
         }
     }
-    
+
     free (temp_auxialiary);
     return NULL;
 }
@@ -198,7 +198,7 @@ void extract_R1R2_generation(FILE *f1,FILE *f2, int num_of_gen){
                 fprintf(f2, "%d \n",temp->person_in_group[l]->gene_R2[i]);
             }
         }
-    
+
         if(temp->next!=NULL){
                 temp=temp->next;
         }
@@ -364,7 +364,7 @@ void extract_genotype_occ(FILE *f,auxiliary_genotype_data* genotype_data){
             /*printf("%f ",genotype_data->genotype_fitness[position]);*/
             fprintf(d,"%f ",genotype_data->genotype_fitness[position]);
         }
-        
+
         position++;
     }
     fprintf(f, "\n");

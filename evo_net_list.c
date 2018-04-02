@@ -57,8 +57,8 @@ void create_array_differences(float array_of_differences[11],float lamda,int opt
         differences_distance=eucledian_distance(active_diff_array,optimal_array);
         differences_distance_exp=exp(-lamda*differences_distance);
         array_of_differences[k]=differences_distance_exp;
-        /*printf("%f\n",array_of_differences[k]);*/
-        }    
+        printf("%f\n",array_of_differences[k]);
+        }
 }
 
 void check_events(int generation_change[1000][2],int i,float lamda,int num_of_parents,int fitness,int row_swapping,
@@ -67,7 +67,7 @@ void check_events(int generation_change[1000][2],int i,float lamda,int num_of_pa
 
     if(i==generation_change[event_index][0]){
         if(curr_num_of_groups*persons_per_group>generation_change[event_index][1]){
-            delete_groups(curr_num_of_groups-(generation_change[event_index][1]/persons_per_group),i%2);            
+            delete_groups(curr_num_of_groups-(generation_change[event_index][1]/persons_per_group),i%2);
         }
         else{
             insert_groups((generation_change[event_index][1]/persons_per_group)-curr_num_of_groups,lamda,i%2,num_of_parents,fitness,row_swapping,
@@ -85,9 +85,9 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
                         gsl_rng *r,float recomb_rate,float target_fitness,int optimal,int key_genes,
                         FILE *start_in,
                         FILE *r1Output, FILE *r2Output,FILE *matrixOutput, FILE *countsOutput,FILE *fitnessOutput,
-                        FILE *discreteOutput,FILE *robustOutput,FILE *genotypeOutput,FILE *fatherOutput, 
+                        FILE *discreteOutput,FILE *robustOutput,FILE *genotypeOutput,FILE *fatherOutput,
                         FILE *mutationOutput,FILE *rob_discrete_Output){
-  
+
     int i,k,l,f,j,ii,/*m,*/o,p;
     int temp_for_free, geneID;
     population *robust_population = NULL;
@@ -102,13 +102,16 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
     int active_div;
     int active_diff_array[10]; */
     int temp = 0;
-    auxiliary_genotype_data *genotype_data=NULL; 
+    auxiliary_genotype_data *genotype_data=NULL;
     /*pthread_t tid[number_of_threads];*/
     char neutral_output_filename[1024];
     thread_auxialiary *temp_auxialiary;
     FILE *file_neutral_gene=NULL;
     float temp_fit=0;
     float generation_fitness=0;
+
+    int bonus_generations=0;
+    int bonus_gen_flag=1;
 
     for( i = 0; i < max_genes_per_person; ++i){
       for( j = 0; j < neutRegionLength; ++j){
@@ -117,37 +120,49 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
     }
 
    create_array_differences(array_of_differences,lamda,optimal);
-   
+
     /*printf("%f\n",target_fitness);*/
     /*kane opwsdipote ta generation wanted kai meta tsekare eisai se selection? kai den exeis ftasei to apaitoumeno fitness tote kane kai alla runs*/
     for(i=0; i<generations_wanted; i++){
 
-      if( generation_fitness > target_fitness && fitness ) break;
-	
+        /*start change akiouk 3/10/17 */
+        if(generation_fitness > target_fitness && fitness && bonus_gen_flag){
+          bonus_generations=i;
+          bonus_gen_flag=0;
+        }
+
+     /* if( generation_fitness > target_fitness && fitness ) break; */ 
+
+        if( generation_fitness > target_fitness && fitness && i>bonus_generations+15000 ) break;
+                /* end of change akiouk 3/10/17 */
+
+
         for(o=0;o<genes_per_person;o++){
             for(j=0;j<2;j++){
                 sensitivity_array[o][j]=0;
             }
         }
-     
-        for( ii = 0; ii < max_genes_per_person; ++ii){
-	       for( j = 0; j < neutRegionLength; ++j){
-	           mutatedSites[ii][j] = 0;
-           }
+
+        if( i % freq == 0){
+            for( ii = 0; ii < max_genes_per_person; ++ii){
+    	       for( j = 0; j < neutRegionLength; ++j){
+    	           mutatedSites[ii][j] = 0;
+               }
+            }
         }
-      
+
         if(i==0){
             generation_array[i%2]=create_population(number_of_groups_wanted,min_gene_R1R2,max_gene_R1R2,min_count,max_count,1,start_in);
         }
         else{
 	        if (i%2==0) temp=2; else temp=1;
             if (model_change==i){
-	      
+
 	           if (fitness)
 		          fitness=0;
 	           else
 		          fitness=1;
-	      
+
 	      freq = newfreq;
 	    }
             if(fitness){
@@ -159,20 +174,24 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
                                                                 recomb_rate,fatherOutput,mutationOutput);
             }
 
-            /*if( i % freq == 0){*/
+            if( i % freq == 0){
              /* printf("temp: %d\n", temp); */
             /*HELLO HELLO HELLO*/
-            for(p=0;p<genes_per_person;p++){
-                create_mutation_vector(i%2, p);
+                for(p=0;p<genes_per_person;p++){
+                    create_mutation_vector(i%2, p);
+                }
+
+            /*printf("2. mutation vector............\n");*/
+
+               /* for( ii = 0; ii < neutRegionLength; ++ii){
+                    printf("%d", mutatedSites[0][ii]);
+                }
+                printf("\n\n");
+            */
             }
-            /*
-            printf("2. mutation vector............\n");
-            for( ii = 0; ii < neutRegionLength; ++ii){
-                printf("%d", mutatedSites[5][ii]);
-            } 
-            printf("\n\n");
-            */    
+
         }
+
         mutate_population(generation_array[i%2],mutation_rate,r,i);
 
         /* ROBUSTNESS */
@@ -199,7 +218,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
 
             robust_population->groups_list=temp_robust_group;
             check_robustness(robustOutput,robust_population,robust_changes,robust_last_bit,1,r,rob_discrete_Output);
-            
+
             /*freeing memory from robustness*/
             for(k=0;k<curr_num_of_groups;k++){
                 for(l=0;l<persons_per_group;l++){
@@ -234,7 +253,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
             free(generation_array[temp_for_free]->groups_list);
             free(generation_array[temp_for_free]);
         }
-    
+
         mature_generation(generation_array[i%2],1);
         temp_fit=calculate_fitness(i%2,lamda,optimal,array_of_differences,key_genes,i);
         generation_fitness=temp_fit/(curr_num_of_groups*persons_per_group);
@@ -246,13 +265,13 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
             extract_gene_dependancies_matrix_generation(matrixOutput, i%2);
             extract_discrete_generation(discreteOutput,i%2);
 	        extract_R1R2_generation(r1Output, r2Output,i%2);
-            extract_gene_counts_generation(countsOutput, i%2);
+            /*extract_gene_counts_generation(countsOutput, i%2);
             extract_genotype_occ(genotypeOutput,genotype_data);
-            extract_father_fitness(i%2,i); 
+            extract_father_fitness(i%2,i); */
             extract_open_non_network(generation_array[i%2],key_genes);
-            
+
             /*THREADED EXTRACT*/
-            for( geneID = 0; geneID < genes_per_person && neut_flag; ++geneID){
+            for( geneID = 0; geneID < 1 && neut_flag; ++geneID){ /*genes_per_person anti gia 1*/
                 sprintf(neutral_output_filename, "neutralOutput%03d.txt", geneID);
                 file_neutral_gene = fopen(neutral_output_filename, "a");
                 temp_auxialiary=calloc(1,sizeof(thread_auxialiary));
@@ -269,7 +288,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
             }*/
                 /*geneID = 0;
                 extract_neutRegion1_generation(neutralOutput, i%2, geneID);
-                */ 
+                */
             /*
             fprintf(mutationOutput,"Generation %d \n",i);
             for(o=0;o<genes_per_person;o++){
@@ -373,7 +392,7 @@ int main(int argc, char** argv){
     const gsl_rng_type * T;
     gsl_rng * r;
 
-    
+
 
 
     FILE *r1Output,*r2Output, *matrixOutput, *countsOutput, *fitnessOutput, *discreteOutput;
@@ -399,9 +418,9 @@ int main(int argc, char** argv){
     mutationOutput = NULL;
     rob_discrete_Output=NULL;
     seed = time(NULL);
-    
-    
-    
+
+
+
     begin = clock();
     /* create a generator chosen by the
     environment variable GSL_RNG_TYPE */
@@ -646,7 +665,7 @@ int main(int argc, char** argv){
     if(fatherOutput==NULL)      fatherOutput = fopen("father.txt", "w");
     if(mutationOutput==NULL)    mutationOutput = fopen("mutations.txt", "w");
     if(start_in==NULL)          start_in = fopen("R1R2_input.txt", "r");
-    
+
     /*antwnis 17/6/2 */rob_discrete_Output = fopen("rob_discrete.txt","w");
     if(key_genes==-1) key_genes=10;
 
@@ -665,7 +684,7 @@ int main(int argc, char** argv){
                 kaliteros[i]=1;
             }
         }
-    
+
         max_distance=eucledian_distance(xeiroteros,optimal_array);
         min_distance=eucledian_distance(kaliteros,optimal_array);
         max_distance_exp=exp(-lamda*max_distance);
@@ -694,12 +713,12 @@ int main(int argc, char** argv){
     }
 
     create_generations(fitness,model_change,lamda,num_of_parents,
-		       groups_wanted,R1R2_swapping,min_gene_R1R2,max_gene_R1R2,freq, newfreq, 
+		       groups_wanted,R1R2_swapping,min_gene_R1R2,max_gene_R1R2,freq, newfreq,
 		       min_count,max_count,
 		       generations,generation_change,mutation_rate,robustness,robust_changes,robust_last_bit,r,recomb_rate,target_fitness,optimal,key_genes,start_in,
-		       r1Output, r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput,robustOutput,genotypeOutput,fatherOutput, 
+		       r1Output, r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput,robustOutput,genotypeOutput,fatherOutput,
                mutationOutput,rob_discrete_Output);
-    
+
 
     for(i=0;i<max_genes_per_person;i++){
         free(sensitivity_array[i]);
@@ -718,12 +737,12 @@ int main(int argc, char** argv){
     fclose(mutationOutput);
     fclose(rob_discrete_Output);
     if (start_in!=NULL) fclose(start_in);
-    
+
 
     end = clock();
     time_spent= (double)(end - begin) / CLOCKS_PER_SEC;
     FILE *time_Output;
-    
+
     time_Output = fopen("time_Output.txt", "a");
     fprintf(time_Output,"%f\n",time_spent);
     fclose(time_Output);

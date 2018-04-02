@@ -14,8 +14,9 @@ $(TARGET): $(OBJECTS)
 
 clean:
 	clear
+#	rm -r 500selection1rr0.run.*
+	#rm -r neutral.run.*
 	rm  $(TARGET)
 	rm  $(OBJECTS)
 	rm -f *.txt
-	rm -r selection.run.*
-	rm -r neutral.run.*
+	
