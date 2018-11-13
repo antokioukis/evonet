@@ -187,11 +187,11 @@ int main(int argc, char** argv)
   assert(genes < 64);
 
 
-  FILE *genout = fopen("generations.txt", "w");
-  FILE *info = fopen("infofile.txt", "w");
-  FILE *log = fopen("log.txt", "w");
-  FILE *fitnesslutfile = fopen("fitness.txt", "w");
-  FILE *curOptFile = fopen("curOptFile.txt", "w");
+  FILE *genout = fopen("GRNgenerations.txt", "w");
+  FILE *info = fopen("GRNinfofile.txt", "w");
+  FILE *log = fopen("GRNlog.txt", "w");
+  FILE *fitnesslutfile = fopen("GRNfitness.txt", "w");
+  FILE *curOptFile = fopen("GRNcurOptFile.txt", "w");
 
   long seed =  191920;
 
@@ -293,6 +293,14 @@ int main(int argc, char** argv)
       /*fprintf(stderr, "fitness: %f, maxFit: %f\n", fitness, maxFitness);*/
       numOfMutations = mutatePop(popsize, genes, pop, mutRate, r);
       ++generations;
+      /*akiouk*/
+      /*an paei panw apo 100k geneies den 8a teleiwsei pote opote spase to
+ *    xreiazetai gia ta megala mutation rates pou den teleiwnei pote
+ *    */
+      if (generations > 100000){
+        break;
+      }
+      /*end akiouk*/
     }
 
   fclose(curOptFile);

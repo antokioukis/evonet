@@ -295,15 +295,13 @@ void extract_gene_counts_generation(FILE *f, int num_of_gen){
     return;
 }
 
-void extract_fitness_generation(FILE *f, int num_of_gen, float mutation_rate){
-
+void extract_fitness_generation(FILE *f, float generation_fitness){
     if (f == NULL)
     {
         printf("Error opening file!\n");
         exit(1);
     }
-
-    fprintf(f, "%d %d %d %f %f\n", num_of_gen,curr_num_of_groups*persons_per_group,genes_per_person,generation_array[num_of_gen]->sum_of_fitness/(curr_num_of_groups*persons_per_group),mutation_rate);
+    fprintf(f,"%f\n",generation_fitness);
 }
 
 

@@ -110,9 +110,6 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
     float temp_fit=0;
     float generation_fitness=0;
 
-    int bonus_generations=0;
-    int bonus_gen_flag=1;
-
     for( i = 0; i < max_genes_per_person; ++i){
       for( j = 0; j < neutRegionLength; ++j){
 	       mutatedSites[i][j] = 0;
@@ -120,23 +117,23 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
     }
 
    create_array_differences(array_of_differences,lamda,optimal);
-
-    /*printf("%f\n",target_fitness);*/
+    /*akiouk 23/10/18*/
+    /*kane mou 1000 genies afou exeis ftasei sto fitness level pou sou eipe to simulation*/
+    int bonus_generations = 0;
+    int final_generation = -1;
+    /*end akiouk*/
+    
     /*kane opwsdipote ta generation wanted kai meta tsekare eisai se selection? kai den exeis ftasei to apaitoumeno fitness tote kane kai alla runs*/
     for(i=0; i<generations_wanted; i++){
 
-        /*start change akiouk 3/10/17 */
-        if(generation_fitness > target_fitness && fitness && bonus_gen_flag){
-          bonus_generations=i;
-          bonus_gen_flag=0;
-        }
-
-     /* if( generation_fitness > target_fitness && fitness ) break; */ 
-
-        if( generation_fitness > target_fitness && fitness && i>bonus_generations+15000 ) break;
-                /* end of change akiouk 3/10/17 */
-
-
+      /*akiouk*/
+      if( generation_fitness > target_fitness && fitness && final_generation == -1){
+          final_generation = i + bonus_generations;
+      }
+      if((final_generation == i) && (fitness)){
+        break;
+      }
+      /*end akiouk*/
         for(o=0;o<genes_per_person;o++){
             for(j=0;j<2;j++){
                 sensitivity_array[o][j]=0;
@@ -261,15 +258,16 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
         genotype_data=create_genotype_hash(generation_array[i%2]);
         if(i%freq==0){
             printf("Generation %d Simulated. \n",i);
-            extract_fitness_generation(fitnessOutput,i%2,mutation_rate);
-            extract_gene_dependancies_matrix_generation(matrixOutput, i%2);
+            extract_fitness_generation(fitnessOutput,generation_fitness);
+/*          
+	    extract_gene_dependancies_matrix_generation(matrixOutput, i%2);
             extract_discrete_generation(discreteOutput,i%2);
-	        extract_R1R2_generation(r1Output, r2Output,i%2);
-            /*extract_gene_counts_generation(countsOutput, i%2);
+	    extract_R1R2_generation(r1Output, r2Output,i%2);
+            extract_gene_counts_generation(countsOutput, i%2);
             extract_genotype_occ(genotypeOutput,genotype_data);
-            extract_father_fitness(i%2,i); */
+            extract_father_fitness(i%2,i); 
             extract_open_non_network(generation_array[i%2],key_genes);
-
+*/
             /*THREADED EXTRACT*/
             for( geneID = 0; geneID < 1 && neut_flag; ++geneID){ /*genes_per_person anti gia 1*/
                 sprintf(neutral_output_filename, "neutralOutput%03d.txt", geneID);
@@ -298,7 +296,7 @@ void create_generations(int fitness,int model_change,float lamda,int num_of_pare
                 fprintf(mutationOutput,"\n");
             }
             */
-	    }
+	      }
     }
 }
 
@@ -690,7 +688,8 @@ int main(int argc, char** argv){
         max_distance_exp=exp(-lamda*max_distance);
         min_distance_exp=exp(-lamda*min_distance);
         target_fitness=0.95*(min_distance_exp-max_distance_exp)+max_distance_exp;
-        printf("target_fitness %f max_distance %f, min_distance %f\n",target_fitness,max_distance_exp,min_distance_exp);
+   	
+	printf("target_fitness %f max_distance %f, min_distance %f\n",target_fitness,max_distance_exp,min_distance_exp);
     }
 
     /* PP 20170415 lathos. Optimum should be any vector with optimal_num of 1s */
@@ -718,7 +717,6 @@ int main(int argc, char** argv){
 		       generations,generation_change,mutation_rate,robustness,robust_changes,robust_last_bit,r,recomb_rate,target_fitness,optimal,key_genes,start_in,
 		       r1Output, r2Output, matrixOutput, countsOutput,fitnessOutput,discreteOutput,robustOutput,genotypeOutput,fatherOutput,
                mutationOutput,rob_discrete_Output);
-
 
     for(i=0;i<max_genes_per_person;i++){
         free(sensitivity_array[i]);

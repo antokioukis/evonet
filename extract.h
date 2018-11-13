@@ -16,7 +16,7 @@ void extract_gene_dependancies_matrix_generation(FILE* f, int num_of_gen);
 
 void extract_gene_counts_generation(FILE *f, int num_of_gen);
 
-void extract_fitness_generation(FILE *f, int num_of_gen, float mutation_rate);
+void extract_fitness_generation(FILE *f, float generation_fitness);
 
 void extract_robustness(FILE *f,population *new_population,FILE *d);
 

@@ -19,7 +19,7 @@
 #define number_of_threads 10
 #define neut_flag 0
 #define extr_fat_id 0
-#define LAST_BIT_PERCENTAGE 0.05
+#define LAST_BIT_PERCENTAGE 0.01
 
 
 typedef struct auxiliary_genotype_data{

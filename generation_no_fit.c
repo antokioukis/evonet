@@ -72,6 +72,29 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_R1R2_swapping(int nu
         }
     }
 
+    /* for(i=0;i<genes_per_person;i++){ */
+    /*     if(i<genes_from_first_parent){ */
+    /* 	  new_auxiliary->R2[i]=temp2->person_in_group[person_counter2]->gene_R2[i]; */
+    /*     } */
+    /*     else{ */
+    /* 	  new_auxiliary->R2[i]=temp1->person_in_group[person_counter1]->gene_R2[i]; */
+    /*     } */
+    /* } */
+    /*
+    printf("Pira apo prwto patera %d gonidia\n", genes_from_first_parent);
+    for(i=0;i<max_genes_per_person;i++){
+        printf("R1:%d R2: %d\n", new_auxiliary->R1[i],new_auxiliary->R2[i]);
+    }
+*/
+ /*
+    for (i = 0; i < max_genes_per_person; i++){
+        for(j=0;j<max_genes_per_person;j++){
+            printf("%d ",new_auxiliary->dependancies[i][j]);
+        }
+        printf("\n");
+    }
+    */
+    /*create_mutations(new_dependancies);*/
     return new_auxiliary;
 }
 
@@ -103,7 +126,7 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_row_swapping(int num
     id_patera1=gsl_rng_uniform_int(r,(curr_num_of_groups*persons_per_group));
     id_patera2=gsl_rng_uniform_int(r,(curr_num_of_groups*persons_per_group));
 
-
+    
     if (extr_fat_id){
         extract_father_id(f,id_patera1,id_patera2);
     /* printf("Counter2= %d\n",counter1); */
@@ -137,6 +160,7 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_row_swapping(int num
                 for(k=0;k<neutRegionLength;k++){
                     new_auxiliary->neutRegion1[i][k]=temp1->person_in_group[person_counter1]->neutRegion1[i][k];
                 }
+                /*++++++*/
             }
         }
         else{
@@ -147,6 +171,7 @@ R1_R2_auxiliary *choose_random_father_dependencies_combined_row_swapping(int num
                 for(k=0;k<neutRegionLength;k++){
                     new_auxiliary->neutRegion1[i][k]=temp1->person_in_group[person_counter1]->neutRegion1[i][k];
                 }
+                /*++++++*/
             }
         }
     }
@@ -234,7 +259,7 @@ person *gen_create_person_no_fit(int id,int num_of_gen, int num_of_parents,int r
 	if (new_person->gene_counts[i]>0)
 	  new_person->vector_of_signs[i]=1;
     }
-
+    
     recomb_chance=gsl_ran_flat(r,0,1);
 
 /*    printf("Creating Inheritance\n");*/
@@ -264,7 +289,7 @@ person *gen_create_person_no_fit(int id,int num_of_gen, int num_of_parents,int r
         }
     }
 
-
+    
     for(i=0; i<genes_per_person; ++i){
         for(j = 0; j < neutRegionLength; ++j){
            if( new_person-> neutRegion1[i][j] == 1 ){
@@ -272,6 +297,26 @@ person *gen_create_person_no_fit(int id,int num_of_gen, int num_of_parents,int r
             }
         }
     }
+
+ 
+    /* printf("\n"); */
+    /* for (i = 0; i < max_genes_per_person; i++){ */
+    /*     for(j=0;j<max_genes_per_person;j++){ */
+    /*         printf("%f ",new_person->gene_interactions[i][j]); */
+    /*     } */
+    /*     printf("\n"); */
+    /* } */
+    
+    /*new_person=create_mutations(new_person,mutation_rate,r);*/
+
+
+    
+    /* for(i=0;i<genes_per_person;i++){ */
+    /*   printf("neo R1[%d]=%d, ... %d (%d)\n",i,new_person->gene_R1[i], auxiliary->R1[i], new_person->gene_R1[i] == auxiliary->R1[i]); */
+    /* } */
+    /* for(i=0;i<genes_per_person;i++){ */
+    /*   printf("neo R2[%d]=%d, ... %d (%d)\n",i,new_person->gene_R2[i], auxiliary->R2[i], new_person->gene_R2[i] == auxiliary->R2[i]);  */
+    /* } */
 
     for(i=0;i<genes_per_person;i++){
         for(j=0;j<genes_per_person;j++){
