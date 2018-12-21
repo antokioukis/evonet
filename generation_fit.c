@@ -344,7 +344,7 @@ R1_R2_auxiliary* choose_fitted_father_dependencies_combined_row_swapping(int num
 
     fitness_asked2=gsl_ran_flat (r,0, generation_array[num_of_gen-1]->sum_of_fitness);
 
-    counter1=0;
+    counter1=(num_of_groups*persons_per_group)/2;
     while(fitness_asked1>fitness_array[counter1]){
         counter1++;
     }
@@ -553,6 +553,7 @@ group *gen_create_group_fit(int starting_id,int num_of_gen, int num_of_parents,i
     group *new_group;
     new_group = (group*)calloc(1, sizeof(group));
 /*printf("Group:%d \n",starting_id);*/
+    #pragma omp parallel for
     for(i=0;i<persons_per_group;i++){
       /*  printf("Creating Atomo %d\n",i); */
         new_group->person_in_group[i]=gen_create_person_fit(i,num_of_gen, num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,recomb_rate,f,d,fitness_array);
@@ -600,7 +601,6 @@ population *create_gen_population_fit(int num_of_gen, int num_of_parents,int row
 
 
 
-    
     for(i=0;i<curr_num_of_groups;i++){
         if(i==0){
             /*printf("Head on the group_list of the generation 0");*/

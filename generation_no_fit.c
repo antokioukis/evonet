@@ -339,8 +339,9 @@ group *gen_create_group_no_fit(int starting_id,int num_of_gen, int num_of_parent
     group *new_group;
     new_group = (group*)calloc(1, sizeof(group));
              /*printf("Creating Atomo %d\n",i);*/
+    #pragma omp parallel for 
     for(i=0;i<persons_per_group;i++){
-    new_group->person_in_group[i]=gen_create_person_no_fit(i,num_of_gen, num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,recomb_rate,f,d);
+        new_group->person_in_group[i]=gen_create_person_no_fit(i,num_of_gen, num_of_parents,row_swapping,min_count,max_count,mutation_rate,r,recomb_rate,f,d);
     /*printf("Atomo created %d\n",i); */
     }
     return new_group;
